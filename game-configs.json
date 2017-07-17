@@ -1,0 +1,17 @@
+{
+  "client_server": {
+    "gameTickInterval": 50,
+    "bulletSpeed": 25,
+    "mapWidth": 800,
+    "mapHeight": 600
+  },
+  "server": {
+    "serverPacketInterval": 100
+  },
+  "client": {
+    "clientPacketInterval": 100,
+    "playerColor": "#2274A5",
+    "otherPlayersColor": "#F90C0C",
+    "bulletColor": "#FFD400"
+  }
+}
