@@ -1,9 +1,11 @@
 {
   "client_server": {
     "gameTickInterval": 50,
-    "bulletSpeed": 25,
+    "bulletSpeed": 20,
     "mapWidth": 800,
-    "mapHeight": 600
+    "mapHeight": 600,
+    "playerWidth": 10,
+    "playerHeight": 10
   },
   "server": {
     "serverPacketInterval": 100

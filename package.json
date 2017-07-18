@@ -6,7 +6,9 @@
   "scripts": {
     "build:prod": "webpack -p --progress --colors",
     "dev": "webpack-dev-server -d --open --content-base dist/",
-    "publish:heroku": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master"
+    "heroku:publish": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master",
+    "heroku:off": "heroku ps:scale web=0",
+    "heroku:on": "heroku ps:scale web=1"
   },
   "babel": {
     "presets": [
@@ -40,6 +42,7 @@
     "eslint-plugin-react": "^7.1.0",
     "html-webpack-plugin": "^2.28.0",
     "mocha": "^3.3.0",
+    "nodemon": "^1.11.0",
     "rewire": "^2.5.2",
     "style-loader": "^0.16.1",
     "webpack": "^2.4.1",

@@ -2,16 +2,17 @@ require('../css/app.css')
 const configs = require('../../game-configs.json')
 
 class Player {
-  constructor(x, y, h, w) {
+  constructor(x, y) {
     this.x = x
     this.y = y
-    this.h = h
-    this.w = w
+    this.h = configs.client_server.playerHeight
+    this.w = configs.client_server.playerWidth
   }
 }
-const player = new Player(395, 295, 10, 10)
+const player = new Player(395, 295)
 // const ws = new WebSocket('ws://localhost:3000')
-const ws = new WebSocket('ws://top-down-shooter.herokuapp.com')
+const wsHost = `ws://${window.location.host}`
+const ws = new WebSocket(wsHost)
 
 let bullets = []
 let otherPlayers = []

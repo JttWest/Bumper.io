@@ -7,12 +7,6 @@ const PORT = process.env.PORT || 3000
 
 const server = express()
   .use(express.static(path.join(__dirname, '../dist')))
-  // .get('/', (req, res) => {
-  //   res.sendFile('index.html', { root: './dist' })
-  // })
-  // .get('/bundle.js', (req, res) => {
-  //   res.sendFile('/bundle.js', { root: './dist' })
-  // })
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 const wss = new WebSocket.Server({ server })
@@ -162,7 +156,7 @@ function gameLoop() {
 }
 
 // run game loop
-setInterval(gameLoop, 300)
+setInterval(gameLoop, configs.client_server.gameTickInterval)
 
 function broadcastGameData() {
   // let playersData
