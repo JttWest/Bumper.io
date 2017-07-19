@@ -4,8 +4,8 @@
   "description": "An HTML5 game",
   "main": "",
   "scripts": {
+    "dev": "concurrently --kill-others \"webpack-dev-server -d --open --content-base dist/\" \"node server/server.js\"",
     "build:prod": "webpack -p --progress --colors",
-    "dev": "webpack-dev-server -d --open --content-base dist/",
     "heroku:publish": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master",
     "heroku:off": "heroku ps:scale web=0",
     "heroku:on": "heroku ps:scale web=1"
@@ -18,34 +18,33 @@
   },
   "author": "JttWest",
   "license": "ISC",
+  "repository": "placeholder.com",
   "dependencies": {
     "bufferutil": "^3.0.2",
-    "enum": "^2.4.0",
-    "eventemitter3": "^2.0.3",
     "express": "^4.15.3",
     "utf-8-validate": "^3.0.3",
     "ws": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
-    "babel-loader": "^6.4.1",
-    "babel-preset-env": "^1.4.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
-    "chai": "^3.5.0",
+    "chai": "^4.1.0",
     "circular-dependency-plugin": "^3.0.0",
+    "concurrently": "^3.5.0",
     "css-loader": "^0.28.0",
     "eslint": "^3.19.0",
-    "eslint-config-airbnb": "^14.1.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-config-airbnb": "^15.0.2",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.1.0",
     "html-webpack-plugin": "^2.28.0",
     "mocha": "^3.3.0",
     "nodemon": "^1.11.0",
-    "rewire": "^2.5.2",
-    "style-loader": "^0.16.1",
-    "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.2"
+    "style-loader": "^0.18.2",
+    "webpack": "^3.3.0",
+    "webpack-dev-server": "^2.5.1"
   }
 }

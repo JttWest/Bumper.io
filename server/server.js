@@ -3,7 +3,7 @@ const WebSocket = require('ws')
 const path = require('path')
 const configs = require('../game-configs.json')
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || configs.shared.port
 
 const server = express()
   .use(express.static(path.join(__dirname, '../dist')))
@@ -104,8 +104,8 @@ function moveBullets() {
   // move bullets
   bullets.forEach((bullet) => {
     // TODO: use unit x and y distance
-    bullet.position.x += bullet.velocity.dx * configs.client_server.bulletSpeed
-    bullet.position.y += bullet.velocity.dy * configs.client_server.bulletSpeed
+    bullet.position.x += bullet.velocity.dx * configs.shared.bulletSpeed
+    bullet.position.y += bullet.velocity.dy * configs.shared.bulletSpeed
 
     bullet.lifeSpan--
   })
@@ -156,7 +156,7 @@ function gameLoop() {
 }
 
 // run game loop
-setInterval(gameLoop, configs.client_server.gameTickInterval)
+setInterval(gameLoop, configs.shared.gameTickInterval)
 
 function broadcastGameData() {
   // let playersData

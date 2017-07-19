@@ -1,5 +1,6 @@
 {
-  "client_server": {
+  "shared": {
+    "port": 3000,
     "gameTickInterval": 50,
     "bulletSpeed": 20,
     "mapWidth": 800,

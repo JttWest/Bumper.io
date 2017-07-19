@@ -5,13 +5,16 @@ class Player {
   constructor(x, y) {
     this.x = x
     this.y = y
-    this.h = configs.client_server.playerHeight
-    this.w = configs.client_server.playerWidth
+    this.h = configs.shared.playerHeight
+    this.w = configs.shared.playerWidth
   }
 }
 const player = new Player(395, 295)
 // const ws = new WebSocket('ws://localhost:3000')
-const wsHost = `ws://${window.location.host}`
+const wsHost = window.location.hostname === 'localhost' ?
+  `ws://localhost:${configs.shared.port}` :
+  `ws://${window.location.host}`
+
 const ws = new WebSocket(wsHost)
 
 let bullets = []
