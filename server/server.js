@@ -176,4 +176,4 @@ function broadcastGameData() {
 }
 
 // broadcast game data
-setInterval(broadcastGameData, 100)
+setInterval(broadcastGameData, configs.server.serverPacketInterval)
