@@ -4,7 +4,7 @@
   "description": "An HTML5 game",
   "main": "",
   "scripts": {
-    "dev": "concurrently --kill-others \"webpack-dev-server -d --open --content-base dist/\" \"node server/server.js\"",
+    "dev": "concurrently --kill-others \"webpack-dev-server -d --open --content-base dist/\" \"nodemon --exitcrash -w server -w game-configs.json server/server.js\"",
     "build:prod": "webpack -p --progress --colors",
     "heroku:publish": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master",
     "heroku:off": "heroku ps:scale web=0",

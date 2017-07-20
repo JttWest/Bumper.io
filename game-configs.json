@@ -6,13 +6,14 @@
     "mapWidth": 800,
     "mapHeight": 600,
     "playerWidth": 10,
-    "playerHeight": 10
+    "playerHeight": 10,
+    "playerSpeed": 2
   },
   "server": {
-    "serverPacketInterval": 100
+    "serverPacketInterval": 500
   },
   "client": {
-    "clientPacketInterval": 100,
+    "clientPacketInterval": 500,
     "playerColor": "#2274A5",
     "otherPlayersColor": "#F90C0C",
     "bulletColor": "#FFD400"

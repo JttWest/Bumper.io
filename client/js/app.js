@@ -10,6 +10,9 @@ class Player {
   }
 }
 const player = new Player(395, 295)
+
+let movementQueue = []
+
 // const ws = new WebSocket('ws://localhost:3000')
 const wsHost = window.location.hostname === 'localhost' ?
   `ws://localhost:${configs.shared.port}` :
@@ -27,8 +30,8 @@ ws.onopen = () => {
 ws.onmessage = (evt) => {
   const payload = JSON.parse(evt.data)
 
-  player.x = payload.player.x
-  player.y = payload.player.y
+  //player.x = payload.player.x
+  //player.y = payload.player.y
 
   bullets = payload.bullets
 
@@ -51,28 +54,18 @@ canvas.addEventListener('keyup', (e) => {
   keys[e.keyCode] = false
 })
 
-function sendMoveData() {
+const sendMoveData = () => {
   const movementData = {
     type: 'move',
-    data: { left: false, right: false, up: false, down: false }
+    data: movementQueue
   }
 
-  if (keys[87])
-    movementData.data.up = true
-
-  if (keys[83])
-    movementData.data.down = true
-
-  if (keys[65])
-    movementData.data.left = true
-
-  if (keys[68])
-    movementData.data.right = true
+  movementQueue = []
 
   ws.send(JSON.stringify(movementData))
 }
 
-setInterval(sendMoveData, 100)
+setInterval(sendMoveData, configs.client.clientPacketInterval)
 
 function bulletsDraw() {
   bullets.forEach((b) => {
@@ -133,6 +126,46 @@ canvas.addEventListener('click', () => {
   const fireAngle = Math.atan2(deltaY, deltaX)
   sendFireData(fireAngle)
 })
+
+const playerMoveTick = () => {
+  // do nothing if movementQueue is full
+  if (movementQueue.length >= (configs.client.clientPacketInterval / configs.shared.gameTickInterval))
+    console.log('Movement Queue exceeded intended size')
+
+  const movementData = { left: false, right: false, up: false, down: false }
+
+  if (keys[87]) {
+    player.y -= configs.shared.playerSpeed
+    movementData.up = true
+  }
+
+  if (keys[83]) {
+    player.y += configs.shared.playerSpeed
+    movementData.down = true
+  }
+
+  if (keys[65]) {
+    player.x -= configs.shared.playerSpeed
+    movementData.left = true
+  }
+
+  if (keys[68]) {
+    player.x += configs.shared.playerSpeed
+    movementData.right = true
+  }
+
+  movementQueue.push(movementData)
+}
+
+function gameTick() {
+  // move player and put movement into queue to be send to server
+  playerMoveTick()
+
+
+}
+
+// run game loop
+setInterval(gameTick, configs.shared.gameTickInterval)
 
 /*
 window.onload = function () {

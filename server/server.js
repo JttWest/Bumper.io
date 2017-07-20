@@ -13,26 +13,17 @@ const wss = new WebSocket.Server({ server })
 
 const players = []
 
-function Player(name, ws) {
-  this.name = name
-  this.position = { x: 395, y: 295 }
-  this.ammo = 0
-  this.movement = { left: false, right: false, up: false, down: false }
-  this.isAlive = true
-  this.health = 3
-  this.websocket = ws
+class Player {
+  constructor(name, ws) {
+    this.name = name
+    this.position = { x: 395, y: 295 }
+    this.ammo = 0
+    this.isAlive = true
+    this.health = 3
+    this.websocket = ws
+    this.movementQueue = [] // movememt data from client to be process at each gameTick
+  }
 }
-
-/*
-Player object
-postion: { x: number, y: number }
-ammo: number
-movement: { left: boolean, right: boolean, up: boolean, down: boolean }
-isAlive: boolean
-health: number
-websocket: ws
-size: { width: number, height: number }
-*/
 
 const bullets = []
 
@@ -58,21 +49,18 @@ onMessage:
   move: updatePlayerLocation()
 */
 
-// { left: boolean, right: boolean, up: boolean, down: boolean }
 function updatePlayerLocation(player, direction) {
-  const SPEED = 2
-
   if (direction.left)
-    player.position.x -= SPEED
+    player.position.x -= configs.shared.playerSpeed
 
   if (direction.right)
-    player.position.x += SPEED
+    player.position.x += configs.shared.playerSpeed
 
   if (direction.up)
-    player.position.y -= SPEED
+    player.position.y -= configs.shared.playerSpeed
 
   if (direction.down)
-    player.position.y += SPEED
+    player.position.y += configs.shared.playerSpeed
 }
 
 wss.on('connection', (ws) => {
@@ -86,7 +74,8 @@ wss.on('connection', (ws) => {
       const payload = JSON.parse(message)
 
       if (payload.type === 'move') {
-        updatePlayerLocation(player, payload.data)
+        // updatePlayerLocation(player, payload.data)
+        player.movementQueue.push(...payload.data)
       } else if (payload.type === 'fire') {
         bullets.push(new Bullet(player.position, payload.data.angle))
       } else {
@@ -143,9 +132,18 @@ function cleanBullets() {
   }
 }
 
+function movePlayers() {
+  players.forEach((player) => {
+    const movement = player.movementQueue.shift()
+
+    if (movement)
+      updatePlayerLocation(player, movement)
+  })
+}
+
 function gameLoop() {
-  // this is driven by client instead (for now)
-  // movePlayers()
+  // process movement data in movement queue for each player
+  movePlayers()
 
   moveBullets()
   checkBulletHits()
@@ -166,11 +164,11 @@ function broadcastGameData() {
       player.websocket.send(
         JSON.stringify(
           {
-            player: player.position,
+            //player: player.position,
             bullets,
             otherPlayers: players
-              .filter((p, ii) => i !== ii) // remove current player from other player array
-              .map(p => p.position)
+             .filter((p, ii) => i !== ii) // remove current player from other player array
+             .map(p => p.position)
           }
         ))
     }
