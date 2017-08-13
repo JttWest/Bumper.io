@@ -57,8 +57,10 @@ module.exports = class Player {
     let playerSnapshot = this.snapshotQueueUnproc.shift()
 
     // player lagged and didn't send snapshot in time; give the default snapshot
-    if (!playerSnapshot)
+    if (!playerSnapshot) {
       playerSnapshot = defaultPlayerSnapshot
+      this.sendSyncTrig()
+    }
 
     this.updatePlayerLocation(playerSnapshot.movement)
 

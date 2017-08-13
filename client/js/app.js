@@ -4,7 +4,33 @@ const key = require('./control').keyboardCodeMapping
 const GameState = require('./models/game-state')
 
 const canvas = document.getElementById('canvas')
+
 const ctx = canvas.getContext('2d')
+const drawPlayer = (color, x, y) => {
+  ctx.beginPath()
+  ctx.fillStyle = color
+  ctx.strokeStyle = 'black'
+  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
+  ctx.lineWidth = 1
+  ctx.stroke()
+  ctx.fill()
+}
+
+const renderLoop = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // TODO: the player class should have a render method
+  gameState.playerStates.forEach((playerState) => {
+    const playerPos = playerState.position
+
+    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
+  })
+
+
+  drawPlayer(configs.client.playerColor, player.x, player.y)
+
+  requestAnimationFrame(renderLoop)
+}
 
 const keyRegister = {}
 
@@ -20,12 +46,10 @@ class Player {
   constructor(x, y) {
     this.x = x
     this.y = y
-    this.h = configs.shared.playerHeight
-    this.w = configs.shared.playerWidth
   }
 }
 
-let player // = new Player(395, 295)
+let player
 
 class PlayerSnapshot {
   constructor(movement) {
@@ -92,44 +116,60 @@ const processGameState = (gameSnapshots) => {
 ws.onmessage = (evt) => {
   const payload = JSON.parse(evt.data)
 
-  // TODO: make these switch cases
-  if (payload.type === 'joinAck') {
-    joinedGame = true
-    currPlayerId = payload.data.playerId
+  switch (payload.type) {
+    case 'joinAck':
+      joinedGame = true
+      currPlayerId = payload.data.playerId
 
-    // players in game before you joined
-    payload.data.otherPlayersInGame.forEach((p) => {
-      gameState.addNewPlayer(p.playerId, p.name)
-    })
+      // players in game before you joined
+      payload.data.otherPlayersInGame.forEach((p) => {
+        gameState.addNewPlayer(p.playerId, p.name)
+      })
 
-    console.log(`Joined game as player ${currPlayerId}`)
-  } else if (payload.type === 'joinNack') {
-    alert(payload.data /* reason for fail join*/)
-  } else if (payload.type === 'playerJoin') {
-    // new player has joined the game
-    gameState.addNewPlayer(payload.data.playerId, payload.data.name)
-  } else if (payload.type === 'syncAck') {
-    syncingGameState = false
+      console.log(`Joined game as player ${currPlayerId}`)
+      break
 
-    payload.data.forEach((playerSyncData) => {
-      gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position)
-    })
+    case 'joinNack':
+      alert(payload.data /* reason for fail join*/)
+      break
 
-    // TODO: temp fix for now
-    if (initGame) {
-      const currentPlayerData = gameState.getPlayerState(currPlayerId)
-      player = new Player(currentPlayerData.position.x, currentPlayerData.position.y)
+    case 'playerJoin':
+      // new player has joined the game
+      gameState.addNewPlayer(payload.data.playerId, payload.data.name)
+      break
 
-      // begin rendering game
-      renderLoop()
-      initGame = false
-    }
-  } else if (payload.type === 'gameState') {
-    // only take in game state if its not outdated
-    if (!syncingGameState)
-      processGameState(payload.data)
-  } else {
-    console.log(`Invalid message received from server: ${payload}`)
+    case 'syncAck':
+      syncingGameState = false
+
+      payload.data.forEach((playerSyncData) => {
+        gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position)
+      })
+
+      // TODO: temp fix for now
+      if (initGame) {
+        const currentPlayerData = gameState.getPlayerState(currPlayerId)
+        player = new Player(currentPlayerData.position.x, currentPlayerData.position.y)
+
+        // begin rendering game
+        renderLoop()
+        initGame = false
+      }
+
+      break
+
+    case 'syncTrig':
+      // TODO: implement this
+      console.log('Default snapshot was used on server')
+      break
+
+    case 'gameState':
+      // only take in game state if its not outdated
+      if (!syncingGameState)
+        processGameState(payload.data)
+      break
+
+    default:
+      console.log(`Invalid message received from server: ${payload}`)
   }
 }
 
@@ -230,33 +270,8 @@ const gameTick = () => {
   }
 }
 
-function drawPlayer(color, x, y) {
-  ctx.beginPath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.rect(x, y, player.w, player.h)
-  ctx.lineWidth = 1
-  ctx.stroke()
-  ctx.fill()
-}
-
-function renderLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  gameState.playerStates.forEach((playerState) => {
-    const playerPos = playerState.position
-
-    // temp fix:
-    if (playerPos)
-      drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
-  })
-
-  // bulletsDraw()
-
-  drawPlayer(configs.client.playerColor, player.x, player.y)
-
-  requestAnimationFrame(renderLoop)
-}
+// run game loop
+setInterval(gameTick, configs.shared.tickInterval)
 
 /*
 let mouseX
@@ -283,6 +298,3 @@ canvas.addEventListener('click', () => {
   const fireAngle = Math.atan2(deltaY, deltaX)
   sendFireData(fireAngle)
 })*/
-
-// run game loop
-setInterval(gameTick, configs.shared.tickInterval)

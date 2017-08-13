@@ -52,32 +52,38 @@ wss.on('connection', (ws) => {
     try {
       const payload = JSON.parse(message)
 
-      if (payload.type === 'joinReq') {
-        if (ws.readyState === WebSocket.OPEN && isValidJoin()) {
-          player = new Player(payload.data /* this is the name of player */, ws, currAvailablePlayerId)
-          players[currAvailablePlayerId] = player
-          ws.send(JSON.stringify({
-            type: 'joinAck',
-            data: {
-              playerId: currAvailablePlayerId,
-              otherPlayersInGame: Object.values(players).map(p => ({ playerId: p.id, name: p.name }))
-            }
-          }))
-          broadcastPlayerJoin(player)
-          currAvailablePlayerId++
-        } else {
-          ws.send(JSON.stringify({ type: 'joinNack', data: 'reason: join failed...' }))
-        }
-      } else if (payload.type === 'syncReq') {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'syncAck', data: getSyncData() }))
+      switch (payload.type) {
+        case 'joinReq':
+          if (ws.readyState === WebSocket.OPEN && isValidJoin()) {
+            player = new Player(payload.data /* this is the name of player */, ws, currAvailablePlayerId)
+            players[currAvailablePlayerId] = player
+            ws.send(JSON.stringify({
+              type: 'joinAck',
+              data: {
+                playerId: currAvailablePlayerId,
+                otherPlayersInGame: Object.values(players).map(p => ({ playerId: p.id, name: p.name }))
+              }
+            }))
+            broadcastPlayerJoin(player)
+            currAvailablePlayerId++
+          } else {
+            ws.send(JSON.stringify({ type: 'joinNack', data: 'reason: join failed...' }))
+          }
+          break
+
+        case 'syncReq':
+          player.sendData(JSON.stringify({ type: 'syncAck', data: getSyncData() }))
           player.isSyncingState = false
-        }
-      } else if (payload.type === 'playerState') {
-        // TODO: check whether data is valid; going to be easier when its binary
-        player.snapshotQueueUnproc.push(...payload.data)
-      } else {
-        console.log(`Received invalid message type from client: ${payload}`)
+          break
+
+        case 'playerState':
+          // TODO: check whether data is valid; going to be easier when its binary
+          player.snapshotQueueUnproc.push(...payload.data)
+          break
+
+        default:
+          console.log(`Received invalid message type from client: ${payload}`)
+
       }
     } catch (e) {
       console.log(e)
@@ -91,6 +97,8 @@ wss.on('connection', (ws) => {
 function playersTick() {
   // Simulate tick logic for each player
   Object.values(players).forEach((player) => {
+    // TODO: use isSyncingState here
+
     player.playerMoveTick()
   })
 }
