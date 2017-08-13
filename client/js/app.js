@@ -1,5 +1,20 @@
 require('../css/app.css')
 const configs = require('../../game-configs.json')
+const key = require('./control').keyboardCodeMapping
+const GameState = require('./models/game-state')
+
+const canvas = document.getElementById('canvas')
+const ctx = canvas.getContext('2d')
+
+const keyRegister = {}
+
+canvas.addEventListener('keydown', (e) => {
+  keyRegister[e.keyCode] = true
+})
+
+canvas.addEventListener('keyup', (e) => {
+  keyRegister[e.keyCode] = false
+})
 
 class Player {
   constructor(x, y) {
@@ -9,63 +24,225 @@ class Player {
     this.w = configs.shared.playerWidth
   }
 }
-const player = new Player(395, 295)
 
-let movementQueue = []
+let player // = new Player(395, 295)
 
-// const ws = new WebSocket('ws://localhost:3000')
+class PlayerSnapshot {
+  constructor(movement) {
+    this.movement = movement
+  }
+
+  setFireAction(shotAngle) {
+    this.action = {
+      actionType: 'fire',
+      angle: shotAngle
+    }
+  }
+}
+
+let syncingGameState = false // drop all gameState packets from server when this is true
+let joinedGame = false // gameTick only runs when this is true
+let currPlayerId
+let playerSnapshotQueue = []
+let initGame = true // flag to begin render once first syncAck is received
+
+let bullets = [] // TODO: what is this for??
+let snapshotsInQueue = 0 // number of snapshots in game state snapshotQueue for every other individual player right now
+
+// const gameState = {
+//   // id: {
+//   //   name: string,
+//   //   position: {x: number, y: number},
+//   //   snapshotQueue: [playerSnapshot]
+//   // }
+// }
+
+const gameState = new GameState()
+
+function GameStateEntry(name) {
+  this.name = name
+  this.position = null
+  this.snapshotQueue = []
+}
+
 const wsHost = window.location.hostname === 'localhost' ?
   `ws://localhost:${configs.shared.port}` :
   `ws://${window.location.host}`
 
 const ws = new WebSocket(wsHost)
 
-let bullets = []
-let otherPlayers = []
+const sendSyncRequest = () => {
+  syncingGameState = true
+
+  const syncData = {
+    type: 'syncReq'
+  }
+
+  ws.send(JSON.stringify(syncData))
+}
+
+const sendJoinRequest = () => {
+  const joinData = {
+    type: 'joinReq',
+    data: 'placeholderName'
+  }
+
+  ws.send(JSON.stringify(joinData))
+}
 
 ws.onopen = () => {
   // Web Socket is connected, send data using send()
+  sendJoinRequest()
+}
+
+const processGameState = (gameSnapshots) => {
+  gameSnapshots.forEach((playerState) => {
+    gameState.insertPlayerSnapshots(playerState.playerId, playerState.snapshots)
+  })
+
+  snapshotsInQueue += configs.shared.tickBufferSize
 }
 
 ws.onmessage = (evt) => {
   const payload = JSON.parse(evt.data)
 
-  //player.x = payload.player.x
-  //player.y = payload.player.y
+  // TODO: make these switch cases
+  if (payload.type === 'joinAck') {
+    joinedGame = true
+    currPlayerId = payload.data.playerId
 
-  bullets = payload.bullets
+    // players in game before you joined
+    payload.data.otherPlayersInGame.forEach((p) => {
+      gameState.addNewPlayer(p.playerId, p.name)
+    })
 
-  otherPlayers = payload.otherPlayers
+    console.log(`Joined game as player ${currPlayerId}`)
+  } else if (payload.type === 'joinNack') {
+    alert(payload.data /* reason for fail join*/)
+  } else if (payload.type === 'playerJoin') {
+    // new player has joined the game
+    gameState.addNewPlayer(payload.data.playerId, payload.data.name)
+  } else if (payload.type === 'syncAck') {
+    syncingGameState = false
+
+    payload.data.forEach((playerSyncData) => {
+      gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position)
+    })
+
+    // TODO: temp fix for now
+    if (initGame) {
+      const currentPlayerData = gameState.getPlayerState(currPlayerId)
+      player = new Player(currentPlayerData.position.x, currentPlayerData.position.y)
+
+      // begin rendering game
+      renderLoop()
+      initGame = false
+    }
+  } else if (payload.type === 'gameState') {
+    // only take in game state if its not outdated
+    if (!syncingGameState)
+      processGameState(payload.data)
+  } else {
+    cosnole.log(`Invalid message received from server: ${payload}`)
+  }
 }
 
-ws.onclose = function () {
+ws.onclose = () => {
   // websocket is closed.
+  alert('socked connect to server closed')
 }
 
-const canvas = document.getElementById('canvas')
-const ctx = canvas.getContext('2d')
-const keys = {}
+const playerMoveTick = () => {
+  const movementData = { left: false, right: false, up: false, down: false }
 
-canvas.addEventListener('keydown', (e) => {
-  keys[e.keyCode] = true
-})
-
-canvas.addEventListener('keyup', (e) => {
-  keys[e.keyCode] = false
-})
-
-const sendMoveData = () => {
-  const movementData = {
-    type: 'move',
-    data: movementQueue
+  if (keyRegister[key.W]) {
+    player.y -= configs.shared.playerSpeed
+    movementData.up = true
   }
 
-  movementQueue = []
+  if (keyRegister[key.S]) {
+    player.y += configs.shared.playerSpeed
+    movementData.down = true
+  }
 
-  ws.send(JSON.stringify(movementData))
+  if (keyRegister[key.A]) {
+    player.x -= configs.shared.playerSpeed
+    movementData.left = true
+  }
+
+  if (keyRegister[key.D]) {
+    player.x += configs.shared.playerSpeed
+    movementData.right = true
+  }
+
+  return movementData
 }
 
-setInterval(sendMoveData, configs.client.clientPacketInterval)
+const updatePlayerState = (playerState) => {
+  const movement = playerState.snapshotQueue.shift().movement
+  const speed = configs.shared.playerSpeed
+
+  if (movement.left)
+    playerState.position.x -= speed
+
+  if (movement.right)
+    playerState.position.x += speed
+
+  if (movement.up)
+    playerState.position.y -= speed
+
+  if (movement.down)
+    playerState.position.y += speed
+}
+
+const sendPlayerState = (playerSnapshots) => {
+  const playerStatePayload = {
+    type: 'playerState',
+    data: playerSnapshots
+  }
+
+  ws.send(JSON.stringify(playerStatePayload))
+}
+
+/*
+Game Tick:
+1 update current player state based on game control input
+2 send playerState to server when playerSnapshotQueue reach tickBufferSize
+3 update the game state using data from gameState
+4 TODO: confirm player position using server game state server (and apply unchecked gameStates)
+5 TODO: drop until last 5 in gameState[anyPlayer].snapshotQueue if deviate too much
+*/
+const gameTick = () => {
+  // game doesn't start until receiving joinAck from server
+  if (!joinedGame)
+    return
+
+  // lag occured -> resync client with server
+  if (snapshotsInQueue === 0) {
+    // request sync from server if haven't already
+    if (!syncingGameState)
+      sendSyncRequest()
+
+    return
+  }
+
+  // (1) update player state based on movement and record player tick data
+  const movementData = playerMoveTick()
+  const currPlayerSnapshot = new PlayerSnapshot(movementData)
+  playerSnapshotQueue.push(currPlayerSnapshot)
+
+  // (2) send playerState to server when ready
+  if (playerSnapshotQueue.length === configs.shared.tickBufferSize) {
+    sendPlayerState(playerSnapshotQueue)
+    playerSnapshotQueue = []
+  }
+
+  // update the game state using data from gameSnapshotQueue
+  if (snapshotsInQueue > 0) {
+    gameState.playerStates.forEach(playerState => updatePlayerState(playerState))
+    snapshotsInQueue--
+  }
+}
 
 function bulletsDraw() {
   bullets.forEach((b) => {
@@ -86,22 +263,25 @@ function drawPlayer(color, x, y) {
   ctx.fill()
 }
 
-function mainDraw() {
+function renderLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  otherPlayers.forEach((p) => {
-    drawPlayer(configs.client.otherPlayersColor, p.x, p.y)
+  gameState.playerStates.forEach((playerState) => {
+    const playerPos = playerState.position
+
+    // temp fix:
+    if (playerPos)
+      drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
   })
 
-  bulletsDraw()
+  // bulletsDraw()
 
   drawPlayer(configs.client.playerColor, player.x, player.y)
 
-  requestAnimationFrame(mainDraw)
+  requestAnimationFrame(renderLoop)
 }
 
-mainDraw()
-
+/*
 let mouseX
 let mouseY
 
@@ -125,247 +305,7 @@ canvas.addEventListener('click', () => {
   const deltaY = mouseY - player.y
   const fireAngle = Math.atan2(deltaY, deltaX)
   sendFireData(fireAngle)
-})
-
-const playerMoveTick = () => {
-  // do nothing if movementQueue is full
-  if (movementQueue.length >= (configs.client.clientPacketInterval / configs.shared.gameTickInterval))
-    console.log('Movement Queue exceeded intended size')
-
-  const movementData = { left: false, right: false, up: false, down: false }
-
-  if (keys[87]) {
-    player.y -= configs.shared.playerSpeed
-    movementData.up = true
-  }
-
-  if (keys[83]) {
-    player.y += configs.shared.playerSpeed
-    movementData.down = true
-  }
-
-  if (keys[65]) {
-    player.x -= configs.shared.playerSpeed
-    movementData.left = true
-  }
-
-  if (keys[68]) {
-    player.x += configs.shared.playerSpeed
-    movementData.right = true
-  }
-
-  movementQueue.push(movementData)
-}
-
-function gameTick() {
-  // move player and put movement into queue to be send to server
-  playerMoveTick()
-
-
-}
+})*/
 
 // run game loop
-setInterval(gameTick, configs.shared.gameTickInterval)
-
-/*
-window.onload = function () {
-  // ---------------- init -------------------------------------- //
-  // canvas init
-  let canvas = document.getElementById('canvas')
-  canvas.width = 800
-  canvas.height = 600
-  let c = canvas.getContext('2d')
-  let WIDTH = canvas.width
-  let HEIGHT = canvas.height
-
-  // key press init
-  let keys = []
-
-  // player init
-  let player1 = new Player(395, 295, 10, 10)
-
-  // bullet init
-  let deltaX = 0
-  let deltaY = 0
-  let rotation = 0
-  let xtarget = 0
-  let ytarget = 0
-  let theBullets = []
-
-  // bad guy init
-  let theBadGuys = []
-  let spawnX
-  let spawnY
-
-  let mouseX
-  let mouseY
-
-  // ---------------- end init --------------------------------- //
-
-  function mainDraw() {
-    c.clearRect(0, 0, WIDTH, HEIGHT)
-
-    c.beginPath()
-    c.fillStyle = 'red'
-    c.strokeStyle = 'blue'
-    c.rect(player1.x, player1.y, player1.w, player1.h)
-    c.lineWidth = 1
-    c.stroke()
-    c.fill()
-
-    playerMove()
-
-    badGuysMove()
-    badGuysDraw()
-
-    bulletsMove()
-    bulletsDraw()
-
-    checkBulletHits()
-
-    if (Math.random() * 100 < 3) {
-      pushBadGuy()
-    }
-
-    removeOutOfBoundBullets()
-
-    requestAnimationFrame(mainDraw)
-  }
-
-  mainDraw()
-
-  canvas.addEventListener('keydown', (e) => {
-    keys[e.keyCode] = true
-  })
-
-  canvas.addEventListener('keyup', (e) => {
-    keys[e.keyCode] = false
-  })
-
-  function playerMove(e) {
-    if (keys[87]) {
-      player1.y -= 2
-    }
-    if (keys[83]) {
-      player1.y += 2
-    }
-    if (keys[65]) {
-      player1.x -= 2
-    }
-    if (keys[68]) {
-      player1.x += 2
-    }
-    return false
-  }
-
-  function mouseMove(e) {
-    mouseX = e.offsetX
-    mouseY = e.offsetY
-  }
-
-  canvas.addEventListener('mousemove', mouseMove)
-  canvas.addEventListener('click', () => {
-    createBullet(mouseX, mouseY, player1.x, player1.y)
-  })
-
-  function createBullet(targetX, targetY, shooterX, shooterY) {
-    deltaX = targetX - shooterX
-    deltaY = targetY - shooterY
-    rotation = Math.atan2(deltaY, deltaX)
-    xtarget = Math.cos(rotation)
-    ytarget = Math.sin(rotation)
-
-    theBullets.push({
-      active: true,
-      x: shooterX,
-      y: shooterY,
-      speed: 10,
-      xtarget,
-      ytarget,
-      w: 3,
-      h: 3,
-      color: 'black',
-      angle: rotation
-    })
-  }
-
-  function bulletsMove() {
-    theBullets.forEach((i) => {
-      i.x += i.xtarget * i.speed
-      i.y += i.ytarget * i.speed
-    })
-  }
-
-  function bulletsDraw() {
-    theBullets.forEach((i) => {
-      c.beginPath()
-      c.fillStyle = 'black'
-      c.rect(i.x, i.y, i.w, i.h)
-      c.fill()
-    })
-  }
-
-  function removeOutOfBoundBullets() {
-    for (let i = 0; i < theBullets.length; ++i) {
-      let bullet = theBullets[i]
-
-      if (bullet.x > WIDTH || bullet.x < 0 || bullet.y < 0 || bullet.y > HEIGHT)
-        theBullets.splice(i, 1)
-    }
-  }
-
-  function pushBadGuy() {
-    if (Math.random() < 0.5) {
-      spawnX = Math.random() < 0.5 ? -11 : 801
-      spawnY = Math.random() * 600
-    } else {
-      spawnX = Math.random() * 800
-      spawnY = Math.random() < 0.5 ? -11 : 601
-    }
-
-    theBadGuys.push({
-      x: spawnX, y: spawnY, w: 10, h: 10, speed: Math.random()
-    })
-  }
-
-  function badGuysMove() {
-    theBadGuys.forEach((i, j) => {
-      if (i.x > player1.x) { i.x -= i.speed }
-      if (i.x < player1.x) { i.x += i.speed }
-      if (i.y > player1.y) { i.y -= i.speed }
-      if (i.y < player1.y) { i.y += i.speed }
-    })
-  }
-
-  function badGuysDraw() {
-    theBadGuys.forEach((i, j) => {
-      c.beginPath()
-      c.fillStyle = 'blue'
-      c.strokeStyle = 'red'
-      c.rect(i.x, i.y, i.w, i.h)
-      c.lineWidth = 1
-      c.stroke()
-      c.fill()
-    })
-  }
-
-  function collides(a, b) {
-    return a.x < b.x + b.w &&
-      a.x + a.w > b.x &&
-      a.y < b.y + b.h &&
-      a.y + a.h > b.y
-  }
-
-  function checkBulletHits() {
-    if (theBullets.length > 0 && theBadGuys.length > 0) {
-      for (let j = theBullets.length - 1; j >= 0; j--) {
-        for (let k = theBadGuys.length - 1; k >= 0; k--) {
-          if (collides(theBadGuys[k], theBullets[j])) {
-            theBadGuys.splice(k, 1)
-          }
-        }
-      }
-    }
-  }
-}
-*/
+setInterval(gameTick, configs.shared.tickInterval)

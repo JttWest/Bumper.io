@@ -1,0 +1,11 @@
+join logic
+1. client makes joinReq to server (by clicking a button)
+2. Server receives joinReq -> put into joinQueue
+3. Server on tick -> broadcast joinData to other players
+
+
+
+server
+
+onSync: send state with past bufferSize playerSnapshots
+	how to get these data??

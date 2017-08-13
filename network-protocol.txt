@@ -1,0 +1,128 @@
+----------------------Shared----------------------------------
+
+playerSnapshot: {
+  movement: {
+    left: boolean,
+    right: boolean,
+    up: boolean,
+    down: boolean
+  },
+  action?: fireAction
+}
+
+fireAction: {
+  actionType: 'fire',
+  angle: number
+}
+
+
+-------------------Client to Server---------------------------
+joinReq: {
+  type: 'joinReq',
+  data: string (name)
+}
+
+syncReq: {
+  type: 'syncReq'
+}
+
+playerState: {
+  type: 'playerState'
+  data: [playerSnapshot]
+}
+
+playerSnapshot: {
+  movement: {
+    left: boolean,
+    right: boolean,
+    up: boolean,
+    down: boolean
+  }
+  action?: fireAction
+}
+
+------------------------Server to Client----------------------
+
+joinAck: {
+  type: 'joinAck',
+  data: {
+    playerId: number,
+    otherPlayersInGame: [joinData]
+  }
+}
+
+joinNack: {
+  type: 'joinNack',
+  data: string (reason)
+}
+
+syncTrig: {
+  type: 'syncTrig'
+}
+
+syncAck: {
+  type: 'syncAck'
+  data: [syncData]
+
+syncData: {
+  playerId: number,
+  position: { x: number, y: number }
+}
+
+playerJoin: {
+  type: 'playerJoin',
+  data: joinData
+}
+
+joinData: {
+  playerId: number,
+  name: string
+}
+
+gameState: {
+  type: 'gameState'
+  data: [gameSnapshot]
+}
+
+gameSnapshot: [playerState]
+
+playerState: {
+  playerId: number,
+  snapshots: [playerSnapshot]
+}
+
+playerSnapshot: {
+  movement: {
+    left: boolean,
+    right: boolean,
+    up: boolean,
+    down: boolean
+  },
+  action?: fireAction
+}
+
+
+
+
+And for the bullets, we used extrapolation.
+Which means that the client simulated the position of the bullet in the future
+and displayed it a little bit ahead of the actual position received from the server.
+
+// Trick to improve proformance on client?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Game scene rendering, user input processing, and applying updates from the server –
+all this was processed by a single handler now.
+
+// Load balancing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+There was a much simpler and cleaner solution, though.
+Our client was written using HTML and JavaScript,
+it was essentially just a couple of .html and .js files.
+And that meant we could use Amazon S3 to host our entire client!
+Which is precisely what we did. We’ve introduced the load balancing logic to the client itself, and S3 gave us great availability so that we didn’t need to worry about the single point of failure anymore.
+
+Moving forward, we went even further: we’ve put CloudFlare in front of our S3 files.
+It’s free and provides a CDN functionality – exactly what we needed to reduce
+the game’s page load time.
+
+//  Tick interval syncing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Another issue was that, over time, the client clocks went out of sync with the server.
+We fixed that by doing periodic clock synchronizations during the game.
