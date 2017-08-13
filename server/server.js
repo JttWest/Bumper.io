@@ -14,47 +14,6 @@ const wss = new WebSocket.Server({ server })
 
 const players = {}
 
-/*
-class Player {
-  constructor(name, ws, id) {
-    this.id = id
-    this.name = name
-    this.position = {
-      x: util.randomIntFromInterval(0, configs.shared.mapWidth),
-      y: util.randomIntFromInterval(0, configs.shared.mapHeight)
-    }
-    this.isSyncingState = true // do not send gameState to this player when true
-    this.websocket = ws
-
-    this.snapshotQueueUnproc = [] // snapshotQueue data from client to be process at each gameTick
-    this.snapshotQueueProc = [] // snapshotQueue data that has been processed and ready to be send to all other clients
-
-    // prefill player's snapshotQueue with default by bufferSize
-    for (let i = 0; i < configs.shared.tickBufferSize; i++) {
-      this.snapshotQueueUnproc.push(defaultPlayerSnapshot)
-    }
-  }
-
-  sendData(data) {
-    if (this.websocket.readyState === WebSocket.OPEN)
-      this.websocket.send(data)
-  }
-}*/
-
-function updatePlayerLocation(player, direction) {
-  if (direction.left)
-    player.position.x -= configs.shared.playerSpeed
-
-  if (direction.right)
-    player.position.x += configs.shared.playerSpeed
-
-  if (direction.up)
-    player.position.y -= configs.shared.playerSpeed
-
-  if (direction.down)
-    player.position.y += configs.shared.playerSpeed
-}
-
 const isValidJoin = () => true
 let currAvailablePlayerId = 0
 

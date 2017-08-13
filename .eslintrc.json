@@ -23,6 +23,7 @@
     "no-underscore-dangle":"warn",
     "camelcase":"warn",
     "max-len":"off",
-    "no-param-reassign": ["error", { "props": false }]
+    "no-param-reassign": ["error", { "props": false }],
+    "object-shorthand":"off"
   }
 }

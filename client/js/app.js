@@ -46,24 +46,10 @@ let currPlayerId
 let playerSnapshotQueue = []
 let initGame = true // flag to begin render once first syncAck is received
 
-let bullets = [] // TODO: what is this for??
-let snapshotsInQueue = 0 // number of snapshots in game state snapshotQueue for every other individual player right now
-
-// const gameState = {
-//   // id: {
-//   //   name: string,
-//   //   position: {x: number, y: number},
-//   //   snapshotQueue: [playerSnapshot]
-//   // }
-// }
+// number of snapshots in game state snapshotQueue for every other individual player right now
+let snapshotsInQueue = 0
 
 const gameState = new GameState()
-
-function GameStateEntry(name) {
-  this.name = name
-  this.position = null
-  this.snapshotQueue = []
-}
 
 const wsHost = window.location.hostname === 'localhost' ?
   `ws://localhost:${configs.shared.port}` :
@@ -143,7 +129,7 @@ ws.onmessage = (evt) => {
     if (!syncingGameState)
       processGameState(payload.data)
   } else {
-    cosnole.log(`Invalid message received from server: ${payload}`)
+    console.log(`Invalid message received from server: ${payload}`)
   }
 }
 
@@ -242,15 +228,6 @@ const gameTick = () => {
     gameState.playerStates.forEach(playerState => updatePlayerState(playerState))
     snapshotsInQueue--
   }
-}
-
-function bulletsDraw() {
-  bullets.forEach((b) => {
-    ctx.beginPath()
-    ctx.fillStyle = configs.client.bulletColor
-    ctx.rect(b.position.x, b.position.y, 5, 5)
-    ctx.fill()
-  })
 }
 
 function drawPlayer(color, x, y) {
