@@ -26,7 +26,7 @@ module.exports = class Player {
 
     // prefill player's snapshotQueue with default by bufferSize
     for (let i = 0; i < configs.shared.tickBufferSize; i++) {
-      this.snapshotQueueUnproc.push(defaultPlayerSnapshot)
+      this.snapshotQueueProc.push(defaultPlayerSnapshot)
     }
   }
 
@@ -59,7 +59,6 @@ module.exports = class Player {
     // player lagged and didn't send snapshot in time; give the default snapshot
     if (!playerSnapshot) {
       playerSnapshot = defaultPlayerSnapshot
-      this.sendSyncTrig()
     }
 
     this.updatePlayerLocation(playerSnapshot.movement)

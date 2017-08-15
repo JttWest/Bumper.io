@@ -2,6 +2,7 @@ require('../css/app.css')
 const configs = require('../../game-configs.json')
 const key = require('./control').keyboardCodeMapping
 const GameState = require('./models/game-state')
+const debug = require('./debug')
 
 const canvas = document.getElementById('canvas')
 
@@ -111,6 +112,13 @@ const processGameState = (gameSnapshots) => {
   })
 
   snapshotsInQueue += configs.shared.tickBufferSize
+
+  if (debug.isDebugMode) {
+    if (gameState.playerStates.some(p => p.snapshotQueue.length !== snapshotsInQueue)) {
+      console.log(`Mismatch snapshot count: expect ${snapshotsInQueue} but actual was ${gameState.getPlayerState(0).snapshotQueue.length}`)
+      const test = 1
+    }
+  }
 }
 
 ws.onmessage = (evt) => {
@@ -154,7 +162,6 @@ ws.onmessage = (evt) => {
         renderLoop()
         initGame = false
       }
-
       break
 
     case 'syncTrig':
@@ -166,6 +173,9 @@ ws.onmessage = (evt) => {
       // only take in game state if its not outdated
       if (!syncingGameState)
         processGameState(payload.data)
+
+      // TODO: remove this
+      // debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval * 2)
       break
 
     default:
@@ -239,6 +249,8 @@ Game Tick:
 5 TODO: drop until last 5 in gameState[anyPlayer].snapshotQueue if deviate too much
 */
 const gameTick = () => {
+  setTimeout(gameTick, configs.shared.tickInterval)
+
   // game doesn't start until receiving joinAck from server
   if (!joinedGame)
     return
@@ -261,6 +273,9 @@ const gameTick = () => {
   if (playerSnapshotQueue.length === configs.shared.tickBufferSize) {
     sendPlayerState(playerSnapshotQueue)
     playerSnapshotQueue = []
+
+    // TODO: remove this
+    debug.logPlayerPacketSendRate(configs.shared.tickInterval * configs.shared.tickBufferSize * 2)
   }
 
   // update the game state using data from gameSnapshotQueue
@@ -268,10 +283,13 @@ const gameTick = () => {
     gameState.playerStates.forEach(playerState => updatePlayerState(playerState))
     snapshotsInQueue--
   }
+
+  debug.logGameTickRate(configs.shared.tickInterval + 5)
 }
 
 // run game loop
-setInterval(gameTick, configs.shared.tickInterval)
+// setInterval(gameTick, configs.shared.tickInterval)
+gameTick()
 
 /*
 let mouseX

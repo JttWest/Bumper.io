@@ -2,7 +2,7 @@
   "shared": {
     "port": 3000,
     "tickInterval": 50,
-    "tickBufferSize": 4,
+    "tickBufferSize": 10,
     "bulletSpeed": 20,
     "mapWidth": 800,
     "mapHeight": 600,
@@ -11,11 +11,10 @@
     "playerSpeed": 2
   },
   "server": {
-    "serverPacketInterval": 500
   },
   "client": {
+    "isDebugMode": "true",
     "playerColor": "#2274A5",
-    "otherPlayersColor": "#F90C0C",
-    "bulletColor": "#FFD400"
+    "otherPlayersColor": "#F90C0C"
   }
 }

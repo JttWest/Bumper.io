@@ -127,12 +127,8 @@ function gameTick() {
   // process movement data in snapshot queue for each player
   playersTick()
 
-  // moveBullets()
-  // checkBulletHits()
-
   // TODO
   // cleanPlayers() // players are remove from array when ws is disconnected
-  // cleanBullets()
   bufferCounter++
 
   if (bufferCounter === configs.shared.tickBufferSize) {
