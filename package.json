@@ -1,6 +1,9 @@
 {
   "name": "top-down-shooter",
   "version": "0.0.1",
+  "engines": {
+    "node": "6.11.1"
+  },
   "description": "An HTML5 game",
   "main": "",
   "scripts": {
