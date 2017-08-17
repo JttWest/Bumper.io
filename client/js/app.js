@@ -6,33 +6,6 @@ const debug = require('./debug')
 
 const canvas = document.getElementById('canvas')
 
-const ctx = canvas.getContext('2d')
-const drawPlayer = (color, x, y) => {
-  ctx.beginPath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
-  ctx.lineWidth = 1
-  ctx.stroke()
-  ctx.fill()
-}
-
-const renderLoop = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-  // TODO: the player class should have a render method
-  gameState.playerStates.forEach((playerState) => {
-    const playerPos = playerState.position
-
-    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
-  })
-
-
-  drawPlayer(configs.client.playerColor, player.x, player.y)
-
-  requestAnimationFrame(renderLoop)
-}
-
 const keyRegister = {}
 
 canvas.addEventListener('keydown', (e) => {
@@ -71,9 +44,6 @@ let currPlayerId
 let playerSnapshotQueue = []
 let initGame = true // flag to begin render once first syncAck is received
 
-// number of snapshots in game state snapshotQueue for every other individual player right now
-let snapshotsInQueue = 0
-
 const gameState = new GameState()
 
 const wsHost = window.location.hostname === 'localhost' ?
@@ -106,17 +76,30 @@ ws.onopen = () => {
   sendJoinRequest()
 }
 
-const processGameState = (gameSnapshots) => {
-  gameSnapshots.forEach((playerState) => {
-    gameState.insertPlayerSnapshots(playerState.playerId, playerState.snapshots)
+const processGameSnapshots = (gameSnapshots) => {
+  gameSnapshots.forEach((playerSnapshots) => {
+    gameState.insertPlayerSnapshots(playerSnapshots.playerId, playerSnapshots.snapshots)
+
+    // TODO: implement resync if deviation is too much
+    // if (snapshotQueue.length > syncThreshold)
+    //   requestResync
+    const playerState = gameState.getPlayerState(playerSnapshots.playerId)
+    // immediately process old snaphsots to ensure client game state is up to date
+    if (playerState.snapshotQueue.length > configs.shared.tickBufferSize) {
+      playerState
+        .processSnapshots(playerState.snapshotQueue.splice(0, playerState.snapshotQueue.length - configs.shared.tickBufferSize))
+    }
   })
 
-  snapshotsInQueue += configs.shared.tickBufferSize
-
   if (debug.isDebugMode) {
-    if (gameState.playerStates.some(p => p.snapshotQueue.length !== snapshotsInQueue)) {
-      console.log(`Mismatch snapshot count: expect ${snapshotsInQueue} but actual was ${gameState.getPlayerState(0).snapshotQueue.length}`)
-      const test = 1
+    const currPlayerSnapshotQueueLength = gameState.getPlayerState(currPlayerId).snapshotQueue.length
+
+    if (gameState.playerStates.some(p => p.snapshotQueue.length !== currPlayerSnapshotQueueLength)) {
+      console.log('Mismatch snapshot length between players in gameState')
+    }
+
+    if (gameState.playerStates.some(p => p.snapshotQueue.length > configs.shared.tickBufferSize)) {
+      console.log('Snapshots for player exceed tickBufferSize')
     }
   }
 }
@@ -131,7 +114,7 @@ ws.onmessage = (evt) => {
 
       // players in game before you joined
       payload.data.otherPlayersInGame.forEach((p) => {
-        gameState.addNewPlayer(p.playerId, p.name)
+        gameState.addNewPlayer(p)
       })
 
       console.log(`Joined game as player ${currPlayerId}`)
@@ -143,12 +126,13 @@ ws.onmessage = (evt) => {
 
     case 'playerJoin':
       // new player has joined the game
-      gameState.addNewPlayer(payload.data.playerId, payload.data.name)
+      gameState.addNewPlayer(payload.data)
       break
 
     case 'syncAck':
       syncingGameState = false
 
+      // TODO: update this to clear gameState
       payload.data.forEach((playerSyncData) => {
         gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position)
       })
@@ -165,17 +149,15 @@ ws.onmessage = (evt) => {
       break
 
     case 'syncTrig':
-      // TODO: implement this
+      // TODO: implement this; still need??
       console.log('Default snapshot was used on server')
       break
 
     case 'gameState':
       // only take in game state if its not outdated
       if (!syncingGameState)
-        processGameState(payload.data)
+        processGameSnapshots(payload.data)
 
-      // TODO: remove this
-      // debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval * 2)
       break
 
     default:
@@ -215,7 +197,12 @@ const playerMoveTick = () => {
 }
 
 const updatePlayerState = (playerState) => {
-  const movement = playerState.snapshotQueue.shift().movement
+  const snapshot = playerState.snapshotQueue.shift()
+
+  if (!snapshot)
+    return
+
+  const movement = snapshot.movement
   const speed = configs.shared.playerSpeed
 
   if (movement.left)
@@ -246,7 +233,7 @@ Game Tick:
 2 send playerState to server when playerSnapshotQueue reach tickBufferSize
 3 update the game state using data from gameState
 4 TODO: confirm player position using server game state server (and apply unchecked gameStates)
-5 TODO: drop until last 5 in gameState[anyPlayer].snapshotQueue if deviate too much
+5 TODO: drop until last tickBufferSize in gameState[anyPlayer].snapshotQueue if deviate too much
 */
 const gameTick = () => {
   setTimeout(gameTick, configs.shared.tickInterval)
@@ -256,7 +243,7 @@ const gameTick = () => {
     return
 
   // lag occured -> resync client with server
-  if (snapshotsInQueue === 0) {
+  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {
     // request sync from server if haven't already
     if (!syncingGameState)
       sendSyncRequest()
@@ -273,15 +260,11 @@ const gameTick = () => {
   if (playerSnapshotQueue.length === configs.shared.tickBufferSize) {
     sendPlayerState(playerSnapshotQueue)
     playerSnapshotQueue = []
-
-    // TODO: remove this
-    debug.logPlayerPacketSendRate(configs.shared.tickInterval * configs.shared.tickBufferSize * 2)
   }
 
   // update the game state using data from gameSnapshotQueue
-  if (snapshotsInQueue > 0) {
+  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length > 0) {
     gameState.playerStates.forEach(playerState => updatePlayerState(playerState))
-    snapshotsInQueue--
   }
 
   debug.logGameTickRate(configs.shared.tickInterval + 5)
@@ -290,6 +273,33 @@ const gameTick = () => {
 // run game loop
 // setInterval(gameTick, configs.shared.tickInterval)
 gameTick()
+
+const ctx = canvas.getContext('2d')
+const drawPlayer = (color, x, y) => {
+  ctx.beginPath()
+  ctx.fillStyle = color
+  ctx.strokeStyle = 'black'
+  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
+  ctx.lineWidth = 1
+  ctx.stroke()
+  ctx.fill()
+}
+
+const renderLoop = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // TODO: the player class should have a render method
+  gameState.playerStates.forEach((playerState) => {
+    const playerPos = playerState.position
+
+    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
+  })
+
+
+  drawPlayer(configs.client.playerColor, player.x, player.y)
+
+  requestAnimationFrame(renderLoop)
+}
 
 /*
 let mouseX

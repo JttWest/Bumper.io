@@ -75,8 +75,9 @@ playerJoin: {
 }
 
 joinData: {
+  name: string,
   playerId: number,
-  name: string
+  position: { x: number, y: number }
 }
 
 gameState: {

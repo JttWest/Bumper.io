@@ -17,18 +17,6 @@ const players = {}
 const isValidJoin = () => true
 let currAvailablePlayerId = 0
 
-const broadcastPlayerJoin = (player) => {
-  const playerJoinData = JSON.stringify({
-    type: 'playerJoin',
-    data: {
-      playerId: player.id,
-      name: player.name
-    }
-  })
-
-  Object.values(players).forEach(p => p.sendData(playerJoinData))
-}
-
 const getSyncData = () => {
   const syncData = []
   // position of every player along with its playerId
@@ -41,6 +29,19 @@ const getSyncData = () => {
   })
 
   return syncData
+}
+
+const broadcastPlayerJoin = (player) => {
+  const playerJoinData = JSON.stringify({
+    type: 'playerJoin',
+    data: {
+      name: player.name,
+      playerId: player.id,
+      position: player.position
+    }
+  })
+
+  Object.values(players).forEach(p => p.sendData(playerJoinData))
 }
 
 wss.on('connection', (ws) => {
@@ -56,7 +57,12 @@ wss.on('connection', (ws) => {
         case 'joinReq':
           if (ws.readyState === WebSocket.OPEN && isValidJoin()) {
             player = new Player(payload.data /* this is the name of player */, ws, currAvailablePlayerId)
+
+            // broadcast before adding new player to players list to prevent sending 'playerJoin' to joining player
+            broadcastPlayerJoin(player)
+
             players[currAvailablePlayerId] = player
+
             ws.send(JSON.stringify({
               type: 'joinAck',
               data: {
@@ -64,7 +70,7 @@ wss.on('connection', (ws) => {
                 otherPlayersInGame: Object.values(players).map(p => ({ playerId: p.id, name: p.name }))
               }
             }))
-            broadcastPlayerJoin(player)
+
             currAvailablePlayerId++
           } else {
             ws.send(JSON.stringify({ type: 'joinNack', data: 'reason: join failed...' }))

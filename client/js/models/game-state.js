@@ -1,4 +1,4 @@
-// const Coord = require('./coord.js')
+const PlayerState = require('./player-state.js')
 
 module.exports = class GameState {
   constructor() {
@@ -13,13 +13,17 @@ module.exports = class GameState {
   }
   */
 
-  addNewPlayer(playerId, name) {
+  addNewPlayer(joinData) {
     // TODO: maybe throw error if player already exists
-    this.players[playerId] = {
-      name: name,
-      position: null,
-      snapshotQueue: []
-    }
+    const playerId = joinData.playerId
+    const name = joinData.name
+    const position = joinData.position
+
+    this.players[playerId] = new PlayerState(name)
+
+    // happens when new player joins game you are already in
+    if (position)
+      this.players[playerId].position = position
   }
 
   updatePlayerPosition(playerId, position) {
