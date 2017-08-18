@@ -341,12 +341,13 @@ Game Tick:
 */
 var gameTick = function gameTick() {
   debug.logGameTickRate(configs.shared.tickInterval + 5);
-  debug.logEmptySnapshotQueueDuration(gameState.getPlayerState(currPlayerId).snapshotQueue.length);
 
   setTimeout(gameTick, configs.shared.tickInterval);
 
   // game doesn't start until receiving joinAck from server
   if (!joinedGame) return;
+
+  debug.logEmptySnapshotQueueDuration(gameState.getPlayerState(currPlayerId).snapshotQueue.length);
 
   // lag occured -> resync client with server
   if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {
