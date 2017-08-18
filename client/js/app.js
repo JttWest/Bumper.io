@@ -239,7 +239,7 @@ Game Tick:
 */
 const gameTick = () => {
   debug.logGameTickRate(configs.shared.tickInterval + 5)
-  debug.logEmptySnapshotQueueDuration()
+  debug.logEmptySnapshotQueueDuration(gameState.getPlayerState(currPlayerId).snapshotQueue.length)
 
   setTimeout(gameTick, configs.shared.tickInterval)
 
