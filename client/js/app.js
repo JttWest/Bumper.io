@@ -154,6 +154,8 @@ ws.onmessage = (evt) => {
       break
 
     case 'gameState':
+      debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50)
+
       // only take in game state if its not outdated
       if (!syncingGameState)
         processGameSnapshots(payload.data)
@@ -236,6 +238,8 @@ Game Tick:
 5 TODO: drop until last tickBufferSize in gameState[anyPlayer].snapshotQueue if deviate too much
 */
 const gameTick = () => {
+  debug.logGameTickRate(configs.shared.tickInterval + 5)
+
   setTimeout(gameTick, configs.shared.tickInterval)
 
   // game doesn't start until receiving joinAck from server
@@ -266,8 +270,6 @@ const gameTick = () => {
   if (gameState.getPlayerState(currPlayerId).snapshotQueue.length > 0) {
     gameState.playerStates.forEach(playerState => updatePlayerState(playerState))
   }
-
-  debug.logGameTickRate(configs.shared.tickInterval + 5)
 }
 
 // run game loop

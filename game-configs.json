@@ -13,7 +13,7 @@
   "server": {
   },
   "client": {
-    "isDebugMode": "true",
+    "isDebugMode": "false",
     "playerColor": "#2274A5",
     "otherPlayersColor": "#F90C0C"
   }
