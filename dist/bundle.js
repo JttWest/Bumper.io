@@ -65,131 +65,1137 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!***************************!*\
-  !*** ./game-configs.json ***!
-  \***************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports) {
 
-eval("module.exports = {\n\t\"shared\": {\n\t\t\"port\": 3000,\n\t\t\"tickInterval\": 50,\n\t\t\"tickBufferSize\": 5,\n\t\t\"bulletSpeed\": 20,\n\t\t\"mapWidth\": 800,\n\t\t\"mapHeight\": 600,\n\t\t\"playerWidth\": 10,\n\t\t\"playerHeight\": 10,\n\t\t\"playerSpeed\": 2\n\t},\n\t\"server\": {},\n\t\"client\": {\n\t\t\"isDebugMode\": \"false\",\n\t\t\"playerColor\": \"#2274A5\",\n\t\t\"otherPlayersColor\": \"#F90C0C\"\n\t}\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMC5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2dhbWUtY29uZmlncy5qc29uP2Q2ZDIiXSwic291cmNlc0NvbnRlbnQiOlsibW9kdWxlLmV4cG9ydHMgPSB7XG5cdFwic2hhcmVkXCI6IHtcblx0XHRcInBvcnRcIjogMzAwMCxcblx0XHRcInRpY2tJbnRlcnZhbFwiOiA1MCxcblx0XHRcInRpY2tCdWZmZXJTaXplXCI6IDUsXG5cdFx0XCJidWxsZXRTcGVlZFwiOiAyMCxcblx0XHRcIm1hcFdpZHRoXCI6IDgwMCxcblx0XHRcIm1hcEhlaWdodFwiOiA2MDAsXG5cdFx0XCJwbGF5ZXJXaWR0aFwiOiAxMCxcblx0XHRcInBsYXllckhlaWdodFwiOiAxMCxcblx0XHRcInBsYXllclNwZWVkXCI6IDJcblx0fSxcblx0XCJzZXJ2ZXJcIjoge30sXG5cdFwiY2xpZW50XCI6IHtcblx0XHRcImlzRGVidWdNb2RlXCI6IFwiZmFsc2VcIixcblx0XHRcInBsYXllckNvbG9yXCI6IFwiIzIyNzRBNVwiLFxuXHRcdFwib3RoZXJQbGF5ZXJzQ29sb3JcIjogXCIjRjkwQzBDXCJcblx0fVxufTtcblxuXG4vLy8vLy8vLy8vLy8vLy8vLy9cbi8vIFdFQlBBQ0sgRk9PVEVSXG4vLyAuL2dhbWUtY29uZmlncy5qc29uXG4vLyBtb2R1bGUgaWQgPSAwXG4vLyBtb2R1bGUgY2h1bmtzID0gMCJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///0\n");
+module.exports = {
+	"shared": {
+		"port": 3000,
+		"tickInterval": 50,
+		"tickBufferSize": 5,
+		"bulletSpeed": 20,
+		"mapWidth": 800,
+		"mapHeight": 600,
+		"playerWidth": 10,
+		"playerHeight": 10,
+		"playerSpeed": 2
+	},
+	"server": {},
+	"client": {
+		"isDebugMode": "false",
+		"playerColor": "#2274A5",
+		"otherPlayersColor": "#F90C0C"
+	}
+};
 
 /***/ }),
 /* 1 */
-/*!**************************!*\
-  !*** ./client/js/app.js ***!
-  \**************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\n__webpack_require__(/*! ../css/app.css */ 2);\nvar configs = __webpack_require__(/*! ../../game-configs.json */ 0);\nvar key = __webpack_require__(/*! ./control */ 7).keyboardCodeMapping;\nvar GameState = __webpack_require__(/*! ./models/game-state */ 8);\nvar debug = __webpack_require__(/*! ./debug */ 10);\n\nvar canvas = document.getElementById('canvas');\n\nvar keyRegister = {};\n\ncanvas.addEventListener('keydown', function (e) {\n  keyRegister[e.keyCode] = true;\n});\n\ncanvas.addEventListener('keyup', function (e) {\n  keyRegister[e.keyCode] = false;\n});\n\nvar Player = function Player(x, y) {\n  _classCallCheck(this, Player);\n\n  this.x = x;\n  this.y = y;\n};\n\nvar player = void 0;\n\nvar PlayerSnapshot = function () {\n  function PlayerSnapshot(movement) {\n    _classCallCheck(this, PlayerSnapshot);\n\n    this.movement = movement;\n  }\n\n  _createClass(PlayerSnapshot, [{\n    key: 'setFireAction',\n    value: function setFireAction(shotAngle) {\n      this.action = {\n        actionType: 'fire',\n        angle: shotAngle\n      };\n    }\n  }]);\n\n  return PlayerSnapshot;\n}();\n\nvar syncingGameState = false; // drop all gameState packets from server when this is true\nvar joinedGame = false; // gameTick only runs when this is true\nvar currPlayerId = void 0;\nvar playerSnapshotQueue = [];\nvar initGame = true; // flag to begin render once first syncAck is received\n\nvar gameState = new GameState();\n\nvar wsHost = window.location.hostname === 'localhost' ? 'ws://localhost:' + configs.shared.port : 'ws://' + window.location.host;\n\nvar ws = new WebSocket(wsHost);\n\nvar sendSyncRequest = function sendSyncRequest() {\n  syncingGameState = true;\n\n  var syncData = {\n    type: 'syncReq'\n  };\n\n  ws.send(JSON.stringify(syncData));\n};\n\nvar sendJoinRequest = function sendJoinRequest() {\n  var joinData = {\n    type: 'joinReq',\n    data: 'placeholderName'\n  };\n\n  ws.send(JSON.stringify(joinData));\n};\n\nws.onopen = function () {\n  // Web Socket is connected, send data using send()\n  sendJoinRequest();\n};\n\nvar processGameSnapshots = function processGameSnapshots(gameSnapshots) {\n  gameSnapshots.forEach(function (playerSnapshots) {\n    gameState.insertPlayerSnapshots(playerSnapshots.playerId, playerSnapshots.snapshots);\n\n    // TODO: implement resync if deviation is too much\n    // if (snapshotQueue.length > syncThreshold)\n    //   requestResync\n    var playerState = gameState.getPlayerState(playerSnapshots.playerId);\n    // immediately process old snaphsots to ensure client game state is up to date\n    if (playerState.snapshotQueue.length > configs.shared.tickBufferSize) {\n      playerState.processSnapshots(playerState.snapshotQueue.splice(0, playerState.snapshotQueue.length - configs.shared.tickBufferSize));\n    }\n  });\n\n  if (debug.isDebugMode) {\n    var currPlayerSnapshotQueueLength = gameState.getPlayerState(currPlayerId).snapshotQueue.length;\n\n    if (gameState.playerStates.some(function (p) {\n      return p.snapshotQueue.length !== currPlayerSnapshotQueueLength;\n    })) {\n      console.log('Mismatch snapshot length between players in gameState');\n    }\n\n    if (gameState.playerStates.some(function (p) {\n      return p.snapshotQueue.length > configs.shared.tickBufferSize;\n    })) {\n      console.log('Snapshots for player exceed tickBufferSize');\n    }\n  }\n};\n\nws.onmessage = function (evt) {\n  var payload = JSON.parse(evt.data);\n\n  switch (payload.type) {\n    case 'joinAck':\n      joinedGame = true;\n      currPlayerId = payload.data.playerId;\n\n      // players in game before you joined\n      payload.data.otherPlayersInGame.forEach(function (p) {\n        gameState.addNewPlayer(p);\n      });\n\n      console.log('Joined game as player ' + currPlayerId);\n      break;\n\n    case 'joinNack':\n      alert(payload.data /* reason for fail join*/);\n      break;\n\n    case 'playerJoin':\n      // new player has joined the game\n      gameState.addNewPlayer(payload.data);\n      break;\n\n    case 'syncAck':\n      syncingGameState = false;\n\n      // TODO: update this to clear gameState\n      payload.data.forEach(function (playerSyncData) {\n        gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position);\n      });\n\n      // TODO: temp fix for now\n      if (initGame) {\n        var currentPlayerData = gameState.getPlayerState(currPlayerId);\n        player = new Player(currentPlayerData.position.x, currentPlayerData.position.y);\n\n        // begin rendering game\n        renderLoop();\n        initGame = false;\n      }\n      break;\n\n    case 'syncTrig':\n      // TODO: implement this; still need??\n      console.log('Default snapshot was used on server');\n      break;\n\n    case 'gameState':\n      debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50);\n\n      // only take in game state if its not outdated\n      if (!syncingGameState) processGameSnapshots(payload.data);\n\n      break;\n\n    default:\n      console.log('Invalid message received from server: ' + payload);\n  }\n};\n\nws.onclose = function () {\n  // websocket is closed.\n  alert('socked connect to server closed');\n};\n\nvar playerMoveTick = function playerMoveTick() {\n  var movementData = { left: false, right: false, up: false, down: false };\n\n  if (keyRegister[key.W]) {\n    player.y -= configs.shared.playerSpeed;\n    movementData.up = true;\n  }\n\n  if (keyRegister[key.S]) {\n    player.y += configs.shared.playerSpeed;\n    movementData.down = true;\n  }\n\n  if (keyRegister[key.A]) {\n    player.x -= configs.shared.playerSpeed;\n    movementData.left = true;\n  }\n\n  if (keyRegister[key.D]) {\n    player.x += configs.shared.playerSpeed;\n    movementData.right = true;\n  }\n\n  return movementData;\n};\n\nvar updatePlayerState = function updatePlayerState(playerState) {\n  var snapshot = playerState.snapshotQueue.shift();\n\n  if (!snapshot) return;\n\n  var movement = snapshot.movement;\n  var speed = configs.shared.playerSpeed;\n\n  if (movement.left) playerState.position.x -= speed;\n\n  if (movement.right) playerState.position.x += speed;\n\n  if (movement.up) playerState.position.y -= speed;\n\n  if (movement.down) playerState.position.y += speed;\n};\n\nvar sendPlayerState = function sendPlayerState(playerSnapshots) {\n  var playerStatePayload = {\n    type: 'playerState',\n    data: playerSnapshots\n  };\n\n  ws.send(JSON.stringify(playerStatePayload));\n};\n\n/*\nGame Tick:\n1 update current player state based on game control input\n2 send playerState to server when playerSnapshotQueue reach tickBufferSize\n3 update the game state using data from gameState\n4 TODO: confirm player position using server game state server (and apply unchecked gameStates)\n5 TODO: drop until last tickBufferSize in gameState[anyPlayer].snapshotQueue if deviate too much\n*/\nvar gameTick = function gameTick() {\n  debug.logGameTickRate(configs.shared.tickInterval + 5);\n\n  setTimeout(gameTick, configs.shared.tickInterval);\n\n  // game doesn't start until receiving joinAck from server\n  if (!joinedGame) return;\n\n  // lag occured -> resync client with server\n  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {\n    // request sync from server if haven't already\n    if (!syncingGameState) sendSyncRequest();\n\n    return;\n  }\n\n  // (1) update player state based on movement and record player tick data\n  var movementData = playerMoveTick();\n  var currPlayerSnapshot = new PlayerSnapshot(movementData);\n  playerSnapshotQueue.push(currPlayerSnapshot);\n\n  // (2) send playerState to server when ready\n  if (playerSnapshotQueue.length === configs.shared.tickBufferSize) {\n    sendPlayerState(playerSnapshotQueue);\n    playerSnapshotQueue = [];\n  }\n\n  // update the game state using data from gameSnapshotQueue\n  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length > 0) {\n    gameState.playerStates.forEach(function (playerState) {\n      return updatePlayerState(playerState);\n    });\n  }\n};\n\n// run game loop\n// setInterval(gameTick, configs.shared.tickInterval)\ngameTick();\n\nvar ctx = canvas.getContext('2d');\nvar drawPlayer = function drawPlayer(color, x, y) {\n  ctx.beginPath();\n  ctx.fillStyle = color;\n  ctx.strokeStyle = 'black';\n  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight);\n  ctx.lineWidth = 1;\n  ctx.stroke();\n  ctx.fill();\n};\n\nvar renderLoop = function renderLoop() {\n  ctx.clearRect(0, 0, canvas.width, canvas.height);\n\n  // TODO: the player class should have a render method\n  gameState.playerStates.forEach(function (playerState) {\n    var playerPos = playerState.position;\n\n    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y);\n  });\n\n  drawPlayer(configs.client.playerColor, player.x, player.y);\n\n  requestAnimationFrame(renderLoop);\n};\n\n/*\nlet mouseX\nlet mouseY\n\nfunction mouseMove(e) {\n  mouseX = e.offsetX\n  mouseY = e.offsetY\n}\n\nfunction sendFireData(angle) {\n  const fireBulletData = {\n    type: 'fire',\n    data: { angle }\n  }\n\n  ws.send(JSON.stringify(fireBulletData))\n}\n\ncanvas.addEventListener('mousemove', mouseMove)\ncanvas.addEventListener('click', () => {\n  const deltaX = mouseX - player.x\n  const deltaY = mouseY - player.y\n  const fireAngle = Math.atan2(deltaY, deltaX)\n  sendFireData(fireAngle)\n})*///# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9jbGllbnQvanMvYXBwLmpzPzQ3ZjgiXSwic291cmNlc0NvbnRlbnQiOlsicmVxdWlyZSgnLi4vY3NzL2FwcC5jc3MnKVxuY29uc3QgY29uZmlncyA9IHJlcXVpcmUoJy4uLy4uL2dhbWUtY29uZmlncy5qc29uJylcbmNvbnN0IGtleSA9IHJlcXVpcmUoJy4vY29udHJvbCcpLmtleWJvYXJkQ29kZU1hcHBpbmdcbmNvbnN0IEdhbWVTdGF0ZSA9IHJlcXVpcmUoJy4vbW9kZWxzL2dhbWUtc3RhdGUnKVxuY29uc3QgZGVidWcgPSByZXF1aXJlKCcuL2RlYnVnJylcblxuY29uc3QgY2FudmFzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NhbnZhcycpXG5cbmNvbnN0IGtleVJlZ2lzdGVyID0ge31cblxuY2FudmFzLmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCAoZSkgPT4ge1xuICBrZXlSZWdpc3RlcltlLmtleUNvZGVdID0gdHJ1ZVxufSlcblxuY2FudmFzLmFkZEV2ZW50TGlzdGVuZXIoJ2tleXVwJywgKGUpID0+IHtcbiAga2V5UmVnaXN0ZXJbZS5rZXlDb2RlXSA9IGZhbHNlXG59KVxuXG5jbGFzcyBQbGF5ZXIge1xuICBjb25zdHJ1Y3Rvcih4LCB5KSB7XG4gICAgdGhpcy54ID0geFxuICAgIHRoaXMueSA9IHlcbiAgfVxufVxuXG5sZXQgcGxheWVyXG5cbmNsYXNzIFBsYXllclNuYXBzaG90IHtcbiAgY29uc3RydWN0b3IobW92ZW1lbnQpIHtcbiAgICB0aGlzLm1vdmVtZW50ID0gbW92ZW1lbnRcbiAgfVxuXG4gIHNldEZpcmVBY3Rpb24oc2hvdEFuZ2xlKSB7XG4gICAgdGhpcy5hY3Rpb24gPSB7XG4gICAgICBhY3Rpb25UeXBlOiAnZmlyZScsXG4gICAgICBhbmdsZTogc2hvdEFuZ2xlXG4gICAgfVxuICB9XG59XG5cbmxldCBzeW5jaW5nR2FtZVN0YXRlID0gZmFsc2UgLy8gZHJvcCBhbGwgZ2FtZVN0YXRlIHBhY2tldHMgZnJvbSBzZXJ2ZXIgd2hlbiB0aGlzIGlzIHRydWVcbmxldCBqb2luZWRHYW1lID0gZmFsc2UgLy8gZ2FtZVRpY2sgb25seSBydW5zIHdoZW4gdGhpcyBpcyB0cnVlXG5sZXQgY3VyclBsYXllcklkXG5sZXQgcGxheWVyU25hcHNob3RRdWV1ZSA9IFtdXG5sZXQgaW5pdEdhbWUgPSB0cnVlIC8vIGZsYWcgdG8gYmVnaW4gcmVuZGVyIG9uY2UgZmlyc3Qgc3luY0FjayBpcyByZWNlaXZlZFxuXG5jb25zdCBnYW1lU3RhdGUgPSBuZXcgR2FtZVN0YXRlKClcblxuY29uc3Qgd3NIb3N0ID0gd2luZG93LmxvY2F0aW9uLmhvc3RuYW1lID09PSAnbG9jYWxob3N0JyA/XG4gIGB3czovL2xvY2FsaG9zdDoke2NvbmZpZ3Muc2hhcmVkLnBvcnR9YCA6XG4gIGB3czovLyR7d2luZG93LmxvY2F0aW9uLmhvc3R9YFxuXG5jb25zdCB3cyA9IG5ldyBXZWJTb2NrZXQod3NIb3N0KVxuXG5jb25zdCBzZW5kU3luY1JlcXVlc3QgPSAoKSA9PiB7XG4gIHN5bmNpbmdHYW1lU3RhdGUgPSB0cnVlXG5cbiAgY29uc3Qgc3luY0RhdGEgPSB7XG4gICAgdHlwZTogJ3N5bmNSZXEnXG4gIH1cblxuICB3cy5zZW5kKEpTT04uc3RyaW5naWZ5KHN5bmNEYXRhKSlcbn1cblxuY29uc3Qgc2VuZEpvaW5SZXF1ZXN0ID0gKCkgPT4ge1xuICBjb25zdCBqb2luRGF0YSA9IHtcbiAgICB0eXBlOiAnam9pblJlcScsXG4gICAgZGF0YTogJ3BsYWNlaG9sZGVyTmFtZSdcbiAgfVxuXG4gIHdzLnNlbmQoSlNPTi5zdHJpbmdpZnkoam9pbkRhdGEpKVxufVxuXG53cy5vbm9wZW4gPSAoKSA9PiB7XG4gIC8vIFdlYiBTb2NrZXQgaXMgY29ubmVjdGVkLCBzZW5kIGRhdGEgdXNpbmcgc2VuZCgpXG4gIHNlbmRKb2luUmVxdWVzdCgpXG59XG5cbmNvbnN0IHByb2Nlc3NHYW1lU25hcHNob3RzID0gKGdhbWVTbmFwc2hvdHMpID0+IHtcbiAgZ2FtZVNuYXBzaG90cy5mb3JFYWNoKChwbGF5ZXJTbmFwc2hvdHMpID0+IHtcbiAgICBnYW1lU3RhdGUuaW5zZXJ0UGxheWVyU25hcHNob3RzKHBsYXllclNuYXBzaG90cy5wbGF5ZXJJZCwgcGxheWVyU25hcHNob3RzLnNuYXBzaG90cylcblxuICAgIC8vIFRPRE86IGltcGxlbWVudCByZXN5bmMgaWYgZGV2aWF0aW9uIGlzIHRvbyBtdWNoXG4gICAgLy8gaWYgKHNuYXBzaG90UXVldWUubGVuZ3RoID4gc3luY1RocmVzaG9sZClcbiAgICAvLyAgIHJlcXVlc3RSZXN5bmNcbiAgICBjb25zdCBwbGF5ZXJTdGF0ZSA9IGdhbWVTdGF0ZS5nZXRQbGF5ZXJTdGF0ZShwbGF5ZXJTbmFwc2hvdHMucGxheWVySWQpXG4gICAgLy8gaW1tZWRpYXRlbHkgcHJvY2VzcyBvbGQgc25hcGhzb3RzIHRvIGVuc3VyZSBjbGllbnQgZ2FtZSBzdGF0ZSBpcyB1cCB0byBkYXRlXG4gICAgaWYgKHBsYXllclN0YXRlLnNuYXBzaG90UXVldWUubGVuZ3RoID4gY29uZmlncy5zaGFyZWQudGlja0J1ZmZlclNpemUpIHtcbiAgICAgIHBsYXllclN0YXRlXG4gICAgICAgIC5wcm9jZXNzU25hcHNob3RzKHBsYXllclN0YXRlLnNuYXBzaG90UXVldWUuc3BsaWNlKDAsIHBsYXllclN0YXRlLnNuYXBzaG90UXVldWUubGVuZ3RoIC0gY29uZmlncy5zaGFyZWQudGlja0J1ZmZlclNpemUpKVxuICAgIH1cbiAgfSlcblxuICBpZiAoZGVidWcuaXNEZWJ1Z01vZGUpIHtcbiAgICBjb25zdCBjdXJyUGxheWVyU25hcHNob3RRdWV1ZUxlbmd0aCA9IGdhbWVTdGF0ZS5nZXRQbGF5ZXJTdGF0ZShjdXJyUGxheWVySWQpLnNuYXBzaG90UXVldWUubGVuZ3RoXG5cbiAgICBpZiAoZ2FtZVN0YXRlLnBsYXllclN0YXRlcy5zb21lKHAgPT4gcC5zbmFwc2hvdFF1ZXVlLmxlbmd0aCAhPT0gY3VyclBsYXllclNuYXBzaG90UXVldWVMZW5ndGgpKSB7XG4gICAgICBjb25zb2xlLmxvZygnTWlzbWF0Y2ggc25hcHNob3QgbGVuZ3RoIGJldHdlZW4gcGxheWVycyBpbiBnYW1lU3RhdGUnKVxuICAgIH1cblxuICAgIGlmIChnYW1lU3RhdGUucGxheWVyU3RhdGVzLnNvbWUocCA9PiBwLnNuYXBzaG90UXVldWUubGVuZ3RoID4gY29uZmlncy5zaGFyZWQudGlja0J1ZmZlclNpemUpKSB7XG4gICAgICBjb25zb2xlLmxvZygnU25hcHNob3RzIGZvciBwbGF5ZXIgZXhjZWVkIHRpY2tCdWZmZXJTaXplJylcbiAgICB9XG4gIH1cbn1cblxud3Mub25tZXNzYWdlID0gKGV2dCkgPT4ge1xuICBjb25zdCBwYXlsb2FkID0gSlNPTi5wYXJzZShldnQuZGF0YSlcblxuICBzd2l0Y2ggKHBheWxvYWQudHlwZSkge1xuICAgIGNhc2UgJ2pvaW5BY2snOlxuICAgICAgam9pbmVkR2FtZSA9IHRydWVcbiAgICAgIGN1cnJQbGF5ZXJJZCA9IHBheWxvYWQuZGF0YS5wbGF5ZXJJZFxuXG4gICAgICAvLyBwbGF5ZXJzIGluIGdhbWUgYmVmb3JlIHlvdSBqb2luZWRcbiAgICAgIHBheWxvYWQuZGF0YS5vdGhlclBsYXllcnNJbkdhbWUuZm9yRWFjaCgocCkgPT4ge1xuICAgICAgICBnYW1lU3RhdGUuYWRkTmV3UGxheWVyKHApXG4gICAgICB9KVxuXG4gICAgICBjb25zb2xlLmxvZyhgSm9pbmVkIGdhbWUgYXMgcGxheWVyICR7Y3VyclBsYXllcklkfWApXG4gICAgICBicmVha1xuXG4gICAgY2FzZSAnam9pbk5hY2snOlxuICAgICAgYWxlcnQocGF5bG9hZC5kYXRhIC8qIHJlYXNvbiBmb3IgZmFpbCBqb2luKi8pXG4gICAgICBicmVha1xuXG4gICAgY2FzZSAncGxheWVySm9pbic6XG4gICAgICAvLyBuZXcgcGxheWVyIGhhcyBqb2luZWQgdGhlIGdhbWVcbiAgICAgIGdhbWVTdGF0ZS5hZGROZXdQbGF5ZXIocGF5bG9hZC5kYXRhKVxuICAgICAgYnJlYWtcblxuICAgIGNhc2UgJ3N5bmNBY2snOlxuICAgICAgc3luY2luZ0dhbWVTdGF0ZSA9IGZhbHNlXG5cbiAgICAgIC8vIFRPRE86IHVwZGF0ZSB0aGlzIHRvIGNsZWFyIGdhbWVTdGF0ZVxuICAgICAgcGF5bG9hZC5kYXRhLmZvckVhY2goKHBsYXllclN5bmNEYXRhKSA9PiB7XG4gICAgICAgIGdhbWVTdGF0ZS51cGRhdGVQbGF5ZXJQb3NpdGlvbihwbGF5ZXJTeW5jRGF0YS5wbGF5ZXJJZCwgcGxheWVyU3luY0RhdGEucG9zaXRpb24pXG4gICAgICB9KVxuXG4gICAgICAvLyBUT0RPOiB0ZW1wIGZpeCBmb3Igbm93XG4gICAgICBpZiAoaW5pdEdhbWUpIHtcbiAgICAgICAgY29uc3QgY3VycmVudFBsYXllckRhdGEgPSBnYW1lU3RhdGUuZ2V0UGxheWVyU3RhdGUoY3VyclBsYXllcklkKVxuICAgICAgICBwbGF5ZXIgPSBuZXcgUGxheWVyKGN1cnJlbnRQbGF5ZXJEYXRhLnBvc2l0aW9uLngsIGN1cnJlbnRQbGF5ZXJEYXRhLnBvc2l0aW9uLnkpXG5cbiAgICAgICAgLy8gYmVnaW4gcmVuZGVyaW5nIGdhbWVcbiAgICAgICAgcmVuZGVyTG9vcCgpXG4gICAgICAgIGluaXRHYW1lID0gZmFsc2VcbiAgICAgIH1cbiAgICAgIGJyZWFrXG5cbiAgICBjYXNlICdzeW5jVHJpZyc6XG4gICAgICAvLyBUT0RPOiBpbXBsZW1lbnQgdGhpczsgc3RpbGwgbmVlZD8/XG4gICAgICBjb25zb2xlLmxvZygnRGVmYXVsdCBzbmFwc2hvdCB3YXMgdXNlZCBvbiBzZXJ2ZXInKVxuICAgICAgYnJlYWtcblxuICAgIGNhc2UgJ2dhbWVTdGF0ZSc6XG4gICAgICBkZWJ1Zy5sb2dHYW1lU3RhdGVQYWNrZXRSZWNlaXZlUmF0ZShjb25maWdzLnNoYXJlZC50aWNrQnVmZmVyU2l6ZSAqIGNvbmZpZ3Muc2hhcmVkLnRpY2tJbnRlcnZhbCArIDUwKVxuXG4gICAgICAvLyBvbmx5IHRha2UgaW4gZ2FtZSBzdGF0ZSBpZiBpdHMgbm90IG91dGRhdGVkXG4gICAgICBpZiAoIXN5bmNpbmdHYW1lU3RhdGUpXG4gICAgICAgIHByb2Nlc3NHYW1lU25hcHNob3RzKHBheWxvYWQuZGF0YSlcblxuICAgICAgYnJlYWtcblxuICAgIGRlZmF1bHQ6XG4gICAgICBjb25zb2xlLmxvZyhgSW52YWxpZCBtZXNzYWdlIHJlY2VpdmVkIGZyb20gc2VydmVyOiAke3BheWxvYWR9YClcbiAgfVxufVxuXG53cy5vbmNsb3NlID0gKCkgPT4ge1xuICAvLyB3ZWJzb2NrZXQgaXMgY2xvc2VkLlxuICBhbGVydCgnc29ja2VkIGNvbm5lY3QgdG8gc2VydmVyIGNsb3NlZCcpXG59XG5cbmNvbnN0IHBsYXllck1vdmVUaWNrID0gKCkgPT4ge1xuICBjb25zdCBtb3ZlbWVudERhdGEgPSB7IGxlZnQ6IGZhbHNlLCByaWdodDogZmFsc2UsIHVwOiBmYWxzZSwgZG93bjogZmFsc2UgfVxuXG4gIGlmIChrZXlSZWdpc3RlcltrZXkuV10pIHtcbiAgICBwbGF5ZXIueSAtPSBjb25maWdzLnNoYXJlZC5wbGF5ZXJTcGVlZFxuICAgIG1vdmVtZW50RGF0YS51cCA9IHRydWVcbiAgfVxuXG4gIGlmIChrZXlSZWdpc3RlcltrZXkuU10pIHtcbiAgICBwbGF5ZXIueSArPSBjb25maWdzLnNoYXJlZC5wbGF5ZXJTcGVlZFxuICAgIG1vdmVtZW50RGF0YS5kb3duID0gdHJ1ZVxuICB9XG5cbiAgaWYgKGtleVJlZ2lzdGVyW2tleS5BXSkge1xuICAgIHBsYXllci54IC09IGNvbmZpZ3Muc2hhcmVkLnBsYXllclNwZWVkXG4gICAgbW92ZW1lbnREYXRhLmxlZnQgPSB0cnVlXG4gIH1cblxuICBpZiAoa2V5UmVnaXN0ZXJba2V5LkRdKSB7XG4gICAgcGxheWVyLnggKz0gY29uZmlncy5zaGFyZWQucGxheWVyU3BlZWRcbiAgICBtb3ZlbWVudERhdGEucmlnaHQgPSB0cnVlXG4gIH1cblxuICByZXR1cm4gbW92ZW1lbnREYXRhXG59XG5cbmNvbnN0IHVwZGF0ZVBsYXllclN0YXRlID0gKHBsYXllclN0YXRlKSA9PiB7XG4gIGNvbnN0IHNuYXBzaG90ID0gcGxheWVyU3RhdGUuc25hcHNob3RRdWV1ZS5zaGlmdCgpXG5cbiAgaWYgKCFzbmFwc2hvdClcbiAgICByZXR1cm5cblxuICBjb25zdCBtb3ZlbWVudCA9IHNuYXBzaG90Lm1vdmVtZW50XG4gIGNvbnN0IHNwZWVkID0gY29uZmlncy5zaGFyZWQucGxheWVyU3BlZWRcblxuICBpZiAobW92ZW1lbnQubGVmdClcbiAgICBwbGF5ZXJTdGF0ZS5wb3NpdGlvbi54IC09IHNwZWVkXG5cbiAgaWYgKG1vdmVtZW50LnJpZ2h0KVxuICAgIHBsYXllclN0YXRlLnBvc2l0aW9uLnggKz0gc3BlZWRcblxuICBpZiAobW92ZW1lbnQudXApXG4gICAgcGxheWVyU3RhdGUucG9zaXRpb24ueSAtPSBzcGVlZFxuXG4gIGlmIChtb3ZlbWVudC5kb3duKVxuICAgIHBsYXllclN0YXRlLnBvc2l0aW9uLnkgKz0gc3BlZWRcbn1cblxuY29uc3Qgc2VuZFBsYXllclN0YXRlID0gKHBsYXllclNuYXBzaG90cykgPT4ge1xuICBjb25zdCBwbGF5ZXJTdGF0ZVBheWxvYWQgPSB7XG4gICAgdHlwZTogJ3BsYXllclN0YXRlJyxcbiAgICBkYXRhOiBwbGF5ZXJTbmFwc2hvdHNcbiAgfVxuXG4gIHdzLnNlbmQoSlNPTi5zdHJpbmdpZnkocGxheWVyU3RhdGVQYXlsb2FkKSlcbn1cblxuLypcbkdhbWUgVGljazpcbjEgdXBkYXRlIGN1cnJlbnQgcGxheWVyIHN0YXRlIGJhc2VkIG9uIGdhbWUgY29udHJvbCBpbnB1dFxuMiBzZW5kIHBsYXllclN0YXRlIHRvIHNlcnZlciB3aGVuIHBsYXllclNuYXBzaG90UXVldWUgcmVhY2ggdGlja0J1ZmZlclNpemVcbjMgdXBkYXRlIHRoZSBnYW1lIHN0YXRlIHVzaW5nIGRhdGEgZnJvbSBnYW1lU3RhdGVcbjQgVE9ETzogY29uZmlybSBwbGF5ZXIgcG9zaXRpb24gdXNpbmcgc2VydmVyIGdhbWUgc3RhdGUgc2VydmVyIChhbmQgYXBwbHkgdW5jaGVja2VkIGdhbWVTdGF0ZXMpXG41IFRPRE86IGRyb3AgdW50aWwgbGFzdCB0aWNrQnVmZmVyU2l6ZSBpbiBnYW1lU3RhdGVbYW55UGxheWVyXS5zbmFwc2hvdFF1ZXVlIGlmIGRldmlhdGUgdG9vIG11Y2hcbiovXG5jb25zdCBnYW1lVGljayA9ICgpID0+IHtcbiAgZGVidWcubG9nR2FtZVRpY2tSYXRlKGNvbmZpZ3Muc2hhcmVkLnRpY2tJbnRlcnZhbCArIDUpXG5cbiAgc2V0VGltZW91dChnYW1lVGljaywgY29uZmlncy5zaGFyZWQudGlja0ludGVydmFsKVxuXG4gIC8vIGdhbWUgZG9lc24ndCBzdGFydCB1bnRpbCByZWNlaXZpbmcgam9pbkFjayBmcm9tIHNlcnZlclxuICBpZiAoIWpvaW5lZEdhbWUpXG4gICAgcmV0dXJuXG5cbiAgLy8gbGFnIG9jY3VyZWQgLT4gcmVzeW5jIGNsaWVudCB3aXRoIHNlcnZlclxuICBpZiAoZ2FtZVN0YXRlLmdldFBsYXllclN0YXRlKGN1cnJQbGF5ZXJJZCkuc25hcHNob3RRdWV1ZS5sZW5ndGggPT09IDApIHtcbiAgICAvLyByZXF1ZXN0IHN5bmMgZnJvbSBzZXJ2ZXIgaWYgaGF2ZW4ndCBhbHJlYWR5XG4gICAgaWYgKCFzeW5jaW5nR2FtZVN0YXRlKVxuICAgICAgc2VuZFN5bmNSZXF1ZXN0KClcblxuICAgIHJldHVyblxuICB9XG5cbiAgLy8gKDEpIHVwZGF0ZSBwbGF5ZXIgc3RhdGUgYmFzZWQgb24gbW92ZW1lbnQgYW5kIHJlY29yZCBwbGF5ZXIgdGljayBkYXRhXG4gIGNvbnN0IG1vdmVtZW50RGF0YSA9IHBsYXllck1vdmVUaWNrKClcbiAgY29uc3QgY3VyclBsYXllclNuYXBzaG90ID0gbmV3IFBsYXllclNuYXBzaG90KG1vdmVtZW50RGF0YSlcbiAgcGxheWVyU25hcHNob3RRdWV1ZS5wdXNoKGN1cnJQbGF5ZXJTbmFwc2hvdClcblxuICAvLyAoMikgc2VuZCBwbGF5ZXJTdGF0ZSB0byBzZXJ2ZXIgd2hlbiByZWFkeVxuICBpZiAocGxheWVyU25hcHNob3RRdWV1ZS5sZW5ndGggPT09IGNvbmZpZ3Muc2hhcmVkLnRpY2tCdWZmZXJTaXplKSB7XG4gICAgc2VuZFBsYXllclN0YXRlKHBsYXllclNuYXBzaG90UXVldWUpXG4gICAgcGxheWVyU25hcHNob3RRdWV1ZSA9IFtdXG4gIH1cblxuICAvLyB1cGRhdGUgdGhlIGdhbWUgc3RhdGUgdXNpbmcgZGF0YSBmcm9tIGdhbWVTbmFwc2hvdFF1ZXVlXG4gIGlmIChnYW1lU3RhdGUuZ2V0UGxheWVyU3RhdGUoY3VyclBsYXllcklkKS5zbmFwc2hvdFF1ZXVlLmxlbmd0aCA+IDApIHtcbiAgICBnYW1lU3RhdGUucGxheWVyU3RhdGVzLmZvckVhY2gocGxheWVyU3RhdGUgPT4gdXBkYXRlUGxheWVyU3RhdGUocGxheWVyU3RhdGUpKVxuICB9XG59XG5cbi8vIHJ1biBnYW1lIGxvb3Bcbi8vIHNldEludGVydmFsKGdhbWVUaWNrLCBjb25maWdzLnNoYXJlZC50aWNrSW50ZXJ2YWwpXG5nYW1lVGljaygpXG5cbmNvbnN0IGN0eCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpXG5jb25zdCBkcmF3UGxheWVyID0gKGNvbG9yLCB4LCB5KSA9PiB7XG4gIGN0eC5iZWdpblBhdGgoKVxuICBjdHguZmlsbFN0eWxlID0gY29sb3JcbiAgY3R4LnN0cm9rZVN0eWxlID0gJ2JsYWNrJ1xuICBjdHgucmVjdCh4LCB5LCBjb25maWdzLnNoYXJlZC5wbGF5ZXJXaWR0aCwgY29uZmlncy5zaGFyZWQucGxheWVySGVpZ2h0KVxuICBjdHgubGluZVdpZHRoID0gMVxuICBjdHguc3Ryb2tlKClcbiAgY3R4LmZpbGwoKVxufVxuXG5jb25zdCByZW5kZXJMb29wID0gKCkgPT4ge1xuICBjdHguY2xlYXJSZWN0KDAsIDAsIGNhbnZhcy53aWR0aCwgY2FudmFzLmhlaWdodClcblxuICAvLyBUT0RPOiB0aGUgcGxheWVyIGNsYXNzIHNob3VsZCBoYXZlIGEgcmVuZGVyIG1ldGhvZFxuICBnYW1lU3RhdGUucGxheWVyU3RhdGVzLmZvckVhY2goKHBsYXllclN0YXRlKSA9PiB7XG4gICAgY29uc3QgcGxheWVyUG9zID0gcGxheWVyU3RhdGUucG9zaXRpb25cblxuICAgIGRyYXdQbGF5ZXIoY29uZmlncy5jbGllbnQub3RoZXJQbGF5ZXJzQ29sb3IsIHBsYXllclBvcy54LCBwbGF5ZXJQb3MueSlcbiAgfSlcblxuXG4gIGRyYXdQbGF5ZXIoY29uZmlncy5jbGllbnQucGxheWVyQ29sb3IsIHBsYXllci54LCBwbGF5ZXIueSlcblxuICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUocmVuZGVyTG9vcClcbn1cblxuLypcbmxldCBtb3VzZVhcbmxldCBtb3VzZVlcblxuZnVuY3Rpb24gbW91c2VNb3ZlKGUpIHtcbiAgbW91c2VYID0gZS5vZmZzZXRYXG4gIG1vdXNlWSA9IGUub2Zmc2V0WVxufVxuXG5mdW5jdGlvbiBzZW5kRmlyZURhdGEoYW5nbGUpIHtcbiAgY29uc3QgZmlyZUJ1bGxldERhdGEgPSB7XG4gICAgdHlwZTogJ2ZpcmUnLFxuICAgIGRhdGE6IHsgYW5nbGUgfVxuICB9XG5cbiAgd3Muc2VuZChKU09OLnN0cmluZ2lmeShmaXJlQnVsbGV0RGF0YSkpXG59XG5cbmNhbnZhcy5hZGRFdmVudExpc3RlbmVyKCdtb3VzZW1vdmUnLCBtb3VzZU1vdmUpXG5jYW52YXMuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoKSA9PiB7XG4gIGNvbnN0IGRlbHRhWCA9IG1vdXNlWCAtIHBsYXllci54XG4gIGNvbnN0IGRlbHRhWSA9IG1vdXNlWSAtIHBsYXllci55XG4gIGNvbnN0IGZpcmVBbmdsZSA9IE1hdGguYXRhbjIoZGVsdGFZLCBkZWx0YVgpXG4gIHNlbmRGaXJlRGF0YShmaXJlQW5nbGUpXG59KSovXG5cblxuXG4vLyBXRUJQQUNLIEZPT1RFUiAvL1xuLy8gY2xpZW50L2pzL2FwcC5qcyJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBQ0E7QUFBQTtBQUNBO0FBQ0E7OztBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBRkE7QUFJQTs7Ozs7O0FBR0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFHQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQURBO0FBQ0E7QUFHQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUZBO0FBQ0E7QUFJQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBeERBO0FBMERBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUVBO0FBQ0E7QUFFQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUZBO0FBQ0E7QUFJQTtBQUNBO0FBQ0E7QUFDQTs7Ozs7Ozs7QUFRQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFBQTtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBIiwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///1\n");
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+__webpack_require__(2);
+var configs = __webpack_require__(0);
+var key = __webpack_require__(7).keyboardCodeMapping;
+var GameState = __webpack_require__(8);
+var debug = __webpack_require__(10);
+
+var canvas = document.getElementById('canvas');
+
+var keyRegister = {};
+
+canvas.addEventListener('keydown', function (e) {
+  keyRegister[e.keyCode] = true;
+});
+
+canvas.addEventListener('keyup', function (e) {
+  keyRegister[e.keyCode] = false;
+});
+
+var Player = function Player(x, y) {
+  _classCallCheck(this, Player);
+
+  this.x = x;
+  this.y = y;
+};
+
+var player = void 0;
+
+var PlayerSnapshot = function () {
+  function PlayerSnapshot(movement) {
+    _classCallCheck(this, PlayerSnapshot);
+
+    this.movement = movement;
+  }
+
+  _createClass(PlayerSnapshot, [{
+    key: 'setFireAction',
+    value: function setFireAction(shotAngle) {
+      this.action = {
+        actionType: 'fire',
+        angle: shotAngle
+      };
+    }
+  }]);
+
+  return PlayerSnapshot;
+}();
+
+var syncingGameState = false; // drop all gameState packets from server when this is true
+var joinedGame = false; // gameTick only runs when this is true
+var currPlayerId = void 0;
+var playerSnapshotQueue = [];
+var initGame = true; // flag to begin render once first syncAck is received
+
+var gameState = new GameState();
+
+var wsHost = window.location.hostname === 'localhost' ? 'ws://localhost:' + configs.shared.port : 'ws://' + window.location.host;
+
+var ws = new WebSocket(wsHost);
+
+var sendSyncRequest = function sendSyncRequest() {
+  syncingGameState = true;
+
+  var syncData = {
+    type: 'syncReq'
+  };
+
+  ws.send(JSON.stringify(syncData));
+};
+
+var sendJoinRequest = function sendJoinRequest() {
+  var joinData = {
+    type: 'joinReq',
+    data: 'placeholderName'
+  };
+
+  ws.send(JSON.stringify(joinData));
+};
+
+ws.onopen = function () {
+  // Web Socket is connected, send data using send()
+  sendJoinRequest();
+};
+
+var processGameSnapshots = function processGameSnapshots(gameSnapshots) {
+  gameSnapshots.forEach(function (playerSnapshots) {
+    gameState.insertPlayerSnapshots(playerSnapshots.playerId, playerSnapshots.snapshots);
+
+    // TODO: implement resync if deviation is too much
+    // if (snapshotQueue.length > syncThreshold)
+    //   requestResync
+    var playerState = gameState.getPlayerState(playerSnapshots.playerId);
+    // immediately process old snaphsots to ensure client game state is up to date
+    if (playerState.snapshotQueue.length > configs.shared.tickBufferSize) {
+      playerState.processSnapshots(playerState.snapshotQueue.splice(0, playerState.snapshotQueue.length - configs.shared.tickBufferSize));
+    }
+  });
+
+  if (debug.isDebugMode) {
+    var currPlayerSnapshotQueueLength = gameState.getPlayerState(currPlayerId).snapshotQueue.length;
+
+    if (gameState.playerStates.some(function (p) {
+      return p.snapshotQueue.length !== currPlayerSnapshotQueueLength;
+    })) {
+      console.log('Mismatch snapshot length between players in gameState');
+    }
+
+    if (gameState.playerStates.some(function (p) {
+      return p.snapshotQueue.length > configs.shared.tickBufferSize;
+    })) {
+      console.log('Snapshots for player exceed tickBufferSize');
+    }
+  }
+};
+
+ws.onmessage = function (evt) {
+  var payload = JSON.parse(evt.data);
+
+  switch (payload.type) {
+    case 'joinAck':
+      joinedGame = true;
+      currPlayerId = payload.data.playerId;
+
+      // players in game before you joined
+      payload.data.otherPlayersInGame.forEach(function (p) {
+        gameState.addNewPlayer(p);
+      });
+
+      console.log('Joined game as player ' + currPlayerId);
+      break;
+
+    case 'joinNack':
+      alert(payload.data /* reason for fail join*/);
+      break;
+
+    case 'playerJoin':
+      // new player has joined the game
+      gameState.addNewPlayer(payload.data);
+      break;
+
+    case 'syncAck':
+      syncingGameState = false;
+
+      // TODO: update this to clear gameState
+      payload.data.forEach(function (playerSyncData) {
+        gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position);
+      });
+
+      // TODO: temp fix for now
+      if (initGame) {
+        var currentPlayerData = gameState.getPlayerState(currPlayerId);
+        player = new Player(currentPlayerData.position.x, currentPlayerData.position.y);
+
+        // begin rendering game
+        renderLoop();
+        initGame = false;
+      }
+      break;
+
+    case 'syncTrig':
+      // TODO: implement this; still need??
+      console.log('Default snapshot was used on server');
+      break;
+
+    case 'gameState':
+      debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50);
+
+      // only take in game state if its not outdated
+      if (!syncingGameState) processGameSnapshots(payload.data);
+
+      break;
+
+    default:
+      console.log('Invalid message received from server: ' + payload);
+  }
+};
+
+ws.onclose = function () {
+  // websocket is closed.
+  alert('socked connect to server closed');
+};
+
+var playerMoveTick = function playerMoveTick() {
+  var movementData = { left: false, right: false, up: false, down: false };
+
+  if (keyRegister[key.W]) {
+    player.y -= configs.shared.playerSpeed;
+    movementData.up = true;
+  }
+
+  if (keyRegister[key.S]) {
+    player.y += configs.shared.playerSpeed;
+    movementData.down = true;
+  }
+
+  if (keyRegister[key.A]) {
+    player.x -= configs.shared.playerSpeed;
+    movementData.left = true;
+  }
+
+  if (keyRegister[key.D]) {
+    player.x += configs.shared.playerSpeed;
+    movementData.right = true;
+  }
+
+  return movementData;
+};
+
+var updatePlayerState = function updatePlayerState(playerState) {
+  var snapshot = playerState.snapshotQueue.shift();
+
+  if (!snapshot) return;
+
+  var movement = snapshot.movement;
+  var speed = configs.shared.playerSpeed;
+
+  if (movement.left) playerState.position.x -= speed;
+
+  if (movement.right) playerState.position.x += speed;
+
+  if (movement.up) playerState.position.y -= speed;
+
+  if (movement.down) playerState.position.y += speed;
+};
+
+var sendPlayerState = function sendPlayerState(playerSnapshots) {
+  var playerStatePayload = {
+    type: 'playerState',
+    data: playerSnapshots
+  };
+
+  ws.send(JSON.stringify(playerStatePayload));
+};
+
+/*
+Game Tick:
+1 update current player state based on game control input
+2 send playerState to server when playerSnapshotQueue reach tickBufferSize
+3 update the game state using data from gameState
+4 TODO: confirm player position using server game state server (and apply unchecked gameStates)
+5 TODO: drop until last tickBufferSize in gameState[anyPlayer].snapshotQueue if deviate too much
+*/
+var gameTick = function gameTick() {
+  debug.logGameTickRate(configs.shared.tickInterval + 5);
+
+  setTimeout(gameTick, configs.shared.tickInterval);
+
+  // game doesn't start until receiving joinAck from server
+  if (!joinedGame) return;
+
+  // lag occured -> resync client with server
+  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {
+    // request sync from server if haven't already
+    if (!syncingGameState) sendSyncRequest();
+
+    return;
+  }
+
+  // (1) update player state based on movement and record player tick data
+  var movementData = playerMoveTick();
+  var currPlayerSnapshot = new PlayerSnapshot(movementData);
+  playerSnapshotQueue.push(currPlayerSnapshot);
+
+  // (2) send playerState to server when ready
+  if (playerSnapshotQueue.length === configs.shared.tickBufferSize) {
+    sendPlayerState(playerSnapshotQueue);
+    playerSnapshotQueue = [];
+  }
+
+  // update the game state using data from gameSnapshotQueue
+  if (gameState.getPlayerState(currPlayerId).snapshotQueue.length > 0) {
+    gameState.playerStates.forEach(function (playerState) {
+      return updatePlayerState(playerState);
+    });
+  }
+};
+
+// run game loop
+// setInterval(gameTick, configs.shared.tickInterval)
+gameTick();
+
+var ctx = canvas.getContext('2d');
+var drawPlayer = function drawPlayer(color, x, y) {
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = 'black';
+  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fill();
+};
+
+var renderLoop = function renderLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // TODO: the player class should have a render method
+  gameState.playerStates.forEach(function (playerState) {
+    var playerPos = playerState.position;
+
+    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y);
+  });
+
+  drawPlayer(configs.client.playerColor, player.x, player.y);
+
+  requestAnimationFrame(renderLoop);
+};
+
+/*
+let mouseX
+let mouseY
+
+function mouseMove(e) {
+  mouseX = e.offsetX
+  mouseY = e.offsetY
+}
+
+function sendFireData(angle) {
+  const fireBulletData = {
+    type: 'fire',
+    data: { angle }
+  }
+
+  ws.send(JSON.stringify(fireBulletData))
+}
+
+canvas.addEventListener('mousemove', mouseMove)
+canvas.addEventListener('click', () => {
+  const deltaX = mouseX - player.x
+  const deltaY = mouseY - player.y
+  const fireAngle = Math.atan2(deltaY, deltaX)
+  sendFireData(fireAngle)
+})*/
 
 /***/ }),
 /* 2 */
-/*!****************************!*\
-  !*** ./client/css/app.css ***!
-  \****************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("// style-loader: Adds some css to the DOM by adding a <style> tag\n\n// load the styles\nvar content = __webpack_require__(/*! !../../node_modules/css-loader!./app.css */ 3);\nif(typeof content === 'string') content = [[module.i, content, '']];\n// Prepare cssTransformation\nvar transform;\n\nvar options = {}\noptions.transform = transform\n// add the styles to the DOM\nvar update = __webpack_require__(/*! ../../node_modules/style-loader/lib/addStyles.js */ 5)(content, options);\nif(content.locals) module.exports = content.locals;\n// Hot Module Replacement\nif(false) {\n\t// When the styles change, update the <style> tags\n\tif(!content.locals) {\n\t\tmodule.hot.accept(\"!!../../node_modules/css-loader/index.js!./app.css\", function() {\n\t\t\tvar newContent = require(\"!!../../node_modules/css-loader/index.js!./app.css\");\n\t\t\tif(typeof newContent === 'string') newContent = [[module.id, newContent, '']];\n\t\t\tupdate(newContent);\n\t\t});\n\t}\n\t// When the module is disposed, remove the <style> tags\n\tmodule.hot.dispose(function() { update(); });\n}//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMi5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2NsaWVudC9jc3MvYXBwLmNzcz8yMWFiIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIHN0eWxlLWxvYWRlcjogQWRkcyBzb21lIGNzcyB0byB0aGUgRE9NIGJ5IGFkZGluZyBhIDxzdHlsZT4gdGFnXG5cbi8vIGxvYWQgdGhlIHN0eWxlc1xudmFyIGNvbnRlbnQgPSByZXF1aXJlKFwiISEuLi8uLi9ub2RlX21vZHVsZXMvY3NzLWxvYWRlci9pbmRleC5qcyEuL2FwcC5jc3NcIik7XG5pZih0eXBlb2YgY29udGVudCA9PT0gJ3N0cmluZycpIGNvbnRlbnQgPSBbW21vZHVsZS5pZCwgY29udGVudCwgJyddXTtcbi8vIFByZXBhcmUgY3NzVHJhbnNmb3JtYXRpb25cbnZhciB0cmFuc2Zvcm07XG5cbnZhciBvcHRpb25zID0ge31cbm9wdGlvbnMudHJhbnNmb3JtID0gdHJhbnNmb3JtXG4vLyBhZGQgdGhlIHN0eWxlcyB0byB0aGUgRE9NXG52YXIgdXBkYXRlID0gcmVxdWlyZShcIiEuLi8uLi9ub2RlX21vZHVsZXMvc3R5bGUtbG9hZGVyL2xpYi9hZGRTdHlsZXMuanNcIikoY29udGVudCwgb3B0aW9ucyk7XG5pZihjb250ZW50LmxvY2FscykgbW9kdWxlLmV4cG9ydHMgPSBjb250ZW50LmxvY2Fscztcbi8vIEhvdCBNb2R1bGUgUmVwbGFjZW1lbnRcbmlmKG1vZHVsZS5ob3QpIHtcblx0Ly8gV2hlbiB0aGUgc3R5bGVzIGNoYW5nZSwgdXBkYXRlIHRoZSA8c3R5bGU+IHRhZ3Ncblx0aWYoIWNvbnRlbnQubG9jYWxzKSB7XG5cdFx0bW9kdWxlLmhvdC5hY2NlcHQoXCIhIS4uLy4uL25vZGVfbW9kdWxlcy9jc3MtbG9hZGVyL2luZGV4LmpzIS4vYXBwLmNzc1wiLCBmdW5jdGlvbigpIHtcblx0XHRcdHZhciBuZXdDb250ZW50ID0gcmVxdWlyZShcIiEhLi4vLi4vbm9kZV9tb2R1bGVzL2Nzcy1sb2FkZXIvaW5kZXguanMhLi9hcHAuY3NzXCIpO1xuXHRcdFx0aWYodHlwZW9mIG5ld0NvbnRlbnQgPT09ICdzdHJpbmcnKSBuZXdDb250ZW50ID0gW1ttb2R1bGUuaWQsIG5ld0NvbnRlbnQsICcnXV07XG5cdFx0XHR1cGRhdGUobmV3Q29udGVudCk7XG5cdFx0fSk7XG5cdH1cblx0Ly8gV2hlbiB0aGUgbW9kdWxlIGlzIGRpc3Bvc2VkLCByZW1vdmUgdGhlIDxzdHlsZT4gdGFnc1xuXHRtb2R1bGUuaG90LmRpc3Bvc2UoZnVuY3Rpb24oKSB7IHVwZGF0ZSgpOyB9KTtcbn1cblxuXG4vLy8vLy8vLy8vLy8vLy8vLy9cbi8vIFdFQlBBQ0sgRk9PVEVSXG4vLyAuL2NsaWVudC9jc3MvYXBwLmNzc1xuLy8gbW9kdWxlIGlkID0gMlxuLy8gbW9kdWxlIGNodW5rcyA9IDAiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///2\n");
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(3);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(5)(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js!./app.css", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!./app.css");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 /* 3 */
-/*!******************************************************!*\
-  !*** ./node_modules/css-loader!./client/css/app.css ***!
-  \******************************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ 4)(undefined);\n// imports\n\n\n// module\nexports.push([module.i, \"body {\\n  margin: 0;\\n}\\n\\ncanvas {\\n  border: solid 1px black;\\n  position: relative;\\n  background: #447604;\\n}\\n\\n#holder {\\n  display: block;\\n  margin: 20px auto 0 auto;\\n  width: 800px;\\n  height: 600px;\\n}\\n\", \"\"]);\n\n// exports\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2NsaWVudC9jc3MvYXBwLmNzcz9mNzQzIl0sInNvdXJjZXNDb250ZW50IjpbImV4cG9ydHMgPSBtb2R1bGUuZXhwb3J0cyA9IHJlcXVpcmUoXCIuLi8uLi9ub2RlX21vZHVsZXMvY3NzLWxvYWRlci9saWIvY3NzLWJhc2UuanNcIikodW5kZWZpbmVkKTtcbi8vIGltcG9ydHNcblxuXG4vLyBtb2R1bGVcbmV4cG9ydHMucHVzaChbbW9kdWxlLmlkLCBcImJvZHkge1xcbiAgbWFyZ2luOiAwO1xcbn1cXG5cXG5jYW52YXMge1xcbiAgYm9yZGVyOiBzb2xpZCAxcHggYmxhY2s7XFxuICBwb3NpdGlvbjogcmVsYXRpdmU7XFxuICBiYWNrZ3JvdW5kOiAjNDQ3NjA0O1xcbn1cXG5cXG4jaG9sZGVyIHtcXG4gIGRpc3BsYXk6IGJsb2NrO1xcbiAgbWFyZ2luOiAyMHB4IGF1dG8gMCBhdXRvO1xcbiAgd2lkdGg6IDgwMHB4O1xcbiAgaGVpZ2h0OiA2MDBweDtcXG59XFxuXCIsIFwiXCJdKTtcblxuLy8gZXhwb3J0c1xuXG5cblxuLy8vLy8vLy8vLy8vLy8vLy8vXG4vLyBXRUJQQUNLIEZPT1RFUlxuLy8gLi9ub2RlX21vZHVsZXMvY3NzLWxvYWRlciEuL2NsaWVudC9jc3MvYXBwLmNzc1xuLy8gbW9kdWxlIGlkID0gM1xuLy8gbW9kdWxlIGNodW5rcyA9IDAiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7Iiwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///3\n");
+exports = module.exports = __webpack_require__(4)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "body {\n  margin: 0;\n}\n\ncanvas {\n  border: solid 1px black;\n  position: relative;\n  background: #447604;\n}\n\n#holder {\n  display: block;\n  margin: 20px auto 0 auto;\n  width: 800px;\n  height: 600px;\n}\n", ""]);
+
+// exports
+
 
 /***/ }),
 /* 4 */
-/*!*************************************************!*\
-  !*** ./node_modules/css-loader/lib/css-base.js ***!
-  \*************************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\n/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n// css base code, injected by the css-loader\nmodule.exports = function (useSourceMap) {\n\tvar list = [];\n\n\t// return the list of modules as css string\n\tlist.toString = function toString() {\n\t\treturn this.map(function (item) {\n\t\t\tvar content = cssWithMappingToString(item, useSourceMap);\n\t\t\tif (item[2]) {\n\t\t\t\treturn \"@media \" + item[2] + \"{\" + content + \"}\";\n\t\t\t} else {\n\t\t\t\treturn content;\n\t\t\t}\n\t\t}).join(\"\");\n\t};\n\n\t// import a list of modules into the list\n\tlist.i = function (modules, mediaQuery) {\n\t\tif (typeof modules === \"string\") modules = [[null, modules, \"\"]];\n\t\tvar alreadyImportedModules = {};\n\t\tfor (var i = 0; i < this.length; i++) {\n\t\t\tvar id = this[i][0];\n\t\t\tif (typeof id === \"number\") alreadyImportedModules[id] = true;\n\t\t}\n\t\tfor (i = 0; i < modules.length; i++) {\n\t\t\tvar item = modules[i];\n\t\t\t// skip already imported module\n\t\t\t// this implementation is not 100% perfect for weird media query combinations\n\t\t\t//  when a module is imported multiple times with different media queries.\n\t\t\t//  I hope this will never occur (Hey this way we have smaller bundles)\n\t\t\tif (typeof item[0] !== \"number\" || !alreadyImportedModules[item[0]]) {\n\t\t\t\tif (mediaQuery && !item[2]) {\n\t\t\t\t\titem[2] = mediaQuery;\n\t\t\t\t} else if (mediaQuery) {\n\t\t\t\t\titem[2] = \"(\" + item[2] + \") and (\" + mediaQuery + \")\";\n\t\t\t\t}\n\t\t\t\tlist.push(item);\n\t\t\t}\n\t\t}\n\t};\n\treturn list;\n};\n\nfunction cssWithMappingToString(item, useSourceMap) {\n\tvar content = item[1] || '';\n\tvar cssMapping = item[3];\n\tif (!cssMapping) {\n\t\treturn content;\n\t}\n\n\tif (useSourceMap && typeof btoa === 'function') {\n\t\tvar sourceMapping = toComment(cssMapping);\n\t\tvar sourceURLs = cssMapping.sources.map(function (source) {\n\t\t\treturn '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';\n\t\t});\n\n\t\treturn [content].concat(sourceURLs).concat([sourceMapping]).join('\\n');\n\t}\n\n\treturn [content].join('\\n');\n}\n\n// Adapted from convert-source-map (MIT)\nfunction toComment(sourceMap) {\n\t// eslint-disable-next-line no-undef\n\tvar base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));\n\tvar data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;\n\n\treturn '/*# ' + data + ' */';\n}//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNC5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9ub2RlX21vZHVsZXMvY3NzLWxvYWRlci9saWIvY3NzLWJhc2UuanM/ZTdmMSJdLCJzb3VyY2VzQ29udGVudCI6WyIvKlxuXHRNSVQgTGljZW5zZSBodHRwOi8vd3d3Lm9wZW5zb3VyY2Uub3JnL2xpY2Vuc2VzL21pdC1saWNlbnNlLnBocFxuXHRBdXRob3IgVG9iaWFzIEtvcHBlcnMgQHNva3JhXG4qL1xuLy8gY3NzIGJhc2UgY29kZSwgaW5qZWN0ZWQgYnkgdGhlIGNzcy1sb2FkZXJcbm1vZHVsZS5leHBvcnRzID0gZnVuY3Rpb24odXNlU291cmNlTWFwKSB7XG5cdHZhciBsaXN0ID0gW107XG5cblx0Ly8gcmV0dXJuIHRoZSBsaXN0IG9mIG1vZHVsZXMgYXMgY3NzIHN0cmluZ1xuXHRsaXN0LnRvU3RyaW5nID0gZnVuY3Rpb24gdG9TdHJpbmcoKSB7XG5cdFx0cmV0dXJuIHRoaXMubWFwKGZ1bmN0aW9uIChpdGVtKSB7XG5cdFx0XHR2YXIgY29udGVudCA9IGNzc1dpdGhNYXBwaW5nVG9TdHJpbmcoaXRlbSwgdXNlU291cmNlTWFwKTtcblx0XHRcdGlmKGl0ZW1bMl0pIHtcblx0XHRcdFx0cmV0dXJuIFwiQG1lZGlhIFwiICsgaXRlbVsyXSArIFwie1wiICsgY29udGVudCArIFwifVwiO1xuXHRcdFx0fSBlbHNlIHtcblx0XHRcdFx0cmV0dXJuIGNvbnRlbnQ7XG5cdFx0XHR9XG5cdFx0fSkuam9pbihcIlwiKTtcblx0fTtcblxuXHQvLyBpbXBvcnQgYSBsaXN0IG9mIG1vZHVsZXMgaW50byB0aGUgbGlzdFxuXHRsaXN0LmkgPSBmdW5jdGlvbihtb2R1bGVzLCBtZWRpYVF1ZXJ5KSB7XG5cdFx0aWYodHlwZW9mIG1vZHVsZXMgPT09IFwic3RyaW5nXCIpXG5cdFx0XHRtb2R1bGVzID0gW1tudWxsLCBtb2R1bGVzLCBcIlwiXV07XG5cdFx0dmFyIGFscmVhZHlJbXBvcnRlZE1vZHVsZXMgPSB7fTtcblx0XHRmb3IodmFyIGkgPSAwOyBpIDwgdGhpcy5sZW5ndGg7IGkrKykge1xuXHRcdFx0dmFyIGlkID0gdGhpc1tpXVswXTtcblx0XHRcdGlmKHR5cGVvZiBpZCA9PT0gXCJudW1iZXJcIilcblx0XHRcdFx0YWxyZWFkeUltcG9ydGVkTW9kdWxlc1tpZF0gPSB0cnVlO1xuXHRcdH1cblx0XHRmb3IoaSA9IDA7IGkgPCBtb2R1bGVzLmxlbmd0aDsgaSsrKSB7XG5cdFx0XHR2YXIgaXRlbSA9IG1vZHVsZXNbaV07XG5cdFx0XHQvLyBza2lwIGFscmVhZHkgaW1wb3J0ZWQgbW9kdWxlXG5cdFx0XHQvLyB0aGlzIGltcGxlbWVudGF0aW9uIGlzIG5vdCAxMDAlIHBlcmZlY3QgZm9yIHdlaXJkIG1lZGlhIHF1ZXJ5IGNvbWJpbmF0aW9uc1xuXHRcdFx0Ly8gIHdoZW4gYSBtb2R1bGUgaXMgaW1wb3J0ZWQgbXVsdGlwbGUgdGltZXMgd2l0aCBkaWZmZXJlbnQgbWVkaWEgcXVlcmllcy5cblx0XHRcdC8vICBJIGhvcGUgdGhpcyB3aWxsIG5ldmVyIG9jY3VyIChIZXkgdGhpcyB3YXkgd2UgaGF2ZSBzbWFsbGVyIGJ1bmRsZXMpXG5cdFx0XHRpZih0eXBlb2YgaXRlbVswXSAhPT0gXCJudW1iZXJcIiB8fCAhYWxyZWFkeUltcG9ydGVkTW9kdWxlc1tpdGVtWzBdXSkge1xuXHRcdFx0XHRpZihtZWRpYVF1ZXJ5ICYmICFpdGVtWzJdKSB7XG5cdFx0XHRcdFx0aXRlbVsyXSA9IG1lZGlhUXVlcnk7XG5cdFx0XHRcdH0gZWxzZSBpZihtZWRpYVF1ZXJ5KSB7XG5cdFx0XHRcdFx0aXRlbVsyXSA9IFwiKFwiICsgaXRlbVsyXSArIFwiKSBhbmQgKFwiICsgbWVkaWFRdWVyeSArIFwiKVwiO1xuXHRcdFx0XHR9XG5cdFx0XHRcdGxpc3QucHVzaChpdGVtKTtcblx0XHRcdH1cblx0XHR9XG5cdH07XG5cdHJldHVybiBsaXN0O1xufTtcblxuZnVuY3Rpb24gY3NzV2l0aE1hcHBpbmdUb1N0cmluZyhpdGVtLCB1c2VTb3VyY2VNYXApIHtcblx0dmFyIGNvbnRlbnQgPSBpdGVtWzFdIHx8ICcnO1xuXHR2YXIgY3NzTWFwcGluZyA9IGl0ZW1bM107XG5cdGlmICghY3NzTWFwcGluZykge1xuXHRcdHJldHVybiBjb250ZW50O1xuXHR9XG5cblx0aWYgKHVzZVNvdXJjZU1hcCAmJiB0eXBlb2YgYnRvYSA9PT0gJ2Z1bmN0aW9uJykge1xuXHRcdHZhciBzb3VyY2VNYXBwaW5nID0gdG9Db21tZW50KGNzc01hcHBpbmcpO1xuXHRcdHZhciBzb3VyY2VVUkxzID0gY3NzTWFwcGluZy5zb3VyY2VzLm1hcChmdW5jdGlvbiAoc291cmNlKSB7XG5cdFx0XHRyZXR1cm4gJy8qIyBzb3VyY2VVUkw9JyArIGNzc01hcHBpbmcuc291cmNlUm9vdCArIHNvdXJjZSArICcgKi8nXG5cdFx0fSk7XG5cblx0XHRyZXR1cm4gW2NvbnRlbnRdLmNvbmNhdChzb3VyY2VVUkxzKS5jb25jYXQoW3NvdXJjZU1hcHBpbmddKS5qb2luKCdcXG4nKTtcblx0fVxuXG5cdHJldHVybiBbY29udGVudF0uam9pbignXFxuJyk7XG59XG5cbi8vIEFkYXB0ZWQgZnJvbSBjb252ZXJ0LXNvdXJjZS1tYXAgKE1JVClcbmZ1bmN0aW9uIHRvQ29tbWVudChzb3VyY2VNYXApIHtcblx0Ly8gZXNsaW50LWRpc2FibGUtbmV4dC1saW5lIG5vLXVuZGVmXG5cdHZhciBiYXNlNjQgPSBidG9hKHVuZXNjYXBlKGVuY29kZVVSSUNvbXBvbmVudChKU09OLnN0cmluZ2lmeShzb3VyY2VNYXApKSkpO1xuXHR2YXIgZGF0YSA9ICdzb3VyY2VNYXBwaW5nVVJMPWRhdGE6YXBwbGljYXRpb24vanNvbjtjaGFyc2V0PXV0Zi04O2Jhc2U2NCwnICsgYmFzZTY0O1xuXG5cdHJldHVybiAnLyojICcgKyBkYXRhICsgJyAqLyc7XG59XG5cblxuXG4vLyBXRUJQQUNLIEZPT1RFUiAvL1xuLy8gbm9kZV9tb2R1bGVzL2Nzcy1sb2FkZXIvbGliL2Nzcy1iYXNlLmpzIl0sIm1hcHBpbmdzIjoiOztBQUFBOzs7O0FBSUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///4\n");
+
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function (useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if (item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function (modules, mediaQuery) {
+		if (typeof modules === "string") modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for (var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if (typeof id === "number") alreadyImportedModules[id] = true;
+		}
+		for (i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if (mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if (mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
 
 /***/ }),
 /* 5 */
-/*!****************************************************!*\
-  !*** ./node_modules/style-loader/lib/addStyles.js ***!
-  \****************************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n\nvar stylesInDom = {};\n\nvar\tmemoize = function (fn) {\n\tvar memo;\n\n\treturn function () {\n\t\tif (typeof memo === \"undefined\") memo = fn.apply(this, arguments);\n\t\treturn memo;\n\t};\n};\n\nvar isOldIE = memoize(function () {\n\t// Test for IE <= 9 as proposed by Browserhacks\n\t// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805\n\t// Tests for existence of standard globals is to allow style-loader\n\t// to operate correctly into non-standard environments\n\t// @see https://github.com/webpack-contrib/style-loader/issues/177\n\treturn window && document && document.all && !window.atob;\n});\n\nvar getElement = (function (fn) {\n\tvar memo = {};\n\n\treturn function(selector) {\n\t\tif (typeof memo[selector] === \"undefined\") {\n\t\t\tmemo[selector] = fn.call(this, selector);\n\t\t}\n\n\t\treturn memo[selector]\n\t};\n})(function (target) {\n\treturn document.querySelector(target)\n});\n\nvar singleton = null;\nvar\tsingletonCounter = 0;\nvar\tstylesInsertedAtTop = [];\n\nvar\tfixUrls = __webpack_require__(/*! ./urls */ 6);\n\nmodule.exports = function(list, options) {\n\tif (typeof DEBUG !== \"undefined\" && DEBUG) {\n\t\tif (typeof document !== \"object\") throw new Error(\"The style-loader cannot be used in a non-browser environment\");\n\t}\n\n\toptions = options || {};\n\n\toptions.attrs = typeof options.attrs === \"object\" ? options.attrs : {};\n\n\t// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>\n\t// tags it will allow on a page\n\tif (!options.singleton) options.singleton = isOldIE();\n\n\t// By default, add <style> tags to the <head> element\n\tif (!options.insertInto) options.insertInto = \"head\";\n\n\t// By default, add <style> tags to the bottom of the target\n\tif (!options.insertAt) options.insertAt = \"bottom\";\n\n\tvar styles = listToStyles(list, options);\n\n\taddStylesToDom(styles, options);\n\n\treturn function update (newList) {\n\t\tvar mayRemove = [];\n\n\t\tfor (var i = 0; i < styles.length; i++) {\n\t\t\tvar item = styles[i];\n\t\t\tvar domStyle = stylesInDom[item.id];\n\n\t\t\tdomStyle.refs--;\n\t\t\tmayRemove.push(domStyle);\n\t\t}\n\n\t\tif(newList) {\n\t\t\tvar newStyles = listToStyles(newList, options);\n\t\t\taddStylesToDom(newStyles, options);\n\t\t}\n\n\t\tfor (var i = 0; i < mayRemove.length; i++) {\n\t\t\tvar domStyle = mayRemove[i];\n\n\t\t\tif(domStyle.refs === 0) {\n\t\t\t\tfor (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();\n\n\t\t\t\tdelete stylesInDom[domStyle.id];\n\t\t\t}\n\t\t}\n\t};\n};\n\nfunction addStylesToDom (styles, options) {\n\tfor (var i = 0; i < styles.length; i++) {\n\t\tvar item = styles[i];\n\t\tvar domStyle = stylesInDom[item.id];\n\n\t\tif(domStyle) {\n\t\t\tdomStyle.refs++;\n\n\t\t\tfor(var j = 0; j < domStyle.parts.length; j++) {\n\t\t\t\tdomStyle.parts[j](item.parts[j]);\n\t\t\t}\n\n\t\t\tfor(; j < item.parts.length; j++) {\n\t\t\t\tdomStyle.parts.push(addStyle(item.parts[j], options));\n\t\t\t}\n\t\t} else {\n\t\t\tvar parts = [];\n\n\t\t\tfor(var j = 0; j < item.parts.length; j++) {\n\t\t\t\tparts.push(addStyle(item.parts[j], options));\n\t\t\t}\n\n\t\t\tstylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};\n\t\t}\n\t}\n}\n\nfunction listToStyles (list, options) {\n\tvar styles = [];\n\tvar newStyles = {};\n\n\tfor (var i = 0; i < list.length; i++) {\n\t\tvar item = list[i];\n\t\tvar id = options.base ? item[0] + options.base : item[0];\n\t\tvar css = item[1];\n\t\tvar media = item[2];\n\t\tvar sourceMap = item[3];\n\t\tvar part = {css: css, media: media, sourceMap: sourceMap};\n\n\t\tif(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});\n\t\telse newStyles[id].parts.push(part);\n\t}\n\n\treturn styles;\n}\n\nfunction insertStyleElement (options, style) {\n\tvar target = getElement(options.insertInto)\n\n\tif (!target) {\n\t\tthrow new Error(\"Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.\");\n\t}\n\n\tvar lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];\n\n\tif (options.insertAt === \"top\") {\n\t\tif (!lastStyleElementInsertedAtTop) {\n\t\t\ttarget.insertBefore(style, target.firstChild);\n\t\t} else if (lastStyleElementInsertedAtTop.nextSibling) {\n\t\t\ttarget.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);\n\t\t} else {\n\t\t\ttarget.appendChild(style);\n\t\t}\n\t\tstylesInsertedAtTop.push(style);\n\t} else if (options.insertAt === \"bottom\") {\n\t\ttarget.appendChild(style);\n\t} else {\n\t\tthrow new Error(\"Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.\");\n\t}\n}\n\nfunction removeStyleElement (style) {\n\tif (style.parentNode === null) return false;\n\tstyle.parentNode.removeChild(style);\n\n\tvar idx = stylesInsertedAtTop.indexOf(style);\n\tif(idx >= 0) {\n\t\tstylesInsertedAtTop.splice(idx, 1);\n\t}\n}\n\nfunction createStyleElement (options) {\n\tvar style = document.createElement(\"style\");\n\n\toptions.attrs.type = \"text/css\";\n\n\taddAttrs(style, options.attrs);\n\tinsertStyleElement(options, style);\n\n\treturn style;\n}\n\nfunction createLinkElement (options) {\n\tvar link = document.createElement(\"link\");\n\n\toptions.attrs.type = \"text/css\";\n\toptions.attrs.rel = \"stylesheet\";\n\n\taddAttrs(link, options.attrs);\n\tinsertStyleElement(options, link);\n\n\treturn link;\n}\n\nfunction addAttrs (el, attrs) {\n\tObject.keys(attrs).forEach(function (key) {\n\t\tel.setAttribute(key, attrs[key]);\n\t});\n}\n\nfunction addStyle (obj, options) {\n\tvar style, update, remove, result;\n\n\t// If a transform function was defined, run it on the css\n\tif (options.transform && obj.css) {\n\t    result = options.transform(obj.css);\n\n\t    if (result) {\n\t    \t// If transform returns a value, use that instead of the original css.\n\t    \t// This allows running runtime transformations on the css.\n\t    \tobj.css = result;\n\t    } else {\n\t    \t// If the transform function returns a falsy value, don't add this css.\n\t    \t// This allows conditional loading of css\n\t    \treturn function() {\n\t    \t\t// noop\n\t    \t};\n\t    }\n\t}\n\n\tif (options.singleton) {\n\t\tvar styleIndex = singletonCounter++;\n\n\t\tstyle = singleton || (singleton = createStyleElement(options));\n\n\t\tupdate = applyToSingletonTag.bind(null, style, styleIndex, false);\n\t\tremove = applyToSingletonTag.bind(null, style, styleIndex, true);\n\n\t} else if (\n\t\tobj.sourceMap &&\n\t\ttypeof URL === \"function\" &&\n\t\ttypeof URL.createObjectURL === \"function\" &&\n\t\ttypeof URL.revokeObjectURL === \"function\" &&\n\t\ttypeof Blob === \"function\" &&\n\t\ttypeof btoa === \"function\"\n\t) {\n\t\tstyle = createLinkElement(options);\n\t\tupdate = updateLink.bind(null, style, options);\n\t\tremove = function () {\n\t\t\tremoveStyleElement(style);\n\n\t\t\tif(style.href) URL.revokeObjectURL(style.href);\n\t\t};\n\t} else {\n\t\tstyle = createStyleElement(options);\n\t\tupdate = applyToTag.bind(null, style);\n\t\tremove = function () {\n\t\t\tremoveStyleElement(style);\n\t\t};\n\t}\n\n\tupdate(obj);\n\n\treturn function updateStyle (newObj) {\n\t\tif (newObj) {\n\t\t\tif (\n\t\t\t\tnewObj.css === obj.css &&\n\t\t\t\tnewObj.media === obj.media &&\n\t\t\t\tnewObj.sourceMap === obj.sourceMap\n\t\t\t) {\n\t\t\t\treturn;\n\t\t\t}\n\n\t\t\tupdate(obj = newObj);\n\t\t} else {\n\t\t\tremove();\n\t\t}\n\t};\n}\n\nvar replaceText = (function () {\n\tvar textStore = [];\n\n\treturn function (index, replacement) {\n\t\ttextStore[index] = replacement;\n\n\t\treturn textStore.filter(Boolean).join('\\n');\n\t};\n})();\n\nfunction applyToSingletonTag (style, index, remove, obj) {\n\tvar css = remove ? \"\" : obj.css;\n\n\tif (style.styleSheet) {\n\t\tstyle.styleSheet.cssText = replaceText(index, css);\n\t} else {\n\t\tvar cssNode = document.createTextNode(css);\n\t\tvar childNodes = style.childNodes;\n\n\t\tif (childNodes[index]) style.removeChild(childNodes[index]);\n\n\t\tif (childNodes.length) {\n\t\t\tstyle.insertBefore(cssNode, childNodes[index]);\n\t\t} else {\n\t\t\tstyle.appendChild(cssNode);\n\t\t}\n\t}\n}\n\nfunction applyToTag (style, obj) {\n\tvar css = obj.css;\n\tvar media = obj.media;\n\n\tif(media) {\n\t\tstyle.setAttribute(\"media\", media)\n\t}\n\n\tif(style.styleSheet) {\n\t\tstyle.styleSheet.cssText = css;\n\t} else {\n\t\twhile(style.firstChild) {\n\t\t\tstyle.removeChild(style.firstChild);\n\t\t}\n\n\t\tstyle.appendChild(document.createTextNode(css));\n\t}\n}\n\nfunction updateLink (link, options, obj) {\n\tvar css = obj.css;\n\tvar sourceMap = obj.sourceMap;\n\n\t/*\n\t\tIf convertToAbsoluteUrls isn't defined, but sourcemaps are enabled\n\t\tand there is no publicPath defined then lets turn convertToAbsoluteUrls\n\t\ton by default.  Otherwise default to the convertToAbsoluteUrls option\n\t\tdirectly\n\t*/\n\tvar autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;\n\n\tif (options.convertToAbsoluteUrls || autoFixUrls) {\n\t\tcss = fixUrls(css);\n\t}\n\n\tif (sourceMap) {\n\t\t// http://stackoverflow.com/a/26603875\n\t\tcss += \"\\n/*# sourceMappingURL=data:application/json;base64,\" + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + \" */\";\n\t}\n\n\tvar blob = new Blob([css], { type: \"text/css\" });\n\n\tvar oldSrc = link.href;\n\n\tlink.href = URL.createObjectURL(blob);\n\n\tif(oldSrc) URL.revokeObjectURL(oldSrc);\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL25vZGVfbW9kdWxlcy9zdHlsZS1sb2FkZXIvbGliL2FkZFN0eWxlcy5qcz8zMTMyIl0sInNvdXJjZXNDb250ZW50IjpbIi8qXG5cdE1JVCBMaWNlbnNlIGh0dHA6Ly93d3cub3BlbnNvdXJjZS5vcmcvbGljZW5zZXMvbWl0LWxpY2Vuc2UucGhwXG5cdEF1dGhvciBUb2JpYXMgS29wcGVycyBAc29rcmFcbiovXG5cbnZhciBzdHlsZXNJbkRvbSA9IHt9O1xuXG52YXJcdG1lbW9pemUgPSBmdW5jdGlvbiAoZm4pIHtcblx0dmFyIG1lbW87XG5cblx0cmV0dXJuIGZ1bmN0aW9uICgpIHtcblx0XHRpZiAodHlwZW9mIG1lbW8gPT09IFwidW5kZWZpbmVkXCIpIG1lbW8gPSBmbi5hcHBseSh0aGlzLCBhcmd1bWVudHMpO1xuXHRcdHJldHVybiBtZW1vO1xuXHR9O1xufTtcblxudmFyIGlzT2xkSUUgPSBtZW1vaXplKGZ1bmN0aW9uICgpIHtcblx0Ly8gVGVzdCBmb3IgSUUgPD0gOSBhcyBwcm9wb3NlZCBieSBCcm93c2VyaGFja3Ncblx0Ly8gQHNlZSBodHRwOi8vYnJvd3NlcmhhY2tzLmNvbS8jaGFjay1lNzFkODY5MmY2NTMzNDE3M2ZlZTcxNWMyMjJjYjgwNVxuXHQvLyBUZXN0cyBmb3IgZXhpc3RlbmNlIG9mIHN0YW5kYXJkIGdsb2JhbHMgaXMgdG8gYWxsb3cgc3R5bGUtbG9hZGVyXG5cdC8vIHRvIG9wZXJhdGUgY29ycmVjdGx5IGludG8gbm9uLXN0YW5kYXJkIGVudmlyb25tZW50c1xuXHQvLyBAc2VlIGh0dHBzOi8vZ2l0aHViLmNvbS93ZWJwYWNrLWNvbnRyaWIvc3R5bGUtbG9hZGVyL2lzc3Vlcy8xNzdcblx0cmV0dXJuIHdpbmRvdyAmJiBkb2N1bWVudCAmJiBkb2N1bWVudC5hbGwgJiYgIXdpbmRvdy5hdG9iO1xufSk7XG5cbnZhciBnZXRFbGVtZW50ID0gKGZ1bmN0aW9uIChmbikge1xuXHR2YXIgbWVtbyA9IHt9O1xuXG5cdHJldHVybiBmdW5jdGlvbihzZWxlY3Rvcikge1xuXHRcdGlmICh0eXBlb2YgbWVtb1tzZWxlY3Rvcl0gPT09IFwidW5kZWZpbmVkXCIpIHtcblx0XHRcdG1lbW9bc2VsZWN0b3JdID0gZm4uY2FsbCh0aGlzLCBzZWxlY3Rvcik7XG5cdFx0fVxuXG5cdFx0cmV0dXJuIG1lbW9bc2VsZWN0b3JdXG5cdH07XG59KShmdW5jdGlvbiAodGFyZ2V0KSB7XG5cdHJldHVybiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKHRhcmdldClcbn0pO1xuXG52YXIgc2luZ2xldG9uID0gbnVsbDtcbnZhclx0c2luZ2xldG9uQ291bnRlciA9IDA7XG52YXJcdHN0eWxlc0luc2VydGVkQXRUb3AgPSBbXTtcblxudmFyXHRmaXhVcmxzID0gcmVxdWlyZShcIi4vdXJsc1wiKTtcblxubW9kdWxlLmV4cG9ydHMgPSBmdW5jdGlvbihsaXN0LCBvcHRpb25zKSB7XG5cdGlmICh0eXBlb2YgREVCVUcgIT09IFwidW5kZWZpbmVkXCIgJiYgREVCVUcpIHtcblx0XHRpZiAodHlwZW9mIGRvY3VtZW50ICE9PSBcIm9iamVjdFwiKSB0aHJvdyBuZXcgRXJyb3IoXCJUaGUgc3R5bGUtbG9hZGVyIGNhbm5vdCBiZSB1c2VkIGluIGEgbm9uLWJyb3dzZXIgZW52aXJvbm1lbnRcIik7XG5cdH1cblxuXHRvcHRpb25zID0gb3B0aW9ucyB8fCB7fTtcblxuXHRvcHRpb25zLmF0dHJzID0gdHlwZW9mIG9wdGlvbnMuYXR0cnMgPT09IFwib2JqZWN0XCIgPyBvcHRpb25zLmF0dHJzIDoge307XG5cblx0Ly8gRm9yY2Ugc2luZ2xlLXRhZyBzb2x1dGlvbiBvbiBJRTYtOSwgd2hpY2ggaGFzIGEgaGFyZCBsaW1pdCBvbiB0aGUgIyBvZiA8c3R5bGU+XG5cdC8vIHRhZ3MgaXQgd2lsbCBhbGxvdyBvbiBhIHBhZ2Vcblx0aWYgKCFvcHRpb25zLnNpbmdsZXRvbikgb3B0aW9ucy5zaW5nbGV0b24gPSBpc09sZElFKCk7XG5cblx0Ly8gQnkgZGVmYXVsdCwgYWRkIDxzdHlsZT4gdGFncyB0byB0aGUgPGhlYWQ+IGVsZW1lbnRcblx0aWYgKCFvcHRpb25zLmluc2VydEludG8pIG9wdGlvbnMuaW5zZXJ0SW50byA9IFwiaGVhZFwiO1xuXG5cdC8vIEJ5IGRlZmF1bHQsIGFkZCA8c3R5bGU+IHRhZ3MgdG8gdGhlIGJvdHRvbSBvZiB0aGUgdGFyZ2V0XG5cdGlmICghb3B0aW9ucy5pbnNlcnRBdCkgb3B0aW9ucy5pbnNlcnRBdCA9IFwiYm90dG9tXCI7XG5cblx0dmFyIHN0eWxlcyA9IGxpc3RUb1N0eWxlcyhsaXN0LCBvcHRpb25zKTtcblxuXHRhZGRTdHlsZXNUb0RvbShzdHlsZXMsIG9wdGlvbnMpO1xuXG5cdHJldHVybiBmdW5jdGlvbiB1cGRhdGUgKG5ld0xpc3QpIHtcblx0XHR2YXIgbWF5UmVtb3ZlID0gW107XG5cblx0XHRmb3IgKHZhciBpID0gMDsgaSA8IHN0eWxlcy5sZW5ndGg7IGkrKykge1xuXHRcdFx0dmFyIGl0ZW0gPSBzdHlsZXNbaV07XG5cdFx0XHR2YXIgZG9tU3R5bGUgPSBzdHlsZXNJbkRvbVtpdGVtLmlkXTtcblxuXHRcdFx0ZG9tU3R5bGUucmVmcy0tO1xuXHRcdFx0bWF5UmVtb3ZlLnB1c2goZG9tU3R5bGUpO1xuXHRcdH1cblxuXHRcdGlmKG5ld0xpc3QpIHtcblx0XHRcdHZhciBuZXdTdHlsZXMgPSBsaXN0VG9TdHlsZXMobmV3TGlzdCwgb3B0aW9ucyk7XG5cdFx0XHRhZGRTdHlsZXNUb0RvbShuZXdTdHlsZXMsIG9wdGlvbnMpO1xuXHRcdH1cblxuXHRcdGZvciAodmFyIGkgPSAwOyBpIDwgbWF5UmVtb3ZlLmxlbmd0aDsgaSsrKSB7XG5cdFx0XHR2YXIgZG9tU3R5bGUgPSBtYXlSZW1vdmVbaV07XG5cblx0XHRcdGlmKGRvbVN0eWxlLnJlZnMgPT09IDApIHtcblx0XHRcdFx0Zm9yICh2YXIgaiA9IDA7IGogPCBkb21TdHlsZS5wYXJ0cy5sZW5ndGg7IGorKykgZG9tU3R5bGUucGFydHNbal0oKTtcblxuXHRcdFx0XHRkZWxldGUgc3R5bGVzSW5Eb21bZG9tU3R5bGUuaWRdO1xuXHRcdFx0fVxuXHRcdH1cblx0fTtcbn07XG5cbmZ1bmN0aW9uIGFkZFN0eWxlc1RvRG9tIChzdHlsZXMsIG9wdGlvbnMpIHtcblx0Zm9yICh2YXIgaSA9IDA7IGkgPCBzdHlsZXMubGVuZ3RoOyBpKyspIHtcblx0XHR2YXIgaXRlbSA9IHN0eWxlc1tpXTtcblx0XHR2YXIgZG9tU3R5bGUgPSBzdHlsZXNJbkRvbVtpdGVtLmlkXTtcblxuXHRcdGlmKGRvbVN0eWxlKSB7XG5cdFx0XHRkb21TdHlsZS5yZWZzKys7XG5cblx0XHRcdGZvcih2YXIgaiA9IDA7IGogPCBkb21TdHlsZS5wYXJ0cy5sZW5ndGg7IGorKykge1xuXHRcdFx0XHRkb21TdHlsZS5wYXJ0c1tqXShpdGVtLnBhcnRzW2pdKTtcblx0XHRcdH1cblxuXHRcdFx0Zm9yKDsgaiA8IGl0ZW0ucGFydHMubGVuZ3RoOyBqKyspIHtcblx0XHRcdFx0ZG9tU3R5bGUucGFydHMucHVzaChhZGRTdHlsZShpdGVtLnBhcnRzW2pdLCBvcHRpb25zKSk7XG5cdFx0XHR9XG5cdFx0fSBlbHNlIHtcblx0XHRcdHZhciBwYXJ0cyA9IFtdO1xuXG5cdFx0XHRmb3IodmFyIGogPSAwOyBqIDwgaXRlbS5wYXJ0cy5sZW5ndGg7IGorKykge1xuXHRcdFx0XHRwYXJ0cy5wdXNoKGFkZFN0eWxlKGl0ZW0ucGFydHNbal0sIG9wdGlvbnMpKTtcblx0XHRcdH1cblxuXHRcdFx0c3R5bGVzSW5Eb21baXRlbS5pZF0gPSB7aWQ6IGl0ZW0uaWQsIHJlZnM6IDEsIHBhcnRzOiBwYXJ0c307XG5cdFx0fVxuXHR9XG59XG5cbmZ1bmN0aW9uIGxpc3RUb1N0eWxlcyAobGlzdCwgb3B0aW9ucykge1xuXHR2YXIgc3R5bGVzID0gW107XG5cdHZhciBuZXdTdHlsZXMgPSB7fTtcblxuXHRmb3IgKHZhciBpID0gMDsgaSA8IGxpc3QubGVuZ3RoOyBpKyspIHtcblx0XHR2YXIgaXRlbSA9IGxpc3RbaV07XG5cdFx0dmFyIGlkID0gb3B0aW9ucy5iYXNlID8gaXRlbVswXSArIG9wdGlvbnMuYmFzZSA6IGl0ZW1bMF07XG5cdFx0dmFyIGNzcyA9IGl0ZW1bMV07XG5cdFx0dmFyIG1lZGlhID0gaXRlbVsyXTtcblx0XHR2YXIgc291cmNlTWFwID0gaXRlbVszXTtcblx0XHR2YXIgcGFydCA9IHtjc3M6IGNzcywgbWVkaWE6IG1lZGlhLCBzb3VyY2VNYXA6IHNvdXJjZU1hcH07XG5cblx0XHRpZighbmV3U3R5bGVzW2lkXSkgc3R5bGVzLnB1c2gobmV3U3R5bGVzW2lkXSA9IHtpZDogaWQsIHBhcnRzOiBbcGFydF19KTtcblx0XHRlbHNlIG5ld1N0eWxlc1tpZF0ucGFydHMucHVzaChwYXJ0KTtcblx0fVxuXG5cdHJldHVybiBzdHlsZXM7XG59XG5cbmZ1bmN0aW9uIGluc2VydFN0eWxlRWxlbWVudCAob3B0aW9ucywgc3R5bGUpIHtcblx0dmFyIHRhcmdldCA9IGdldEVsZW1lbnQob3B0aW9ucy5pbnNlcnRJbnRvKVxuXG5cdGlmICghdGFyZ2V0KSB7XG5cdFx0dGhyb3cgbmV3IEVycm9yKFwiQ291bGRuJ3QgZmluZCBhIHN0eWxlIHRhcmdldC4gVGhpcyBwcm9iYWJseSBtZWFucyB0aGF0IHRoZSB2YWx1ZSBmb3IgdGhlICdpbnNlcnRJbnRvJyBwYXJhbWV0ZXIgaXMgaW52YWxpZC5cIik7XG5cdH1cblxuXHR2YXIgbGFzdFN0eWxlRWxlbWVudEluc2VydGVkQXRUb3AgPSBzdHlsZXNJbnNlcnRlZEF0VG9wW3N0eWxlc0luc2VydGVkQXRUb3AubGVuZ3RoIC0gMV07XG5cblx0aWYgKG9wdGlvbnMuaW5zZXJ0QXQgPT09IFwidG9wXCIpIHtcblx0XHRpZiAoIWxhc3RTdHlsZUVsZW1lbnRJbnNlcnRlZEF0VG9wKSB7XG5cdFx0XHR0YXJnZXQuaW5zZXJ0QmVmb3JlKHN0eWxlLCB0YXJnZXQuZmlyc3RDaGlsZCk7XG5cdFx0fSBlbHNlIGlmIChsYXN0U3R5bGVFbGVtZW50SW5zZXJ0ZWRBdFRvcC5uZXh0U2libGluZykge1xuXHRcdFx0dGFyZ2V0Lmluc2VydEJlZm9yZShzdHlsZSwgbGFzdFN0eWxlRWxlbWVudEluc2VydGVkQXRUb3AubmV4dFNpYmxpbmcpO1xuXHRcdH0gZWxzZSB7XG5cdFx0XHR0YXJnZXQuYXBwZW5kQ2hpbGQoc3R5bGUpO1xuXHRcdH1cblx0XHRzdHlsZXNJbnNlcnRlZEF0VG9wLnB1c2goc3R5bGUpO1xuXHR9IGVsc2UgaWYgKG9wdGlvbnMuaW5zZXJ0QXQgPT09IFwiYm90dG9tXCIpIHtcblx0XHR0YXJnZXQuYXBwZW5kQ2hpbGQoc3R5bGUpO1xuXHR9IGVsc2Uge1xuXHRcdHRocm93IG5ldyBFcnJvcihcIkludmFsaWQgdmFsdWUgZm9yIHBhcmFtZXRlciAnaW5zZXJ0QXQnLiBNdXN0IGJlICd0b3AnIG9yICdib3R0b20nLlwiKTtcblx0fVxufVxuXG5mdW5jdGlvbiByZW1vdmVTdHlsZUVsZW1lbnQgKHN0eWxlKSB7XG5cdGlmIChzdHlsZS5wYXJlbnROb2RlID09PSBudWxsKSByZXR1cm4gZmFsc2U7XG5cdHN0eWxlLnBhcmVudE5vZGUucmVtb3ZlQ2hpbGQoc3R5bGUpO1xuXG5cdHZhciBpZHggPSBzdHlsZXNJbnNlcnRlZEF0VG9wLmluZGV4T2Yoc3R5bGUpO1xuXHRpZihpZHggPj0gMCkge1xuXHRcdHN0eWxlc0luc2VydGVkQXRUb3Auc3BsaWNlKGlkeCwgMSk7XG5cdH1cbn1cblxuZnVuY3Rpb24gY3JlYXRlU3R5bGVFbGVtZW50IChvcHRpb25zKSB7XG5cdHZhciBzdHlsZSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJzdHlsZVwiKTtcblxuXHRvcHRpb25zLmF0dHJzLnR5cGUgPSBcInRleHQvY3NzXCI7XG5cblx0YWRkQXR0cnMoc3R5bGUsIG9wdGlvbnMuYXR0cnMpO1xuXHRpbnNlcnRTdHlsZUVsZW1lbnQob3B0aW9ucywgc3R5bGUpO1xuXG5cdHJldHVybiBzdHlsZTtcbn1cblxuZnVuY3Rpb24gY3JlYXRlTGlua0VsZW1lbnQgKG9wdGlvbnMpIHtcblx0dmFyIGxpbmsgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KFwibGlua1wiKTtcblxuXHRvcHRpb25zLmF0dHJzLnR5cGUgPSBcInRleHQvY3NzXCI7XG5cdG9wdGlvbnMuYXR0cnMucmVsID0gXCJzdHlsZXNoZWV0XCI7XG5cblx0YWRkQXR0cnMobGluaywgb3B0aW9ucy5hdHRycyk7XG5cdGluc2VydFN0eWxlRWxlbWVudChvcHRpb25zLCBsaW5rKTtcblxuXHRyZXR1cm4gbGluaztcbn1cblxuZnVuY3Rpb24gYWRkQXR0cnMgKGVsLCBhdHRycykge1xuXHRPYmplY3Qua2V5cyhhdHRycykuZm9yRWFjaChmdW5jdGlvbiAoa2V5KSB7XG5cdFx0ZWwuc2V0QXR0cmlidXRlKGtleSwgYXR0cnNba2V5XSk7XG5cdH0pO1xufVxuXG5mdW5jdGlvbiBhZGRTdHlsZSAob2JqLCBvcHRpb25zKSB7XG5cdHZhciBzdHlsZSwgdXBkYXRlLCByZW1vdmUsIHJlc3VsdDtcblxuXHQvLyBJZiBhIHRyYW5zZm9ybSBmdW5jdGlvbiB3YXMgZGVmaW5lZCwgcnVuIGl0IG9uIHRoZSBjc3Ncblx0aWYgKG9wdGlvbnMudHJhbnNmb3JtICYmIG9iai5jc3MpIHtcblx0ICAgIHJlc3VsdCA9IG9wdGlvbnMudHJhbnNmb3JtKG9iai5jc3MpO1xuXG5cdCAgICBpZiAocmVzdWx0KSB7XG5cdCAgICBcdC8vIElmIHRyYW5zZm9ybSByZXR1cm5zIGEgdmFsdWUsIHVzZSB0aGF0IGluc3RlYWQgb2YgdGhlIG9yaWdpbmFsIGNzcy5cblx0ICAgIFx0Ly8gVGhpcyBhbGxvd3MgcnVubmluZyBydW50aW1lIHRyYW5zZm9ybWF0aW9ucyBvbiB0aGUgY3NzLlxuXHQgICAgXHRvYmouY3NzID0gcmVzdWx0O1xuXHQgICAgfSBlbHNlIHtcblx0ICAgIFx0Ly8gSWYgdGhlIHRyYW5zZm9ybSBmdW5jdGlvbiByZXR1cm5zIGEgZmFsc3kgdmFsdWUsIGRvbid0IGFkZCB0aGlzIGNzcy5cblx0ICAgIFx0Ly8gVGhpcyBhbGxvd3MgY29uZGl0aW9uYWwgbG9hZGluZyBvZiBjc3Ncblx0ICAgIFx0cmV0dXJuIGZ1bmN0aW9uKCkge1xuXHQgICAgXHRcdC8vIG5vb3Bcblx0ICAgIFx0fTtcblx0ICAgIH1cblx0fVxuXG5cdGlmIChvcHRpb25zLnNpbmdsZXRvbikge1xuXHRcdHZhciBzdHlsZUluZGV4ID0gc2luZ2xldG9uQ291bnRlcisrO1xuXG5cdFx0c3R5bGUgPSBzaW5nbGV0b24gfHwgKHNpbmdsZXRvbiA9IGNyZWF0ZVN0eWxlRWxlbWVudChvcHRpb25zKSk7XG5cblx0XHR1cGRhdGUgPSBhcHBseVRvU2luZ2xldG9uVGFnLmJpbmQobnVsbCwgc3R5bGUsIHN0eWxlSW5kZXgsIGZhbHNlKTtcblx0XHRyZW1vdmUgPSBhcHBseVRvU2luZ2xldG9uVGFnLmJpbmQobnVsbCwgc3R5bGUsIHN0eWxlSW5kZXgsIHRydWUpO1xuXG5cdH0gZWxzZSBpZiAoXG5cdFx0b2JqLnNvdXJjZU1hcCAmJlxuXHRcdHR5cGVvZiBVUkwgPT09IFwiZnVuY3Rpb25cIiAmJlxuXHRcdHR5cGVvZiBVUkwuY3JlYXRlT2JqZWN0VVJMID09PSBcImZ1bmN0aW9uXCIgJiZcblx0XHR0eXBlb2YgVVJMLnJldm9rZU9iamVjdFVSTCA9PT0gXCJmdW5jdGlvblwiICYmXG5cdFx0dHlwZW9mIEJsb2IgPT09IFwiZnVuY3Rpb25cIiAmJlxuXHRcdHR5cGVvZiBidG9hID09PSBcImZ1bmN0aW9uXCJcblx0KSB7XG5cdFx0c3R5bGUgPSBjcmVhdGVMaW5rRWxlbWVudChvcHRpb25zKTtcblx0XHR1cGRhdGUgPSB1cGRhdGVMaW5rLmJpbmQobnVsbCwgc3R5bGUsIG9wdGlvbnMpO1xuXHRcdHJlbW92ZSA9IGZ1bmN0aW9uICgpIHtcblx0XHRcdHJlbW92ZVN0eWxlRWxlbWVudChzdHlsZSk7XG5cblx0XHRcdGlmKHN0eWxlLmhyZWYpIFVSTC5yZXZva2VPYmplY3RVUkwoc3R5bGUuaHJlZik7XG5cdFx0fTtcblx0fSBlbHNlIHtcblx0XHRzdHlsZSA9IGNyZWF0ZVN0eWxlRWxlbWVudChvcHRpb25zKTtcblx0XHR1cGRhdGUgPSBhcHBseVRvVGFnLmJpbmQobnVsbCwgc3R5bGUpO1xuXHRcdHJlbW92ZSA9IGZ1bmN0aW9uICgpIHtcblx0XHRcdHJlbW92ZVN0eWxlRWxlbWVudChzdHlsZSk7XG5cdFx0fTtcblx0fVxuXG5cdHVwZGF0ZShvYmopO1xuXG5cdHJldHVybiBmdW5jdGlvbiB1cGRhdGVTdHlsZSAobmV3T2JqKSB7XG5cdFx0aWYgKG5ld09iaikge1xuXHRcdFx0aWYgKFxuXHRcdFx0XHRuZXdPYmouY3NzID09PSBvYmouY3NzICYmXG5cdFx0XHRcdG5ld09iai5tZWRpYSA9PT0gb2JqLm1lZGlhICYmXG5cdFx0XHRcdG5ld09iai5zb3VyY2VNYXAgPT09IG9iai5zb3VyY2VNYXBcblx0XHRcdCkge1xuXHRcdFx0XHRyZXR1cm47XG5cdFx0XHR9XG5cblx0XHRcdHVwZGF0ZShvYmogPSBuZXdPYmopO1xuXHRcdH0gZWxzZSB7XG5cdFx0XHRyZW1vdmUoKTtcblx0XHR9XG5cdH07XG59XG5cbnZhciByZXBsYWNlVGV4dCA9IChmdW5jdGlvbiAoKSB7XG5cdHZhciB0ZXh0U3RvcmUgPSBbXTtcblxuXHRyZXR1cm4gZnVuY3Rpb24gKGluZGV4LCByZXBsYWNlbWVudCkge1xuXHRcdHRleHRTdG9yZVtpbmRleF0gPSByZXBsYWNlbWVudDtcblxuXHRcdHJldHVybiB0ZXh0U3RvcmUuZmlsdGVyKEJvb2xlYW4pLmpvaW4oJ1xcbicpO1xuXHR9O1xufSkoKTtcblxuZnVuY3Rpb24gYXBwbHlUb1NpbmdsZXRvblRhZyAoc3R5bGUsIGluZGV4LCByZW1vdmUsIG9iaikge1xuXHR2YXIgY3NzID0gcmVtb3ZlID8gXCJcIiA6IG9iai5jc3M7XG5cblx0aWYgKHN0eWxlLnN0eWxlU2hlZXQpIHtcblx0XHRzdHlsZS5zdHlsZVNoZWV0LmNzc1RleHQgPSByZXBsYWNlVGV4dChpbmRleCwgY3NzKTtcblx0fSBlbHNlIHtcblx0XHR2YXIgY3NzTm9kZSA9IGRvY3VtZW50LmNyZWF0ZVRleHROb2RlKGNzcyk7XG5cdFx0dmFyIGNoaWxkTm9kZXMgPSBzdHlsZS5jaGlsZE5vZGVzO1xuXG5cdFx0aWYgKGNoaWxkTm9kZXNbaW5kZXhdKSBzdHlsZS5yZW1vdmVDaGlsZChjaGlsZE5vZGVzW2luZGV4XSk7XG5cblx0XHRpZiAoY2hpbGROb2Rlcy5sZW5ndGgpIHtcblx0XHRcdHN0eWxlLmluc2VydEJlZm9yZShjc3NOb2RlLCBjaGlsZE5vZGVzW2luZGV4XSk7XG5cdFx0fSBlbHNlIHtcblx0XHRcdHN0eWxlLmFwcGVuZENoaWxkKGNzc05vZGUpO1xuXHRcdH1cblx0fVxufVxuXG5mdW5jdGlvbiBhcHBseVRvVGFnIChzdHlsZSwgb2JqKSB7XG5cdHZhciBjc3MgPSBvYmouY3NzO1xuXHR2YXIgbWVkaWEgPSBvYmoubWVkaWE7XG5cblx0aWYobWVkaWEpIHtcblx0XHRzdHlsZS5zZXRBdHRyaWJ1dGUoXCJtZWRpYVwiLCBtZWRpYSlcblx0fVxuXG5cdGlmKHN0eWxlLnN0eWxlU2hlZXQpIHtcblx0XHRzdHlsZS5zdHlsZVNoZWV0LmNzc1RleHQgPSBjc3M7XG5cdH0gZWxzZSB7XG5cdFx0d2hpbGUoc3R5bGUuZmlyc3RDaGlsZCkge1xuXHRcdFx0c3R5bGUucmVtb3ZlQ2hpbGQoc3R5bGUuZmlyc3RDaGlsZCk7XG5cdFx0fVxuXG5cdFx0c3R5bGUuYXBwZW5kQ2hpbGQoZG9jdW1lbnQuY3JlYXRlVGV4dE5vZGUoY3NzKSk7XG5cdH1cbn1cblxuZnVuY3Rpb24gdXBkYXRlTGluayAobGluaywgb3B0aW9ucywgb2JqKSB7XG5cdHZhciBjc3MgPSBvYmouY3NzO1xuXHR2YXIgc291cmNlTWFwID0gb2JqLnNvdXJjZU1hcDtcblxuXHQvKlxuXHRcdElmIGNvbnZlcnRUb0Fic29sdXRlVXJscyBpc24ndCBkZWZpbmVkLCBidXQgc291cmNlbWFwcyBhcmUgZW5hYmxlZFxuXHRcdGFuZCB0aGVyZSBpcyBubyBwdWJsaWNQYXRoIGRlZmluZWQgdGhlbiBsZXRzIHR1cm4gY29udmVydFRvQWJzb2x1dGVVcmxzXG5cdFx0b24gYnkgZGVmYXVsdC4gIE90aGVyd2lzZSBkZWZhdWx0IHRvIHRoZSBjb252ZXJ0VG9BYnNvbHV0ZVVybHMgb3B0aW9uXG5cdFx0ZGlyZWN0bHlcblx0Ki9cblx0dmFyIGF1dG9GaXhVcmxzID0gb3B0aW9ucy5jb252ZXJ0VG9BYnNvbHV0ZVVybHMgPT09IHVuZGVmaW5lZCAmJiBzb3VyY2VNYXA7XG5cblx0aWYgKG9wdGlvbnMuY29udmVydFRvQWJzb2x1dGVVcmxzIHx8IGF1dG9GaXhVcmxzKSB7XG5cdFx0Y3NzID0gZml4VXJscyhjc3MpO1xuXHR9XG5cblx0aWYgKHNvdXJjZU1hcCkge1xuXHRcdC8vIGh0dHA6Ly9zdGFja292ZXJmbG93LmNvbS9hLzI2NjAzODc1XG5cdFx0Y3NzICs9IFwiXFxuLyojIHNvdXJjZU1hcHBpbmdVUkw9ZGF0YTphcHBsaWNhdGlvbi9qc29uO2Jhc2U2NCxcIiArIGJ0b2EodW5lc2NhcGUoZW5jb2RlVVJJQ29tcG9uZW50KEpTT04uc3RyaW5naWZ5KHNvdXJjZU1hcCkpKSkgKyBcIiAqL1wiO1xuXHR9XG5cblx0dmFyIGJsb2IgPSBuZXcgQmxvYihbY3NzXSwgeyB0eXBlOiBcInRleHQvY3NzXCIgfSk7XG5cblx0dmFyIG9sZFNyYyA9IGxpbmsuaHJlZjtcblxuXHRsaW5rLmhyZWYgPSBVUkwuY3JlYXRlT2JqZWN0VVJMKGJsb2IpO1xuXG5cdGlmKG9sZFNyYykgVVJMLnJldm9rZU9iamVjdFVSTChvbGRTcmMpO1xufVxuXG5cblxuLy8vLy8vLy8vLy8vLy8vLy8vXG4vLyBXRUJQQUNLIEZPT1RFUlxuLy8gLi9ub2RlX21vZHVsZXMvc3R5bGUtbG9hZGVyL2xpYi9hZGRTdHlsZXMuanNcbi8vIG1vZHVsZSBpZCA9IDVcbi8vIG1vZHVsZSBjaHVua3MgPSAwIl0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOyIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///5\n");
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+var stylesInDom = {};
+
+var	memoize = function (fn) {
+	var memo;
+
+	return function () {
+		if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+		return memo;
+	};
+};
+
+var isOldIE = memoize(function () {
+	// Test for IE <= 9 as proposed by Browserhacks
+	// @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+	// Tests for existence of standard globals is to allow style-loader
+	// to operate correctly into non-standard environments
+	// @see https://github.com/webpack-contrib/style-loader/issues/177
+	return window && document && document.all && !window.atob;
+});
+
+var getElement = (function (fn) {
+	var memo = {};
+
+	return function(selector) {
+		if (typeof memo[selector] === "undefined") {
+			memo[selector] = fn.call(this, selector);
+		}
+
+		return memo[selector]
+	};
+})(function (target) {
+	return document.querySelector(target)
+});
+
+var singleton = null;
+var	singletonCounter = 0;
+var	stylesInsertedAtTop = [];
+
+var	fixUrls = __webpack_require__(6);
+
+module.exports = function(list, options) {
+	if (typeof DEBUG !== "undefined" && DEBUG) {
+		if (typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+	}
+
+	options = options || {};
+
+	options.attrs = typeof options.attrs === "object" ? options.attrs : {};
+
+	// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+	// tags it will allow on a page
+	if (!options.singleton) options.singleton = isOldIE();
+
+	// By default, add <style> tags to the <head> element
+	if (!options.insertInto) options.insertInto = "head";
+
+	// By default, add <style> tags to the bottom of the target
+	if (!options.insertAt) options.insertAt = "bottom";
+
+	var styles = listToStyles(list, options);
+
+	addStylesToDom(styles, options);
+
+	return function update (newList) {
+		var mayRemove = [];
+
+		for (var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+
+			domStyle.refs--;
+			mayRemove.push(domStyle);
+		}
+
+		if(newList) {
+			var newStyles = listToStyles(newList, options);
+			addStylesToDom(newStyles, options);
+		}
+
+		for (var i = 0; i < mayRemove.length; i++) {
+			var domStyle = mayRemove[i];
+
+			if(domStyle.refs === 0) {
+				for (var j = 0; j < domStyle.parts.length; j++) domStyle.parts[j]();
+
+				delete stylesInDom[domStyle.id];
+			}
+		}
+	};
+};
+
+function addStylesToDom (styles, options) {
+	for (var i = 0; i < styles.length; i++) {
+		var item = styles[i];
+		var domStyle = stylesInDom[item.id];
+
+		if(domStyle) {
+			domStyle.refs++;
+
+			for(var j = 0; j < domStyle.parts.length; j++) {
+				domStyle.parts[j](item.parts[j]);
+			}
+
+			for(; j < item.parts.length; j++) {
+				domStyle.parts.push(addStyle(item.parts[j], options));
+			}
+		} else {
+			var parts = [];
+
+			for(var j = 0; j < item.parts.length; j++) {
+				parts.push(addStyle(item.parts[j], options));
+			}
+
+			stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+		}
+	}
+}
+
+function listToStyles (list, options) {
+	var styles = [];
+	var newStyles = {};
+
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var id = options.base ? item[0] + options.base : item[0];
+		var css = item[1];
+		var media = item[2];
+		var sourceMap = item[3];
+		var part = {css: css, media: media, sourceMap: sourceMap};
+
+		if(!newStyles[id]) styles.push(newStyles[id] = {id: id, parts: [part]});
+		else newStyles[id].parts.push(part);
+	}
+
+	return styles;
+}
+
+function insertStyleElement (options, style) {
+	var target = getElement(options.insertInto)
+
+	if (!target) {
+		throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");
+	}
+
+	var lastStyleElementInsertedAtTop = stylesInsertedAtTop[stylesInsertedAtTop.length - 1];
+
+	if (options.insertAt === "top") {
+		if (!lastStyleElementInsertedAtTop) {
+			target.insertBefore(style, target.firstChild);
+		} else if (lastStyleElementInsertedAtTop.nextSibling) {
+			target.insertBefore(style, lastStyleElementInsertedAtTop.nextSibling);
+		} else {
+			target.appendChild(style);
+		}
+		stylesInsertedAtTop.push(style);
+	} else if (options.insertAt === "bottom") {
+		target.appendChild(style);
+	} else {
+		throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+	}
+}
+
+function removeStyleElement (style) {
+	if (style.parentNode === null) return false;
+	style.parentNode.removeChild(style);
+
+	var idx = stylesInsertedAtTop.indexOf(style);
+	if(idx >= 0) {
+		stylesInsertedAtTop.splice(idx, 1);
+	}
+}
+
+function createStyleElement (options) {
+	var style = document.createElement("style");
+
+	options.attrs.type = "text/css";
+
+	addAttrs(style, options.attrs);
+	insertStyleElement(options, style);
+
+	return style;
+}
+
+function createLinkElement (options) {
+	var link = document.createElement("link");
+
+	options.attrs.type = "text/css";
+	options.attrs.rel = "stylesheet";
+
+	addAttrs(link, options.attrs);
+	insertStyleElement(options, link);
+
+	return link;
+}
+
+function addAttrs (el, attrs) {
+	Object.keys(attrs).forEach(function (key) {
+		el.setAttribute(key, attrs[key]);
+	});
+}
+
+function addStyle (obj, options) {
+	var style, update, remove, result;
+
+	// If a transform function was defined, run it on the css
+	if (options.transform && obj.css) {
+	    result = options.transform(obj.css);
+
+	    if (result) {
+	    	// If transform returns a value, use that instead of the original css.
+	    	// This allows running runtime transformations on the css.
+	    	obj.css = result;
+	    } else {
+	    	// If the transform function returns a falsy value, don't add this css.
+	    	// This allows conditional loading of css
+	    	return function() {
+	    		// noop
+	    	};
+	    }
+	}
+
+	if (options.singleton) {
+		var styleIndex = singletonCounter++;
+
+		style = singleton || (singleton = createStyleElement(options));
+
+		update = applyToSingletonTag.bind(null, style, styleIndex, false);
+		remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+
+	} else if (
+		obj.sourceMap &&
+		typeof URL === "function" &&
+		typeof URL.createObjectURL === "function" &&
+		typeof URL.revokeObjectURL === "function" &&
+		typeof Blob === "function" &&
+		typeof btoa === "function"
+	) {
+		style = createLinkElement(options);
+		update = updateLink.bind(null, style, options);
+		remove = function () {
+			removeStyleElement(style);
+
+			if(style.href) URL.revokeObjectURL(style.href);
+		};
+	} else {
+		style = createStyleElement(options);
+		update = applyToTag.bind(null, style);
+		remove = function () {
+			removeStyleElement(style);
+		};
+	}
+
+	update(obj);
+
+	return function updateStyle (newObj) {
+		if (newObj) {
+			if (
+				newObj.css === obj.css &&
+				newObj.media === obj.media &&
+				newObj.sourceMap === obj.sourceMap
+			) {
+				return;
+			}
+
+			update(obj = newObj);
+		} else {
+			remove();
+		}
+	};
+}
+
+var replaceText = (function () {
+	var textStore = [];
+
+	return function (index, replacement) {
+		textStore[index] = replacement;
+
+		return textStore.filter(Boolean).join('\n');
+	};
+})();
+
+function applyToSingletonTag (style, index, remove, obj) {
+	var css = remove ? "" : obj.css;
+
+	if (style.styleSheet) {
+		style.styleSheet.cssText = replaceText(index, css);
+	} else {
+		var cssNode = document.createTextNode(css);
+		var childNodes = style.childNodes;
+
+		if (childNodes[index]) style.removeChild(childNodes[index]);
+
+		if (childNodes.length) {
+			style.insertBefore(cssNode, childNodes[index]);
+		} else {
+			style.appendChild(cssNode);
+		}
+	}
+}
+
+function applyToTag (style, obj) {
+	var css = obj.css;
+	var media = obj.media;
+
+	if(media) {
+		style.setAttribute("media", media)
+	}
+
+	if(style.styleSheet) {
+		style.styleSheet.cssText = css;
+	} else {
+		while(style.firstChild) {
+			style.removeChild(style.firstChild);
+		}
+
+		style.appendChild(document.createTextNode(css));
+	}
+}
+
+function updateLink (link, options, obj) {
+	var css = obj.css;
+	var sourceMap = obj.sourceMap;
+
+	/*
+		If convertToAbsoluteUrls isn't defined, but sourcemaps are enabled
+		and there is no publicPath defined then lets turn convertToAbsoluteUrls
+		on by default.  Otherwise default to the convertToAbsoluteUrls option
+		directly
+	*/
+	var autoFixUrls = options.convertToAbsoluteUrls === undefined && sourceMap;
+
+	if (options.convertToAbsoluteUrls || autoFixUrls) {
+		css = fixUrls(css);
+	}
+
+	if (sourceMap) {
+		// http://stackoverflow.com/a/26603875
+		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+	}
+
+	var blob = new Blob([css], { type: "text/css" });
+
+	var oldSrc = link.href;
+
+	link.href = URL.createObjectURL(blob);
+
+	if(oldSrc) URL.revokeObjectURL(oldSrc);
+}
+
 
 /***/ }),
 /* 6 */
-/*!***********************************************!*\
-  !*** ./node_modules/style-loader/lib/urls.js ***!
-  \***********************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\n/**\n * When source maps are enabled, `style-loader` uses a link element with a data-uri to\n * embed the css on the page. This breaks all relative urls because now they are relative to a\n * bundle instead of the current page.\n *\n * One solution is to only use full urls, but that may be impossible.\n *\n * Instead, this function \"fixes\" the relative urls to be absolute according to the current page location.\n *\n * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.\n *\n */\n\nmodule.exports = function (css) {\n\t// get current location\n\tvar location = typeof window !== \"undefined\" && window.location;\n\n\tif (!location) {\n\t\tthrow new Error(\"fixUrls requires window.location\");\n\t}\n\n\t// blank or null?\n\tif (!css || typeof css !== \"string\") {\n\t\treturn css;\n\t}\n\n\tvar baseUrl = location.protocol + \"//\" + location.host;\n\tvar currentDir = baseUrl + location.pathname.replace(/\\/[^\\/]*$/, \"/\");\n\n\t// convert each url(...)\n\t/*\n This regular expression is just a way to recursively match brackets within\n a string.\n \t /url\\s*\\(  = Match on the word \"url\" with any whitespace after it and then a parens\n    (  = Start a capturing group\n      (?:  = Start a non-capturing group\n          [^)(]  = Match anything that isn't a parentheses\n          |  = OR\n          \\(  = Match a start parentheses\n              (?:  = Start another non-capturing groups\n                  [^)(]+  = Match anything that isn't a parentheses\n                  |  = OR\n                  \\(  = Match a start parentheses\n                      [^)(]*  = Match anything that isn't a parentheses\n                  \\)  = Match a end parentheses\n              )  = End Group\n              *\\) = Match anything and then a close parens\n          )  = Close non-capturing group\n          *  = Match anything\n       )  = Close capturing group\n  \\)  = Match a close parens\n \t /gi  = Get all matches, not the first.  Be case insensitive.\n  */\n\tvar fixedCss = css.replace(/url\\s*\\(((?:[^)(]|\\((?:[^)(]+|\\([^)(]*\\))*\\))*)\\)/gi, function (fullMatch, origUrl) {\n\t\t// strip quotes (if they exist)\n\t\tvar unquotedOrigUrl = origUrl.trim().replace(/^\"(.*)\"$/, function (o, $1) {\n\t\t\treturn $1;\n\t\t}).replace(/^'(.*)'$/, function (o, $1) {\n\t\t\treturn $1;\n\t\t});\n\n\t\t// already a full url? no change\n\t\tif (/^(#|data:|http:\\/\\/|https:\\/\\/|file:\\/\\/\\/)/i.test(unquotedOrigUrl)) {\n\t\t\treturn fullMatch;\n\t\t}\n\n\t\t// convert the url to a full url\n\t\tvar newUrl;\n\n\t\tif (unquotedOrigUrl.indexOf(\"//\") === 0) {\n\t\t\t//TODO: should we add protocol?\n\t\t\tnewUrl = unquotedOrigUrl;\n\t\t} else if (unquotedOrigUrl.indexOf(\"/\") === 0) {\n\t\t\t// path should be relative to the base url\n\t\t\tnewUrl = baseUrl + unquotedOrigUrl; // already starts with '/'\n\t\t} else {\n\t\t\t// path should be relative to current directory\n\t\t\tnewUrl = currentDir + unquotedOrigUrl.replace(/^\\.\\//, \"\"); // Strip leading './'\n\t\t}\n\n\t\t// send back the fixed url(...)\n\t\treturn \"url(\" + JSON.stringify(newUrl) + \")\";\n\t});\n\n\t// send back the fixed css\n\treturn fixedCss;\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNi5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9ub2RlX21vZHVsZXMvc3R5bGUtbG9hZGVyL2xpYi91cmxzLmpzPzQ4MzUiXSwic291cmNlc0NvbnRlbnQiOlsiXG4vKipcbiAqIFdoZW4gc291cmNlIG1hcHMgYXJlIGVuYWJsZWQsIGBzdHlsZS1sb2FkZXJgIHVzZXMgYSBsaW5rIGVsZW1lbnQgd2l0aCBhIGRhdGEtdXJpIHRvXG4gKiBlbWJlZCB0aGUgY3NzIG9uIHRoZSBwYWdlLiBUaGlzIGJyZWFrcyBhbGwgcmVsYXRpdmUgdXJscyBiZWNhdXNlIG5vdyB0aGV5IGFyZSByZWxhdGl2ZSB0byBhXG4gKiBidW5kbGUgaW5zdGVhZCBvZiB0aGUgY3VycmVudCBwYWdlLlxuICpcbiAqIE9uZSBzb2x1dGlvbiBpcyB0byBvbmx5IHVzZSBmdWxsIHVybHMsIGJ1dCB0aGF0IG1heSBiZSBpbXBvc3NpYmxlLlxuICpcbiAqIEluc3RlYWQsIHRoaXMgZnVuY3Rpb24gXCJmaXhlc1wiIHRoZSByZWxhdGl2ZSB1cmxzIHRvIGJlIGFic29sdXRlIGFjY29yZGluZyB0byB0aGUgY3VycmVudCBwYWdlIGxvY2F0aW9uLlxuICpcbiAqIEEgcnVkaW1lbnRhcnkgdGVzdCBzdWl0ZSBpcyBsb2NhdGVkIGF0IGB0ZXN0L2ZpeFVybHMuanNgIGFuZCBjYW4gYmUgcnVuIHZpYSB0aGUgYG5wbSB0ZXN0YCBjb21tYW5kLlxuICpcbiAqL1xuXG5tb2R1bGUuZXhwb3J0cyA9IGZ1bmN0aW9uIChjc3MpIHtcbiAgLy8gZ2V0IGN1cnJlbnQgbG9jYXRpb25cbiAgdmFyIGxvY2F0aW9uID0gdHlwZW9mIHdpbmRvdyAhPT0gXCJ1bmRlZmluZWRcIiAmJiB3aW5kb3cubG9jYXRpb247XG5cbiAgaWYgKCFsb2NhdGlvbikge1xuICAgIHRocm93IG5ldyBFcnJvcihcImZpeFVybHMgcmVxdWlyZXMgd2luZG93LmxvY2F0aW9uXCIpO1xuICB9XG5cblx0Ly8gYmxhbmsgb3IgbnVsbD9cblx0aWYgKCFjc3MgfHwgdHlwZW9mIGNzcyAhPT0gXCJzdHJpbmdcIikge1xuXHQgIHJldHVybiBjc3M7XG4gIH1cblxuICB2YXIgYmFzZVVybCA9IGxvY2F0aW9uLnByb3RvY29sICsgXCIvL1wiICsgbG9jYXRpb24uaG9zdDtcbiAgdmFyIGN1cnJlbnREaXIgPSBiYXNlVXJsICsgbG9jYXRpb24ucGF0aG5hbWUucmVwbGFjZSgvXFwvW15cXC9dKiQvLCBcIi9cIik7XG5cblx0Ly8gY29udmVydCBlYWNoIHVybCguLi4pXG5cdC8qXG5cdFRoaXMgcmVndWxhciBleHByZXNzaW9uIGlzIGp1c3QgYSB3YXkgdG8gcmVjdXJzaXZlbHkgbWF0Y2ggYnJhY2tldHMgd2l0aGluXG5cdGEgc3RyaW5nLlxuXG5cdCAvdXJsXFxzKlxcKCAgPSBNYXRjaCBvbiB0aGUgd29yZCBcInVybFwiIHdpdGggYW55IHdoaXRlc3BhY2UgYWZ0ZXIgaXQgYW5kIHRoZW4gYSBwYXJlbnNcblx0ICAgKCAgPSBTdGFydCBhIGNhcHR1cmluZyBncm91cFxuXHQgICAgICg/OiAgPSBTdGFydCBhIG5vbi1jYXB0dXJpbmcgZ3JvdXBcblx0ICAgICAgICAgW14pKF0gID0gTWF0Y2ggYW55dGhpbmcgdGhhdCBpc24ndCBhIHBhcmVudGhlc2VzXG5cdCAgICAgICAgIHwgID0gT1Jcblx0ICAgICAgICAgXFwoICA9IE1hdGNoIGEgc3RhcnQgcGFyZW50aGVzZXNcblx0ICAgICAgICAgICAgICg/OiAgPSBTdGFydCBhbm90aGVyIG5vbi1jYXB0dXJpbmcgZ3JvdXBzXG5cdCAgICAgICAgICAgICAgICAgW14pKF0rICA9IE1hdGNoIGFueXRoaW5nIHRoYXQgaXNuJ3QgYSBwYXJlbnRoZXNlc1xuXHQgICAgICAgICAgICAgICAgIHwgID0gT1Jcblx0ICAgICAgICAgICAgICAgICBcXCggID0gTWF0Y2ggYSBzdGFydCBwYXJlbnRoZXNlc1xuXHQgICAgICAgICAgICAgICAgICAgICBbXikoXSogID0gTWF0Y2ggYW55dGhpbmcgdGhhdCBpc24ndCBhIHBhcmVudGhlc2VzXG5cdCAgICAgICAgICAgICAgICAgXFwpICA9IE1hdGNoIGEgZW5kIHBhcmVudGhlc2VzXG5cdCAgICAgICAgICAgICApICA9IEVuZCBHcm91cFxuICAgICAgICAgICAgICAqXFwpID0gTWF0Y2ggYW55dGhpbmcgYW5kIHRoZW4gYSBjbG9zZSBwYXJlbnNcbiAgICAgICAgICApICA9IENsb3NlIG5vbi1jYXB0dXJpbmcgZ3JvdXBcbiAgICAgICAgICAqICA9IE1hdGNoIGFueXRoaW5nXG4gICAgICAgKSAgPSBDbG9zZSBjYXB0dXJpbmcgZ3JvdXBcblx0IFxcKSAgPSBNYXRjaCBhIGNsb3NlIHBhcmVuc1xuXG5cdCAvZ2kgID0gR2V0IGFsbCBtYXRjaGVzLCBub3QgdGhlIGZpcnN0LiAgQmUgY2FzZSBpbnNlbnNpdGl2ZS5cblx0ICovXG5cdHZhciBmaXhlZENzcyA9IGNzcy5yZXBsYWNlKC91cmxcXHMqXFwoKCg/OlteKShdfFxcKCg/OlteKShdK3xcXChbXikoXSpcXCkpKlxcKSkqKVxcKS9naSwgZnVuY3Rpb24oZnVsbE1hdGNoLCBvcmlnVXJsKSB7XG5cdFx0Ly8gc3RyaXAgcXVvdGVzIChpZiB0aGV5IGV4aXN0KVxuXHRcdHZhciB1bnF1b3RlZE9yaWdVcmwgPSBvcmlnVXJsXG5cdFx0XHQudHJpbSgpXG5cdFx0XHQucmVwbGFjZSgvXlwiKC4qKVwiJC8sIGZ1bmN0aW9uKG8sICQxKXsgcmV0dXJuICQxOyB9KVxuXHRcdFx0LnJlcGxhY2UoL14nKC4qKSckLywgZnVuY3Rpb24obywgJDEpeyByZXR1cm4gJDE7IH0pO1xuXG5cdFx0Ly8gYWxyZWFkeSBhIGZ1bGwgdXJsPyBubyBjaGFuZ2Vcblx0XHRpZiAoL14oI3xkYXRhOnxodHRwOlxcL1xcL3xodHRwczpcXC9cXC98ZmlsZTpcXC9cXC9cXC8pL2kudGVzdCh1bnF1b3RlZE9yaWdVcmwpKSB7XG5cdFx0ICByZXR1cm4gZnVsbE1hdGNoO1xuXHRcdH1cblxuXHRcdC8vIGNvbnZlcnQgdGhlIHVybCB0byBhIGZ1bGwgdXJsXG5cdFx0dmFyIG5ld1VybDtcblxuXHRcdGlmICh1bnF1b3RlZE9yaWdVcmwuaW5kZXhPZihcIi8vXCIpID09PSAwKSB7XG5cdFx0ICBcdC8vVE9ETzogc2hvdWxkIHdlIGFkZCBwcm90b2NvbD9cblx0XHRcdG5ld1VybCA9IHVucXVvdGVkT3JpZ1VybDtcblx0XHR9IGVsc2UgaWYgKHVucXVvdGVkT3JpZ1VybC5pbmRleE9mKFwiL1wiKSA9PT0gMCkge1xuXHRcdFx0Ly8gcGF0aCBzaG91bGQgYmUgcmVsYXRpdmUgdG8gdGhlIGJhc2UgdXJsXG5cdFx0XHRuZXdVcmwgPSBiYXNlVXJsICsgdW5xdW90ZWRPcmlnVXJsOyAvLyBhbHJlYWR5IHN0YXJ0cyB3aXRoICcvJ1xuXHRcdH0gZWxzZSB7XG5cdFx0XHQvLyBwYXRoIHNob3VsZCBiZSByZWxhdGl2ZSB0byBjdXJyZW50IGRpcmVjdG9yeVxuXHRcdFx0bmV3VXJsID0gY3VycmVudERpciArIHVucXVvdGVkT3JpZ1VybC5yZXBsYWNlKC9eXFwuXFwvLywgXCJcIik7IC8vIFN0cmlwIGxlYWRpbmcgJy4vJ1xuXHRcdH1cblxuXHRcdC8vIHNlbmQgYmFjayB0aGUgZml4ZWQgdXJsKC4uLilcblx0XHRyZXR1cm4gXCJ1cmwoXCIgKyBKU09OLnN0cmluZ2lmeShuZXdVcmwpICsgXCIpXCI7XG5cdH0pO1xuXG5cdC8vIHNlbmQgYmFjayB0aGUgZml4ZWQgY3NzXG5cdHJldHVybiBmaXhlZENzcztcbn07XG5cblxuXG4vLyBXRUJQQUNLIEZPT1RFUiAvL1xuLy8gbm9kZV9tb2R1bGVzL3N0eWxlLWxvYWRlci9saWIvdXJscy5qcyJdLCJtYXBwaW5ncyI6Ijs7QUFDQTs7Ozs7Ozs7Ozs7OztBQWFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUF5QkE7QUFDQTtBQUNBO0FBRUE7QUFBQTtBQUNBO0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///6\n");
+
+
+/**
+ * When source maps are enabled, `style-loader` uses a link element with a data-uri to
+ * embed the css on the page. This breaks all relative urls because now they are relative to a
+ * bundle instead of the current page.
+ *
+ * One solution is to only use full urls, but that may be impossible.
+ *
+ * Instead, this function "fixes" the relative urls to be absolute according to the current page location.
+ *
+ * A rudimentary test suite is located at `test/fixUrls.js` and can be run via the `npm test` command.
+ *
+ */
+
+module.exports = function (css) {
+	// get current location
+	var location = typeof window !== "undefined" && window.location;
+
+	if (!location) {
+		throw new Error("fixUrls requires window.location");
+	}
+
+	// blank or null?
+	if (!css || typeof css !== "string") {
+		return css;
+	}
+
+	var baseUrl = location.protocol + "//" + location.host;
+	var currentDir = baseUrl + location.pathname.replace(/\/[^\/]*$/, "/");
+
+	// convert each url(...)
+	/*
+ This regular expression is just a way to recursively match brackets within
+ a string.
+ 	 /url\s*\(  = Match on the word "url" with any whitespace after it and then a parens
+    (  = Start a capturing group
+      (?:  = Start a non-capturing group
+          [^)(]  = Match anything that isn't a parentheses
+          |  = OR
+          \(  = Match a start parentheses
+              (?:  = Start another non-capturing groups
+                  [^)(]+  = Match anything that isn't a parentheses
+                  |  = OR
+                  \(  = Match a start parentheses
+                      [^)(]*  = Match anything that isn't a parentheses
+                  \)  = Match a end parentheses
+              )  = End Group
+              *\) = Match anything and then a close parens
+          )  = Close non-capturing group
+          *  = Match anything
+       )  = Close capturing group
+  \)  = Match a close parens
+ 	 /gi  = Get all matches, not the first.  Be case insensitive.
+  */
+	var fixedCss = css.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi, function (fullMatch, origUrl) {
+		// strip quotes (if they exist)
+		var unquotedOrigUrl = origUrl.trim().replace(/^"(.*)"$/, function (o, $1) {
+			return $1;
+		}).replace(/^'(.*)'$/, function (o, $1) {
+			return $1;
+		});
+
+		// already a full url? no change
+		if (/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/)/i.test(unquotedOrigUrl)) {
+			return fullMatch;
+		}
+
+		// convert the url to a full url
+		var newUrl;
+
+		if (unquotedOrigUrl.indexOf("//") === 0) {
+			//TODO: should we add protocol?
+			newUrl = unquotedOrigUrl;
+		} else if (unquotedOrigUrl.indexOf("/") === 0) {
+			// path should be relative to the base url
+			newUrl = baseUrl + unquotedOrigUrl; // already starts with '/'
+		} else {
+			// path should be relative to current directory
+			newUrl = currentDir + unquotedOrigUrl.replace(/^\.\//, ""); // Strip leading './'
+		}
+
+		// send back the fixed url(...)
+		return "url(" + JSON.stringify(newUrl) + ")";
+	});
+
+	// send back the fixed css
+	return fixedCss;
+};
 
 /***/ }),
 /* 7 */
-/*!******************************!*\
-  !*** ./client/js/control.js ***!
-  \******************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nmodule.exports = {\n  keyboardCodeMapping: {\n    W: 87,\n    A: 65,\n    S: 83,\n    D: 68\n  }\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9jbGllbnQvanMvY29udHJvbC5qcz8zMDc5Il0sInNvdXJjZXNDb250ZW50IjpbIm1vZHVsZS5leHBvcnRzID0ge1xuICBrZXlib2FyZENvZGVNYXBwaW5nOiB7XG4gICAgVzogODcsXG4gICAgQTogNjUsXG4gICAgUzogODMsXG4gICAgRDogNjhcbiAgfVxufVxuXG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIGNsaWVudC9qcy9jb250cm9sLmpzIl0sIm1hcHBpbmdzIjoiOztBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUpBO0FBREEiLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///7\n");
+
+
+module.exports = {
+  keyboardCodeMapping: {
+    W: 87,
+    A: 65,
+    S: 83,
+    D: 68
+  }
+};
 
 /***/ }),
 /* 8 */
-/*!****************************************!*\
-  !*** ./client/js/models/game-state.js ***!
-  \****************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nfunction _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar PlayerState = __webpack_require__(/*! ./player-state.js */ 9);\n\nmodule.exports = function () {\n  function GameState() {\n    _classCallCheck(this, GameState);\n\n    this.players = {};\n  }\n\n  /* GameState Entry model\n   id: {\n    name: string,\n    position: {x: number, y: number},\n    snapshotQueue: [playerSnapshot]\n  }\n  */\n\n  _createClass(GameState, [{\n    key: 'addNewPlayer',\n    value: function addNewPlayer(joinData) {\n      // TODO: maybe throw error if player already exists\n      var playerId = joinData.playerId;\n      var name = joinData.name;\n      var position = joinData.position;\n\n      this.players[playerId] = new PlayerState(name);\n\n      // happens when new player joins game you are already in\n      if (position) this.players[playerId].position = position;\n    }\n  }, {\n    key: 'updatePlayerPosition',\n    value: function updatePlayerPosition(playerId, position) {\n      this.players[playerId].position = position;\n    }\n  }, {\n    key: 'insertPlayerSnapshots',\n    value: function insertPlayerSnapshots(playerId, snapshots) {\n      var _players$playerId$sna;\n\n      (_players$playerId$sna = this.players[playerId].snapshotQueue).push.apply(_players$playerId$sna, _toConsumableArray(snapshots));\n    }\n\n    /**\n     * Returns an array of PlayerState\n     */\n\n  }, {\n    key: 'getPlayerState',\n    value: function getPlayerState(playerId) {\n      if (!this.players[playerId]) throw new Error('Player with id ' + playerId + ' doesn\\'t exist in game state');\n\n      return this.players[playerId];\n    }\n  }, {\n    key: 'playerStates',\n    get: function get() {\n      return Object.values(this.players);\n    }\n  }]);\n\n  return GameState;\n}();//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiOC5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9jbGllbnQvanMvbW9kZWxzL2dhbWUtc3RhdGUuanM/ODU1MiJdLCJzb3VyY2VzQ29udGVudCI6WyJjb25zdCBQbGF5ZXJTdGF0ZSA9IHJlcXVpcmUoJy4vcGxheWVyLXN0YXRlLmpzJylcblxubW9kdWxlLmV4cG9ydHMgPSBjbGFzcyBHYW1lU3RhdGUge1xuICBjb25zdHJ1Y3RvcigpIHtcbiAgICB0aGlzLnBsYXllcnMgPSB7fVxuICB9XG5cbiAgLyogR2FtZVN0YXRlIEVudHJ5IG1vZGVsXG4gICBpZDoge1xuICAgIG5hbWU6IHN0cmluZyxcbiAgICBwb3NpdGlvbjoge3g6IG51bWJlciwgeTogbnVtYmVyfSxcbiAgICBzbmFwc2hvdFF1ZXVlOiBbcGxheWVyU25hcHNob3RdXG4gIH1cbiAgKi9cblxuICBhZGROZXdQbGF5ZXIoam9pbkRhdGEpIHtcbiAgICAvLyBUT0RPOiBtYXliZSB0aHJvdyBlcnJvciBpZiBwbGF5ZXIgYWxyZWFkeSBleGlzdHNcbiAgICBjb25zdCBwbGF5ZXJJZCA9IGpvaW5EYXRhLnBsYXllcklkXG4gICAgY29uc3QgbmFtZSA9IGpvaW5EYXRhLm5hbWVcbiAgICBjb25zdCBwb3NpdGlvbiA9IGpvaW5EYXRhLnBvc2l0aW9uXG5cbiAgICB0aGlzLnBsYXllcnNbcGxheWVySWRdID0gbmV3IFBsYXllclN0YXRlKG5hbWUpXG5cbiAgICAvLyBoYXBwZW5zIHdoZW4gbmV3IHBsYXllciBqb2lucyBnYW1lIHlvdSBhcmUgYWxyZWFkeSBpblxuICAgIGlmIChwb3NpdGlvbilcbiAgICAgIHRoaXMucGxheWVyc1twbGF5ZXJJZF0ucG9zaXRpb24gPSBwb3NpdGlvblxuICB9XG5cbiAgdXBkYXRlUGxheWVyUG9zaXRpb24ocGxheWVySWQsIHBvc2l0aW9uKSB7XG4gICAgdGhpcy5wbGF5ZXJzW3BsYXllcklkXS5wb3NpdGlvbiA9IHBvc2l0aW9uXG4gIH1cblxuICBpbnNlcnRQbGF5ZXJTbmFwc2hvdHMocGxheWVySWQsIHNuYXBzaG90cykge1xuICAgIHRoaXMucGxheWVyc1twbGF5ZXJJZF0uc25hcHNob3RRdWV1ZS5wdXNoKC4uLnNuYXBzaG90cylcbiAgfVxuXG4gIC8qKlxuICAgKiBSZXR1cm5zIGFuIGFycmF5IG9mIFBsYXllclN0YXRlXG4gICAqL1xuICBnZXQgcGxheWVyU3RhdGVzKCkge1xuICAgIHJldHVybiBPYmplY3QudmFsdWVzKHRoaXMucGxheWVycylcbiAgfVxuXG4gIGdldFBsYXllclN0YXRlKHBsYXllcklkKSB7XG4gICAgaWYgKCF0aGlzLnBsYXllcnNbcGxheWVySWRdKVxuICAgICAgdGhyb3cgbmV3IEVycm9yKGBQbGF5ZXIgd2l0aCBpZCAke3BsYXllcklkfSBkb2Vzbid0IGV4aXN0IGluIGdhbWUgc3RhdGVgKVxuXG4gICAgcmV0dXJuIHRoaXMucGxheWVyc1twbGF5ZXJJZF1cbiAgfVxufVxuXG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIGNsaWVudC9qcy9tb2RlbHMvZ2FtZS1zdGF0ZS5qcyJdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBQ0E7QUFBQTtBQUNBO0FBQ0E7QUFDQTs7Ozs7Ozs7QUFMQTtBQUFBO0FBQUE7QUFjQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQXhCQTtBQUFBO0FBQUE7QUEyQkE7QUFDQTtBQTVCQTtBQUFBO0FBQUE7QUE4QkE7QUFDQTtBQUFBO0FBQ0E7QUFDQTtBQUNBOzs7O0FBbENBO0FBQUE7QUFBQTtBQTBDQTtBQUNBO0FBRUE7QUFDQTtBQTlDQTtBQUFBO0FBQUE7QUFzQ0E7QUFDQTtBQXZDQTtBQUNBO0FBREE7QUFBQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///8\n");
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PlayerState = __webpack_require__(9);
+
+module.exports = function () {
+  function GameState() {
+    _classCallCheck(this, GameState);
+
+    this.players = {};
+  }
+
+  /* GameState Entry model
+   id: {
+    name: string,
+    position: {x: number, y: number},
+    snapshotQueue: [playerSnapshot]
+  }
+  */
+
+  _createClass(GameState, [{
+    key: 'addNewPlayer',
+    value: function addNewPlayer(joinData) {
+      // TODO: maybe throw error if player already exists
+      var playerId = joinData.playerId;
+      var name = joinData.name;
+      var position = joinData.position;
+
+      this.players[playerId] = new PlayerState(name);
+
+      // happens when new player joins game you are already in
+      if (position) this.players[playerId].position = position;
+    }
+  }, {
+    key: 'updatePlayerPosition',
+    value: function updatePlayerPosition(playerId, position) {
+      this.players[playerId].position = position;
+    }
+  }, {
+    key: 'insertPlayerSnapshots',
+    value: function insertPlayerSnapshots(playerId, snapshots) {
+      var _players$playerId$sna;
+
+      (_players$playerId$sna = this.players[playerId].snapshotQueue).push.apply(_players$playerId$sna, _toConsumableArray(snapshots));
+    }
+
+    /**
+     * Returns an array of PlayerState
+     */
+
+  }, {
+    key: 'getPlayerState',
+    value: function getPlayerState(playerId) {
+      if (!this.players[playerId]) throw new Error('Player with id ' + playerId + ' doesn\'t exist in game state');
+
+      return this.players[playerId];
+    }
+  }, {
+    key: 'playerStates',
+    get: function get() {
+      return Object.values(this.players);
+    }
+  }]);
+
+  return GameState;
+}();
 
 /***/ }),
 /* 9 */
-/*!******************************************!*\
-  !*** ./client/js/models/player-state.js ***!
-  \******************************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nvar configs = __webpack_require__(/*! ../../../game-configs.json */ 0);\n\nmodule.exports = function () {\n  function PlayerState(name) {\n    _classCallCheck(this, PlayerState);\n\n    this.name = name;\n    this.position = null;\n    this.snapshotQueue = [];\n  }\n\n  _createClass(PlayerState, [{\n    key: 'processSnapshots',\n    value: function processSnapshots(snapshots) {\n      var _this = this;\n\n      snapshots.forEach(function (snapshot) {\n        _this.processPlayerMove(snapshot.movement);\n      });\n    }\n  }, {\n    key: 'processPlayerMove',\n    value: function processPlayerMove(movement) {\n      if (movement.left) this.position.x -= configs.shared.playerSpeed;\n\n      if (movement.right) this.position.x += configs.shared.playerSpeed;\n\n      if (movement.up) this.position.y -= configs.shared.playerSpeed;\n\n      if (movement.down) this.position.y += configs.shared.playerSpeed;\n    }\n  }]);\n\n  return PlayerState;\n}();//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiOS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy9jbGllbnQvanMvbW9kZWxzL3BsYXllci1zdGF0ZS5qcz82ZjIzIl0sInNvdXJjZXNDb250ZW50IjpbImNvbnN0IGNvbmZpZ3MgPSByZXF1aXJlKCcuLi8uLi8uLi9nYW1lLWNvbmZpZ3MuanNvbicpXG5cbm1vZHVsZS5leHBvcnRzID0gY2xhc3MgUGxheWVyU3RhdGUge1xuICBjb25zdHJ1Y3RvcihuYW1lKSB7XG4gICAgdGhpcy5uYW1lID0gbmFtZVxuICAgIHRoaXMucG9zaXRpb24gPSBudWxsXG4gICAgdGhpcy5zbmFwc2hvdFF1ZXVlID0gW11cbiAgfVxuXG4gIHByb2Nlc3NTbmFwc2hvdHMoc25hcHNob3RzKSB7XG4gICAgc25hcHNob3RzLmZvckVhY2goKHNuYXBzaG90KSA9PiB7XG4gICAgICB0aGlzLnByb2Nlc3NQbGF5ZXJNb3ZlKHNuYXBzaG90Lm1vdmVtZW50KVxuICAgIH0pXG4gIH1cblxuICBwcm9jZXNzUGxheWVyTW92ZShtb3ZlbWVudCkge1xuICAgIGlmIChtb3ZlbWVudC5sZWZ0KVxuICAgICAgdGhpcy5wb3NpdGlvbi54IC09IGNvbmZpZ3Muc2hhcmVkLnBsYXllclNwZWVkXG5cbiAgICBpZiAobW92ZW1lbnQucmlnaHQpXG4gICAgICB0aGlzLnBvc2l0aW9uLnggKz0gY29uZmlncy5zaGFyZWQucGxheWVyU3BlZWRcblxuICAgIGlmIChtb3ZlbWVudC51cClcbiAgICAgIHRoaXMucG9zaXRpb24ueSAtPSBjb25maWdzLnNoYXJlZC5wbGF5ZXJTcGVlZFxuXG4gICAgaWYgKG1vdmVtZW50LmRvd24pXG4gICAgICB0aGlzLnBvc2l0aW9uLnkgKz0gY29uZmlncy5zaGFyZWQucGxheWVyU3BlZWRcbiAgfVxufVxuXG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIGNsaWVudC9qcy9tb2RlbHMvcGxheWVyLXN0YXRlLmpzIl0sIm1hcHBpbmdzIjoiOzs7Ozs7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBQ0E7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBTkE7QUFBQTtBQUFBO0FBT0E7QUFDQTtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBWEE7QUFBQTtBQUFBO0FBY0E7QUFDQTtBQUVBO0FBQ0E7QUFFQTtBQUNBO0FBRUE7QUFFQTtBQXpCQTtBQUNBO0FBREE7QUFBQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///9\n");
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var configs = __webpack_require__(0);
+
+module.exports = function () {
+  function PlayerState(name) {
+    _classCallCheck(this, PlayerState);
+
+    this.name = name;
+    this.position = null;
+    this.snapshotQueue = [];
+  }
+
+  _createClass(PlayerState, [{
+    key: 'processSnapshots',
+    value: function processSnapshots(snapshots) {
+      var _this = this;
+
+      snapshots.forEach(function (snapshot) {
+        _this.processPlayerMove(snapshot.movement);
+      });
+    }
+  }, {
+    key: 'processPlayerMove',
+    value: function processPlayerMove(movement) {
+      if (movement.left) this.position.x -= configs.shared.playerSpeed;
+
+      if (movement.right) this.position.x += configs.shared.playerSpeed;
+
+      if (movement.up) this.position.y -= configs.shared.playerSpeed;
+
+      if (movement.down) this.position.y += configs.shared.playerSpeed;
+    }
+  }]);
+
+  return PlayerState;
+}();
 
 /***/ }),
 /* 10 */
-/*!****************************!*\
-  !*** ./client/js/debug.js ***!
-  \****************************/
-/*! no static exports found */
-/*! all exports used */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\n\nvar configs = __webpack_require__(/*! ../../game-configs.json */ 0);\n\nvar lastTimeTracker = {\n  playerPacketSend: null,\n  gameStatePacketReceive: null,\n  gameTick: null\n};\n\nvar logTargetRate = function logTargetRate(target) {\n  var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;\n\n  if (!lastTimeTracker[target]) {\n    lastTimeTracker[target] = performance.now();\n  } else {\n    var elapseTime = performance.now() - lastTimeTracker[target];\n    if (threshold && elapseTime > threshold) console.log(target + ' took ' + Math.round(elapseTime) + 'ms. Exceeded threshold of ' + threshold);else if (!threshold) console.log(target + ' took ' + Math.round(elapseTime) + 'ms');\n\n    lastTimeTracker[target] = performance.now();\n  }\n};\n\nmodule.exports = {\n  isDebugMode: function isDebugMode() {\n    return window.isDebugMode || configs.client.isDebugMode;\n  },\n\n  logPlayerPacketSendRate: function logPlayerPacketSendRate(threshold) {\n    logTargetRate('playerPacketSend', threshold);\n  },\n\n  logGameStatePacketReceiveRate: function logGameStatePacketReceiveRate(threshold) {\n    logTargetRate('gameStatePacketReceive', threshold);\n  },\n\n  logGameTickRate: function logGameTickRate(threshold) {\n    logTargetRate('gameTick', threshold);\n  }\n};//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMTAuanMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vY2xpZW50L2pzL2RlYnVnLmpzP2ExMmYiXSwic291cmNlc0NvbnRlbnQiOlsiY29uc3QgY29uZmlncyA9IHJlcXVpcmUoJy4uLy4uL2dhbWUtY29uZmlncy5qc29uJylcblxuY29uc3QgbGFzdFRpbWVUcmFja2VyID0ge1xuICBwbGF5ZXJQYWNrZXRTZW5kOiBudWxsLFxuICBnYW1lU3RhdGVQYWNrZXRSZWNlaXZlOiBudWxsLFxuICBnYW1lVGljazogbnVsbFxufVxuXG5jb25zdCBsb2dUYXJnZXRSYXRlID0gKHRhcmdldCwgdGhyZXNob2xkID0gbnVsbCkgPT4ge1xuICBpZiAoIWxhc3RUaW1lVHJhY2tlclt0YXJnZXRdKSB7XG4gICAgbGFzdFRpbWVUcmFja2VyW3RhcmdldF0gPSBwZXJmb3JtYW5jZS5ub3coKVxuICB9IGVsc2Uge1xuICAgIGNvbnN0IGVsYXBzZVRpbWUgPSBwZXJmb3JtYW5jZS5ub3coKSAtIGxhc3RUaW1lVHJhY2tlclt0YXJnZXRdXG4gICAgaWYgKHRocmVzaG9sZCAmJiBlbGFwc2VUaW1lID4gdGhyZXNob2xkKVxuICAgICAgY29uc29sZS5sb2coYCR7dGFyZ2V0fSB0b29rICR7TWF0aC5yb3VuZChlbGFwc2VUaW1lKX1tcy4gRXhjZWVkZWQgdGhyZXNob2xkIG9mICR7dGhyZXNob2xkfWApXG4gICAgZWxzZSBpZiAoIXRocmVzaG9sZClcbiAgICAgIGNvbnNvbGUubG9nKGAke3RhcmdldH0gdG9vayAke01hdGgucm91bmQoZWxhcHNlVGltZSl9bXNgKVxuXG4gICAgbGFzdFRpbWVUcmFja2VyW3RhcmdldF0gPSBwZXJmb3JtYW5jZS5ub3coKVxuICB9XG59XG5cbm1vZHVsZS5leHBvcnRzID0ge1xuICBpc0RlYnVnTW9kZTogKCkgPT4gd2luZG93LmlzRGVidWdNb2RlIHx8IGNvbmZpZ3MuY2xpZW50LmlzRGVidWdNb2RlLFxuXG4gIGxvZ1BsYXllclBhY2tldFNlbmRSYXRlOiAodGhyZXNob2xkKSA9PiB7XG4gICAgbG9nVGFyZ2V0UmF0ZSgncGxheWVyUGFja2V0U2VuZCcsIHRocmVzaG9sZClcbiAgfSxcblxuICBsb2dHYW1lU3RhdGVQYWNrZXRSZWNlaXZlUmF0ZTogKHRocmVzaG9sZCkgPT4ge1xuICAgIGxvZ1RhcmdldFJhdGUoJ2dhbWVTdGF0ZVBhY2tldFJlY2VpdmUnLCB0aHJlc2hvbGQpXG4gIH0sXG5cbiAgbG9nR2FtZVRpY2tSYXRlOiAodGhyZXNob2xkKSA9PiB7XG4gICAgbG9nVGFyZ2V0UmF0ZSgnZ2FtZVRpY2snLCB0aHJlc2hvbGQpXG4gIH1cbn1cblxuXG5cbi8vIFdFQlBBQ0sgRk9PVEVSIC8vXG4vLyBjbGllbnQvanMvZGVidWcuanMiXSwibWFwcGluZ3MiOiI7O0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBSEE7QUFDQTtBQUtBO0FBQUE7QUFDQTtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUlBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFiQSIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///10\n");
+
+
+var configs = __webpack_require__(0);
+
+var lastTimeTracker = {
+  playerPacketSend: null,
+  gameStatePacketReceive: null,
+  gameTick: null
+};
+
+var logTargetRate = function logTargetRate(target) {
+  var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  if (!lastTimeTracker[target]) {
+    lastTimeTracker[target] = performance.now();
+  } else {
+    var elapseTime = performance.now() - lastTimeTracker[target];
+    if (threshold && elapseTime > threshold) console.log(target + ' took ' + Math.round(elapseTime) + 'ms. Exceeded threshold of ' + threshold);else if (!threshold) console.log(target + ' took ' + Math.round(elapseTime) + 'ms');
+
+    lastTimeTracker[target] = performance.now();
+  }
+};
+
+module.exports = {
+  isDebugMode: function isDebugMode() {
+    return window.isDebugMode || configs.client.isDebugMode;
+  },
+
+  logPlayerPacketSendRate: function logPlayerPacketSendRate(threshold) {
+    logTargetRate('playerPacketSend', threshold);
+  },
+
+  logGameStatePacketReceiveRate: function logGameStatePacketReceiveRate(threshold) {
+    logTargetRate('gameStatePacketReceive', threshold);
+  },
+
+  logGameTickRate: function logGameTickRate(threshold) {
+    logTargetRate('gameTick', threshold);
+  }
+};
 
 /***/ })
 /******/ ]);

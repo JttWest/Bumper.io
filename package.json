@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "concurrently --kill-others \"nodemon --exitcrash -w server -w game-configs.json server/server.js\" \"webpack-dev-server -d --open --content-base dist/\"",
     "dev:client": "webpack-dev-server -d --open --content-base dist/",
+    "build:dev": "webpack --progress --colors",
     "build:prod": "webpack -p --progress --colors",
     "heroku:publish": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master",
     "heroku:off": "heroku ps:scale web=0",
