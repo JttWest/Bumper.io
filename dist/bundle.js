@@ -341,6 +341,7 @@ Game Tick:
 */
 var gameTick = function gameTick() {
   debug.logGameTickRate(configs.shared.tickInterval + 5);
+  debug.logEmptySnapshotQueueDuration();
 
   setTimeout(gameTick, configs.shared.tickInterval);
 
@@ -1162,6 +1163,10 @@ module.exports = function () {
 
 var configs = __webpack_require__(0);
 
+var isDebugMode = function isDebugMode() {
+  return window.isDebugMode || configs.client.isDebugMode;
+};
+
 var lastTimeTracker = {
   playerPacketSend: null,
   gameStatePacketReceive: null,
@@ -1170,6 +1175,8 @@ var lastTimeTracker = {
 
 var logTargetRate = function logTargetRate(target) {
   var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  if (!isDebugMode) return;
 
   if (!lastTimeTracker[target]) {
     lastTimeTracker[target] = performance.now();
@@ -1181,10 +1188,10 @@ var logTargetRate = function logTargetRate(target) {
   }
 };
 
+var emptySnapshotQueueStartTime = void 0;
+
 module.exports = {
-  isDebugMode: function isDebugMode() {
-    return window.isDebugMode || configs.client.isDebugMode;
-  },
+  isDebugMode: isDebugMode,
 
   logPlayerPacketSendRate: function logPlayerPacketSendRate(threshold) {
     logTargetRate('playerPacketSend', threshold);
@@ -1196,6 +1203,19 @@ module.exports = {
 
   logGameTickRate: function logGameTickRate(threshold) {
     logTargetRate('gameTick', threshold);
+  },
+
+  logEmptySnapshotQueueDuration: function logEmptySnapshotQueueDuration(length) {
+    if (!isDebugMode) return;
+
+    if (length === 0 && !emptySnapshotQueueStartTime) {
+      // start timer
+      emptySnapshotQueueStartTime = performance.now();
+    } else if (length !== 0 && emptySnapshotQueueStartTime) {
+      // there was timer in process
+      console.log('GameState snapshot queue was empty for ' + Math.round(performance.now() - emptySnapshotQueueStartTime) + 'ms');
+      emptySnapshotQueueStartTime = null; // reset timer
+    }
   }
 };
 

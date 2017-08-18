@@ -1,5 +1,7 @@
 const configs = require('../../game-configs.json')
 
+const isDebugMode = () => window.isDebugMode || configs.client.isDebugMode
+
 const lastTimeTracker = {
   playerPacketSend: null,
   gameStatePacketReceive: null,
@@ -7,6 +9,9 @@ const lastTimeTracker = {
 }
 
 const logTargetRate = (target, threshold = null) => {
+  if (!isDebugMode)
+    return
+
   if (!lastTimeTracker[target]) {
     lastTimeTracker[target] = performance.now()
   } else {
@@ -20,8 +25,10 @@ const logTargetRate = (target, threshold = null) => {
   }
 }
 
+let emptySnapshotQueueStartTime
+
 module.exports = {
-  isDebugMode: () => window.isDebugMode || configs.client.isDebugMode,
+  isDebugMode: isDebugMode,
 
   logPlayerPacketSendRate: (threshold) => {
     logTargetRate('playerPacketSend', threshold)
@@ -33,5 +40,17 @@ module.exports = {
 
   logGameTickRate: (threshold) => {
     logTargetRate('gameTick', threshold)
+  },
+
+  logEmptySnapshotQueueDuration: (length) => {
+    if (!isDebugMode)
+      return
+
+    if (length === 0 && !emptySnapshotQueueStartTime) { // start timer
+      emptySnapshotQueueStartTime = performance.now()
+    } else if (length !== 0 && emptySnapshotQueueStartTime) { // there was timer in process
+      console.log(`GameState snapshot queue was empty for ${Math.round(performance.now() - emptySnapshotQueueStartTime)}ms`)
+      emptySnapshotQueueStartTime = null // reset timer
+    }
   }
 }
