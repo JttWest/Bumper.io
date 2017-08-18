@@ -349,6 +349,8 @@ var gameTick = function gameTick() {
 
   // lag occured -> resync client with server
   if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {
+    if (window.isDebugMode) console.log('Player gameSnapshotQueue empty');
+
     // request sync from server if haven't already
     if (!syncingGameState) sendSyncRequest();
 
