@@ -18,14 +18,14 @@ module.exports = class Player {
       x: util.randomIntFromInterval(0, configs.shared.mapWidth),
       y: util.randomIntFromInterval(0, configs.shared.mapHeight)
     }
-    this.isSyncingState = true // do not send gameState to this player when true
+    this.isSyncingState = true
     this.websocket = ws
 
     this.snapshotQueueUnproc = [] // snapshotQueue data from client to be process at each gameTick
     this.snapshotQueueProc = [] // snapshotQueue data that has been processed and ready to be send to all other clients
 
     // prefill player's snapshotQueue with default by bufferSize
-    for (let i = 0; i < configs.shared.tickBufferSize; i++) {
+    for (let i = 0; i < configs.shared.tickBufferSize * 2; i++) {
       this.snapshotQueueProc.push(defaultPlayerSnapshot)
     }
   }
@@ -35,8 +35,21 @@ module.exports = class Player {
       this.websocket.send(data)
   }
 
+  // still needed?
   sendSyncTrig() {
     this.sendData(syncTrigData)
+  }
+
+  getBufferSnapshots() {
+    return this.snapshotQueueProc.slice(0, configs.shared.tickBufferSize)
+  }
+
+  getIncrementalData() {
+    return this.snapshotQueueProc.slice(configs.shared.tickBufferSize, configs.shared.tickBufferSize * 2)
+  }
+
+  insertUnprocSnapshots(snapshots) {
+    this.snapshotQueueUnproc.push(...snapshots)
   }
 
   updatePlayerLocation(direction) {
@@ -66,5 +79,6 @@ module.exports = class Player {
     // insert postion data for player at tick to be broadcasted
     // TODO: include action in this once thats being implemented
     this.snapshotQueueProc.push(playerSnapshot)
+    this.snapshotQueueProc.shift() // remove unneeded snapshot to prevent memory leak
   }
 }

@@ -24,7 +24,8 @@ const getSyncData = () => {
     syncData.push({
       playerId: p.id,
       name: p.name,
-      position: p.position
+      position: p.position,
+      bufferSnapshots: [] // these snapshots are before the pending current snapshots for syncing player to create a buffer
     })
   })
 
@@ -83,8 +84,9 @@ wss.on('connection', (ws) => {
           break
 
         case 'playerState':
-          // TODO: check whether data is valid; going to be easier when its binary
-          player.snapshotQueueUnproc.push(...payload.data)
+          // TODO: check whether data and LENGTH is valid; going to be easier when its binary
+          // player.snapshotQueueUnproc.push(...payload.data)
+          player.insertUnprocSnapshots(payload.data)
           break
 
         default:
@@ -115,13 +117,12 @@ const broadcastGameData = () => {
       type: 'gameState',
       data: Object.values(players).map(p => ({
         playerId: p.id,
-        snapshots: p.snapshotQueueProc.splice(0, configs.shared.tickBufferSize)
+        snapshots: p.getIncrementalData() // p.snapshotQueueProc.splice(0, configs.shared.tickBufferSize)
       }))
     }
   )
 
   Object.values(players).forEach((player) => {
-    // send gameState data to player when it's not in process of syncing
     if (!player.isSyncingState)
       player.sendData(gameStateData)
   })

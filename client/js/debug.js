@@ -9,7 +9,7 @@ const lastTimeTracker = {
 }
 
 const logTargetRate = (target, threshold = null) => {
-  if (!isDebugMode)
+  if (!isDebugMode())
     return
 
   if (!lastTimeTracker[target]) {
@@ -43,7 +43,7 @@ module.exports = {
   },
 
   logEmptySnapshotQueueDuration: (length) => {
-    if (!isDebugMode)
+    if (!isDebugMode())
       return
 
     if (length === 0 && !emptySnapshotQueueStartTime) { // start timer

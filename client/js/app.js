@@ -85,21 +85,21 @@ const processGameSnapshots = (gameSnapshots) => {
     //   requestResync
     const playerState = gameState.getPlayerState(playerSnapshots.playerId)
     // immediately process old snaphsots to ensure client game state is up to date
-    if (playerState.snapshotQueue.length > configs.shared.tickBufferSize) {
+    if (playerState.snapshotQueue.length > configs.shared.tickBufferSize * 2) {
       playerState
-        .processSnapshots(playerState.snapshotQueue.splice(0, playerState.snapshotQueue.length - configs.shared.tickBufferSize))
+        .processSnapshots(playerState.snapshotQueue.splice(0, playerState.snapshotQueue.length - (configs.shared.tickBufferSize * 2)))
     }
   })
 
-  if (debug.isDebugMode) {
+  if (debug.isDebugMode()) {
     const currPlayerSnapshotQueueLength = gameState.getPlayerState(currPlayerId).snapshotQueue.length
 
     if (gameState.playerStates.some(p => p.snapshotQueue.length !== currPlayerSnapshotQueueLength)) {
       console.log('Mismatch snapshot length between players in gameState')
     }
 
-    if (gameState.playerStates.some(p => p.snapshotQueue.length > configs.shared.tickBufferSize)) {
-      console.log('Snapshots for player exceed tickBufferSize')
+    if (gameState.playerStates.some(p => p.snapshotQueue.length > configs.shared.tickBufferSize * 2)) {
+      console.log('Snapshots for player exceed tickBufferSize * 2')
     }
   }
 }
@@ -154,11 +154,13 @@ ws.onmessage = (evt) => {
       break
 
     case 'gameState':
-      debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50)
+      // debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50)
 
       // only take in game state if its not outdated
-      if (!syncingGameState)
+      if (!syncingGameState) {
+        debug.logGameStatePacketReceiveRate(configs.shared.tickBufferSize * configs.shared.tickInterval + 50)
         processGameSnapshots(payload.data)
+      }
 
       break
 
@@ -238,7 +240,7 @@ Game Tick:
 5 TODO: drop until last tickBufferSize in gameState[anyPlayer].snapshotQueue if deviate too much
 */
 const gameTick = () => {
-  debug.logGameTickRate(configs.shared.tickInterval + 5)
+  debug.logGameTickRate(configs.shared.tickInterval + 10)
 
   setTimeout(gameTick, configs.shared.tickInterval)
 
@@ -250,9 +252,6 @@ const gameTick = () => {
 
   // lag occured -> resync client with server
   if (gameState.getPlayerState(currPlayerId).snapshotQueue.length === 0) {
-    if (window.isDebugMode)
-      console.log('Player gameSnapshotQueue empty')
-
     // request sync from server if haven't already
     if (!syncingGameState)
       sendSyncRequest()
