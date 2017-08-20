@@ -135,6 +135,7 @@ ws.onmessage = (evt) => {
       // TODO: update this to clear gameState
       payload.data.forEach((playerSyncData) => {
         gameState.updatePlayerPosition(playerSyncData.playerId, playerSyncData.position)
+        gameState.insertPlayerSnapshots(playerSyncData.playerId, playerSyncData.bufferSnapshots)
       })
 
       // TODO: temp fix for now

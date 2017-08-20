@@ -18,7 +18,7 @@ module.exports = class Player {
       x: util.randomIntFromInterval(0, configs.shared.mapWidth),
       y: util.randomIntFromInterval(0, configs.shared.mapHeight)
     }
-    this.isSyncingState = true
+    this.isSyncing = true
     this.websocket = ws
 
     this.snapshotQueueUnproc = [] // snapshotQueue data from client to be process at each gameTick
@@ -80,5 +80,10 @@ module.exports = class Player {
     // TODO: include action in this once thats being implemented
     this.snapshotQueueProc.push(playerSnapshot)
     this.snapshotQueueProc.shift() // remove unneeded snapshot to prevent memory leak
+  }
+
+  // TODO
+  sync() {
+    // this.isSyncing = true // is this even needed?
   }
 }

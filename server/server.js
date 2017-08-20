@@ -25,7 +25,7 @@ const getSyncData = () => {
       playerId: p.id,
       name: p.name,
       position: p.position,
-      bufferSnapshots: [] // these snapshots are before the pending current snapshots for syncing player to create a buffer
+      bufferSnapshots: p.getBufferSnapshots() // these snapshots are before the pending current snapshots for syncing player to create a buffer
     })
   })
 
@@ -80,7 +80,7 @@ wss.on('connection', (ws) => {
 
         case 'syncReq':
           player.sendData(JSON.stringify({ type: 'syncAck', data: getSyncData() }))
-          player.isSyncingState = false
+          player.isSyncing = false
           break
 
         case 'playerState':
@@ -105,7 +105,7 @@ wss.on('connection', (ws) => {
 function playersTick() {
   // Simulate tick logic for each player
   Object.values(players).forEach((player) => {
-    // TODO: use isSyncingState here
+    // TODO: use isSyncing here
 
     player.playerMoveTick()
   })
@@ -123,12 +123,27 @@ const broadcastGameData = () => {
   )
 
   Object.values(players).forEach((player) => {
-    if (!player.isSyncingState)
+    // TODO
+    // if (player.isSyncing)
+    //   player.sync()
+
+    if (!player.isSyncing)
       player.sendData(gameStateData)
   })
 }
 
-let bufferCounter = 0
+let tickCounter = 0
+// broadcast to players in game on every tickBufferSize ticks
+const readyToBroadcast = () => {
+  tickCounter++
+
+  if (tickCounter === configs.shared.tickBufferSize) {
+    tickCounter = 0 // reset counter
+    return true
+  }
+
+  return false
+}
 
 function gameTick() {
   // process movement data in snapshot queue for each player
@@ -136,10 +151,8 @@ function gameTick() {
 
   // TODO
   // cleanPlayers() // players are remove from array when ws is disconnected
-  bufferCounter++
 
-  if (bufferCounter === configs.shared.tickBufferSize) {
-    bufferCounter = 0
+  if (readyToBroadcast()) {
     broadcastGameData()
   }
 }
