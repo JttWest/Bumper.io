@@ -82,8 +82,8 @@ module.exports = class Player {
     this.snapshotQueueProc.shift() // remove unneeded snapshot to prevent memory leak
   }
 
-  // TODO
-  sync() {
-    // this.isSyncing = true // is this even needed?
+  sync(syncData) {
+    this.sendData(syncData)
+    this.isSyncing = false // syncing completed
   }
 }

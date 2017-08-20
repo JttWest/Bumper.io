@@ -17,21 +17,6 @@ const players = {}
 const isValidJoin = () => true
 let currAvailablePlayerId = 0
 
-const getSyncData = () => {
-  const syncData = []
-  // position of every player along with its playerId
-  Object.values(players).forEach((p) => {
-    syncData.push({
-      playerId: p.id,
-      name: p.name,
-      position: p.position,
-      bufferSnapshots: p.getBufferSnapshots() // these snapshots are before the pending current snapshots for syncing player to create a buffer
-    })
-  })
-
-  return syncData
-}
-
 const broadcastPlayerJoin = (player) => {
   const playerJoinData = JSON.stringify({
     type: 'playerJoin',
@@ -79,8 +64,10 @@ wss.on('connection', (ws) => {
           break
 
         case 'syncReq':
-          player.sendData(JSON.stringify({ type: 'syncAck', data: getSyncData() }))
-          player.isSyncing = false
+          // player.sendData(JSON.stringify({ type: 'syncAck', data: getSyncData() }))
+          // player.isSyncing = false
+
+          player.isSyncing = true
           break
 
         case 'playerState':
@@ -111,24 +98,41 @@ function playersTick() {
   })
 }
 
+const getGameSyncData = () => {
+  const syncData = []
+  // position of every player along with its playerId
+  Object.values(players).forEach((p) => {
+    syncData.push({
+      playerId: p.id,
+      name: p.name,
+      position: p.position,
+      bufferSnapshots: p.getBufferSnapshots() // these snapshots are before the pending current snapshots for syncing player to create a buffer
+    })
+  })
+
+  return JSON.stringify({ type: 'syncAck', data: syncData })
+}
+
+const getGameIncrementalData = () => (
+  JSON.stringify({
+    type: 'gameState',
+    data: Object.values(players).map(p => ({
+      playerId: p.id,
+      snapshots: p.getIncrementalData() // p.snapshotQueueProc.splice(0, configs.shared.tickBufferSize)
+    }))
+  })
+)
+
 const broadcastGameData = () => {
-  const gameStateData = JSON.stringify(
-    {
-      type: 'gameState',
-      data: Object.values(players).map(p => ({
-        playerId: p.id,
-        snapshots: p.getIncrementalData() // p.snapshotQueueProc.splice(0, configs.shared.tickBufferSize)
-      }))
-    }
-  )
+  const incrementalData = getGameIncrementalData()
+
+  const syncData = getGameSyncData()
 
   Object.values(players).forEach((player) => {
-    // TODO
-    // if (player.isSyncing)
-    //   player.sync()
+    if (player.isSyncing)
+      player.sync(syncData)
 
-    if (!player.isSyncing)
-      player.sendData(gameStateData)
+    player.sendData(incrementalData)
   })
 }
 
