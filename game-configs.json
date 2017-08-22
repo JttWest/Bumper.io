@@ -2,7 +2,7 @@
   "shared": {
     "port": 3000,
     "tickInterval": 50,
-    "tickBufferSize": 5,
+    "tickBufferSize": 3,
     "bulletSpeed": 20,
     "mapWidth": 800,
     "mapHeight": 600,
