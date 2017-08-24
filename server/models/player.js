@@ -14,10 +14,16 @@ module.exports = class Player {
   constructor(name, ws, id) {
     this.id = id
     this.name = name
+
+    // TODO place this in playerState obj
     this.position = {
       x: util.randomIntFromInterval(0, configs.shared.mapWidth),
       y: util.randomIntFromInterval(0, configs.shared.mapHeight)
     }
+
+    // an array of syncState where first entry is the one to be sent to client as syncState
+    this.syncStates = [Object.assign({}, this.position), Object.assign({}, this.position)]
+
     this.isSyncing = true
     this.websocket = ws
 
@@ -82,8 +88,14 @@ module.exports = class Player {
     this.snapshotQueueProc.shift() // remove unneeded snapshot to prevent memory leak
   }
 
+  processSyncStateTick() {
+    this.syncStates.push(Object.assign({}, this.position))
+  }
+
   sync(syncData) {
     this.sendData(syncData)
     this.isSyncing = false // syncing completed
   }
+
+  //TODO: getPosition or getPlayerState
 }
