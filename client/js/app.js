@@ -3,6 +3,8 @@ const configs = require('../../game-configs.json')
 const key = require('./control').keyboardCodeMapping
 const GameState = require('./models/game-state')
 const debug = require('./debug')
+const graphics = require('./graphics')
+const global = require('./global')
 
 const canvas = document.getElementById('canvas')
 
@@ -20,21 +22,24 @@ class Player {
   constructor(x, y) {
     this.x = x
     this.y = y
+    this.actions = {}
   }
 }
 
 let player
 
 class PlayerSnapshot {
-  constructor(movement) {
-    this.movement = movement
+  // constructor() {
+  //   this.movement = null
+  //   this.action = null
+  // }
+
+  setAction(action) {
+    this.action = action
   }
 
-  setFireAction(shotAngle) {
-    this.action = {
-      actionType: 'fire',
-      angle: shotAngle
-    }
+  setMovement(movement) {
+    this.movement = movement
   }
 }
 
@@ -45,6 +50,8 @@ let playerSnapshotQueue = []
 let initGame = true // flag to begin render once first syncAck is received
 
 const gameState = new GameState()
+
+global.register('gameState', gameState)
 
 const wsHost = window.location.hostname === 'localhost' ?
   `ws://localhost:${configs.shared.port}` :
@@ -143,8 +150,11 @@ ws.onmessage = (evt) => {
         const currentPlayerData = gameState.getPlayerState(currPlayerId)
         player = new Player(currentPlayerData.position.x, currentPlayerData.position.y)
 
+        // is this the only place where player get assigned?
+        global.register('player', player)
+
         // begin rendering game
-        renderLoop()
+        graphics.renderLoop()
         initGame = false
       }
       break
@@ -199,6 +209,27 @@ const playerMoveTick = () => {
   }
 
   return movementData
+}
+
+const playerActionTick = () => {
+  // action in progress
+  if (player.action) {
+    if (player.action.countdown <= 0) {
+      player.action = null
+    } else if (player.action.type === 'attack') {
+      player.action.countdown--
+    }
+
+    return
+  }
+
+  if (keyRegister[key.SPACE]) {
+    const action = { type: 'attack', countdown: configs.shared.attackCountdown }
+    player.action = action
+    return action
+  }
+
+  return undefined
 }
 
 const updatePlayerState = (playerState) => {
@@ -261,8 +292,14 @@ const gameTick = () => {
   }
 
   // (1) update player state based on movement and record player tick data
+  const currPlayerSnapshot = new PlayerSnapshot()
+
   const movementData = playerMoveTick()
-  const currPlayerSnapshot = new PlayerSnapshot(movementData)
+  currPlayerSnapshot.setMovement(movementData)
+
+  const actionData = playerActionTick()
+  currPlayerSnapshot.setAction(actionData)
+
   playerSnapshotQueue.push(currPlayerSnapshot)
 
   // (2) send playerState to server when ready
@@ -281,32 +318,44 @@ const gameTick = () => {
 // setInterval(gameTick, configs.shared.tickInterval)
 gameTick()
 
-const ctx = canvas.getContext('2d')
-const drawPlayer = (color, x, y) => {
-  ctx.beginPath()
-  ctx.fillStyle = color
-  ctx.strokeStyle = 'black'
-  ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
-  ctx.lineWidth = 1
-  ctx.stroke()
-  ctx.fill()
-}
+// const ctx = canvas.getContext('2d')
+// const drawPlayer = (color, x, y) => {
+//   ctx.beginPath()
+//   ctx.fillStyle = color
+//   ctx.strokeStyle = 'black'
+//   ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
+//   ctx.lineWidth = 1
+//   ctx.stroke()
+//   ctx.fill()
+// }
 
-const renderLoop = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+// const drawAttackRadius = (player) => {
+//   // draw circle at player's position with radius from config
+//   ctx.beginPath()
+//   ctx.arc(player.x, player.y, configs.shared.attackRadius, 0, 2 * Math.PI, false)
+//   ctx.fillStyle = 'orange'
+//   ctx.fill()
+// }
 
-  // TODO: the player class should have a render method
-  gameState.playerStates.forEach((playerState) => {
-    const playerPos = playerState.position
+// const renderLoop = () => {
+//   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
-  })
+//   // TODO: the player class should have a render method
+//   gameState.playerStates.forEach((playerState) => {
+//     const playerPos = playerState.position
 
+//     drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
+//   })
 
-  drawPlayer(configs.client.playerColor, player.x, player.y)
+//   if (player.action) {
+//     if (player.action.type === 'attack')
+//       drawAttackRadius(player)
+//   }
 
-  requestAnimationFrame(renderLoop)
-}
+//   drawPlayer(configs.client.playerColor, player.x, player.y)
+
+//   requestAnimationFrame(renderLoop)
+// }
 
 /*
 let mouseX

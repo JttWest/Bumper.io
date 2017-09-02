@@ -6,9 +6,10 @@
     "bulletSpeed": 20,
     "mapWidth": 800,
     "mapHeight": 600,
-    "playerWidth": 10,
-    "playerHeight": 10,
-    "playerSpeed": 2
+    "playerRadius": 10,
+    "playerSpeed": 2,
+    "attackRadius": 50,
+    "attackCountdown": 100
   },
   "server": {
   },
