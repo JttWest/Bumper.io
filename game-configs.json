@@ -4,18 +4,22 @@
     "tickInterval": 50,
     "tickBufferSize": 3,
     "bulletSpeed": 20,
-    "mapWidth": 800,
+    "mapWidth": 600,
     "mapHeight": 600,
-    "playerRadius": 10,
+    "playerRadius": 5,
     "playerSpeed": 2,
-    "attackRadius": 50,
-    "attackCountdown": 100
+    "attackRadius": 25,
+    "attackCountdown": 100,
+    "zoneWidth": 100,
+    "zoneHeight": 100,
+    "zoneBorderSize": 1
   },
   "server": {
   },
   "client": {
     "isDebugMode": false,
     "playerColor": "#2274A5",
-    "otherPlayersColor": "#F90C0C"
+    "otherPlayersColor": "#F90C0C",
+    "zoneBorderColor": "black"
   }
 }

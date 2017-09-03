@@ -1,9 +1,41 @@
 const configs = require('../../game-configs.json')
 const global = require('./global')
+const Coord = require('./models/coord')
 
 
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
+
+const drawLine = (startCoord, endCoord, color, lineWidth) => {
+  ctx.beginPath()
+
+  ctx.lineWidth = lineWidth
+  ctx.strokeStyle = color
+
+  ctx.moveTo(startCoord.x, startCoord.y)
+  ctx.lineTo(endCoord.x, endCoord.y)
+
+
+  ctx.stroke()
+}
+
+const drawZoneBorders = () => {
+  // draw vertical borders
+  for (let i = 1; i < configs.shared.mapHeight / configs.shared.zoneHeight; ++i) {
+    const startCoord = new Coord(0, i * configs.shared.zoneHeight)
+    const endCoord = new Coord(configs.shared.mapHeight, i * configs.shared.zoneHeight)
+
+    drawLine(startCoord, endCoord, configs.client.zoneBorderColor, configs.shared.zoneBorderSize)
+  }
+
+  // draw horizontal borders
+  for (let i = 1; i < configs.shared.mapWidth / configs.shared.zoneWidth; ++i) {
+    const startCoord = new Coord(i * configs.shared.zoneWidth, 0)
+    const endCoord = new Coord(i * configs.shared.zoneWidth, configs.shared.mapWidth)
+
+    drawLine(startCoord, endCoord, configs.client.zoneBorderColor, configs.shared.zoneBorderSize)
+  }
+}
 
 const drawPlayer = (color, x, y) => {
   ctx.beginPath()
@@ -42,6 +74,9 @@ const renderLoop = () => {
   const gameState = global.get('gameState')
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  drawZoneBorders()
+
   // TODO: the player class should have a render method
   gameState.playerStates.forEach((playerState) => {
     const playerPos = playerState.position
