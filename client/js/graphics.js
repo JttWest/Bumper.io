@@ -6,15 +6,43 @@ const Coord = require('./models/coord')
 const canvas = document.getElementById('canvas')
 const ctx = canvas.getContext('2d')
 
-const drawLine = (startCoord, endCoord, color, lineWidth) => {
+const applyCtxSetting = (setting) => {
+  Object.keys(setting).forEach((key) => {
+    ctx[key] = setting[key]
+  })
+}
+
+const drawCircle = (originCoord, radius, setting = {}) => {
   ctx.beginPath()
 
-  ctx.lineWidth = lineWidth
-  ctx.strokeStyle = color
+  applyCtxSetting(setting)
+
+  ctx.arc(originCoord.x, originCoord.y, radius, 0, 2 * Math.PI, false)
+
+  ctx.stroke()
+
+  if (setting.fillStyle)
+    ctx.fill()
+}
+
+
+const drawLine = (startCoord, endCoord, setting = {}) => {
+  ctx.beginPath()
+
+  applyCtxSetting(setting)
 
   ctx.moveTo(startCoord.x, startCoord.y)
   ctx.lineTo(endCoord.x, endCoord.y)
 
+  ctx.stroke()
+}
+
+const drawRectangle = (originCoord, width, height, setting) => {
+  ctx.beginPath()
+
+  applyCtxSetting(setting)
+
+  ctx.rect(originCoord.x, originCoord.y, width, height)
 
   ctx.stroke()
 }
@@ -25,7 +53,9 @@ const drawZoneBorders = () => {
     const startCoord = new Coord(0, i * configs.shared.zoneHeight)
     const endCoord = new Coord(configs.shared.mapHeight, i * configs.shared.zoneHeight)
 
-    drawLine(startCoord, endCoord, configs.client.zoneBorderColor, configs.shared.zoneBorderSize)
+    drawLine(startCoord, endCoord,
+      { strokeStyle: configs.client.zoneBorderColor, lineWidth: configs.shared.zoneBorderSize }
+    )
   }
 
   // draw horizontal borders
@@ -33,40 +63,28 @@ const drawZoneBorders = () => {
     const startCoord = new Coord(i * configs.shared.zoneWidth, 0)
     const endCoord = new Coord(i * configs.shared.zoneWidth, configs.shared.mapWidth)
 
-    drawLine(startCoord, endCoord, configs.client.zoneBorderColor, configs.shared.zoneBorderSize)
+    drawLine(startCoord, endCoord,
+      { strokeStyle: configs.client.zoneBorderColor, lineWidth: configs.shared.zoneBorderSize }
+    )
   }
 }
 
 const drawPlayer = (color, x, y) => {
-  ctx.beginPath()
-
-  ctx.fillStyle = color
-
-  ctx.lineWidth = 10
-  ctx.strokeStyle = 'black'
-
-  ctx.arc(x, y, configs.shared.playerRadius, 0, 2 * Math.PI, false)
-
-  // ctx.rect(x - (configs.shared.playerWidth / 2),
-  //          y - (configs.shared.playerHeight / 2),
-  //          configs.shared.playerWidth,
-  //          configs.shared.playerHeight)
-
-  ctx.stroke()
-  ctx.fill()
+  drawCircle({ x, y },
+    configs.shared.playerRadius,
+    { fillStyle: color, lineWidth: 5, strokeStyle: 'black' }
+  )
 }
 
 const drawAttackRadius = (player) => {
-  // draw circle at player's position with radius from config
-  ctx.beginPath()
-  ctx.arc(player.x, player.y, configs.shared.attackRadius, 0, 2 * Math.PI, false)
-
   // color starts off at orange and becomes redder as it counts down rounded to nearest 1
   const greenIntensity = Math.round((255 * (player.action.countdown / configs.shared.attackCountdown)))
   const attackRadiusColor = `rgb(255, ${greenIntensity}, 0)`
 
-  ctx.fillStyle = attackRadiusColor
-  ctx.fill()
+  drawCircle({ x: player.x, y: player.y },
+    configs.shared.attackRadius,
+    { fillStyle: attackRadiusColor }
+  )
 }
 
 const renderLoop = () => {
@@ -77,7 +95,6 @@ const renderLoop = () => {
 
   drawZoneBorders()
 
-  // TODO: the player class should have a render method
   gameState.playerStates.forEach((playerState) => {
     const playerPos = playerState.position
 
