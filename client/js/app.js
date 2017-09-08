@@ -6,6 +6,12 @@ const debug = require('./debug')
 const graphics = require('./graphics')
 const global = require('./global')
 
+// const NewGameState = require('../../shared/models/game-state')
+
+// going to be gradually replancing the old 1 with this
+// intended for single player / client side for now
+// const gameState = new NewGameState()
+
 const canvas = document.getElementById('canvas')
 
 const keyRegister = {}
@@ -317,45 +323,6 @@ const gameTick = () => {
 // run game loop
 // setInterval(gameTick, configs.shared.tickInterval)
 gameTick()
-
-// const ctx = canvas.getContext('2d')
-// const drawPlayer = (color, x, y) => {
-//   ctx.beginPath()
-//   ctx.fillStyle = color
-//   ctx.strokeStyle = 'black'
-//   ctx.rect(x, y, configs.shared.playerWidth, configs.shared.playerHeight)
-//   ctx.lineWidth = 1
-//   ctx.stroke()
-//   ctx.fill()
-// }
-
-// const drawAttackRadius = (player) => {
-//   // draw circle at player's position with radius from config
-//   ctx.beginPath()
-//   ctx.arc(player.x, player.y, configs.shared.attackRadius, 0, 2 * Math.PI, false)
-//   ctx.fillStyle = 'orange'
-//   ctx.fill()
-// }
-
-// const renderLoop = () => {
-//   ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-//   // TODO: the player class should have a render method
-//   gameState.playerStates.forEach((playerState) => {
-//     const playerPos = playerState.position
-
-//     drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
-//   })
-
-//   if (player.action) {
-//     if (player.action.type === 'attack')
-//       drawAttackRadius(player)
-//   }
-
-//   drawPlayer(configs.client.playerColor, player.x, player.y)
-
-//   requestAnimationFrame(renderLoop)
-// }
 
 /*
 let mouseX
