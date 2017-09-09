@@ -19,10 +19,11 @@ const drawCircle = (originCoord, radius, setting = {}) => {
 
   ctx.arc(originCoord.x, originCoord.y, radius, 0, 2 * Math.PI, false)
 
-  ctx.stroke()
-
   if (setting.fillStyle)
     ctx.fill()
+
+  if (setting.strokeStyle)
+    ctx.stroke()
 }
 
 
@@ -44,7 +45,11 @@ const drawRectangle = (originCoord, width, height, setting) => {
 
   ctx.rect(originCoord.x, originCoord.y, width, height)
 
-  ctx.stroke()
+  if (setting.fillStyle)
+    ctx.fill()
+
+  if (setting.strokeStyle)
+    ctx.stroke()
 }
 
 const drawZoneBorders = () => {
@@ -69,10 +74,16 @@ const drawZoneBorders = () => {
   }
 }
 
-const drawPlayer = (color, x, y) => {
-  drawCircle({ x, y },
+const drawZone = (zone, width, height) => {
+  const zoneColor = zone.status === 1 ? 'green' : 'brown'
+
+  drawRectangle(zone.coord, width, height, { fillStyle: zoneColor })
+}
+
+const drawPlayer = (position, color) => {
+  drawCircle(position,
     configs.shared.playerRadius,
-    { fillStyle: color, lineWidth: 5, strokeStyle: 'black' }
+    { fillStyle: color, strokeStyle: 'black', lineWidth: 1 }
   )
 }
 
@@ -81,9 +92,9 @@ const drawAttackRadius = (player) => {
   const greenIntensity = Math.round((255 * (player.action.countdown / configs.shared.attackCountdown)))
   const attackRadiusColor = `rgb(255, ${greenIntensity}, 0)`
 
-  drawCircle({ x: player.x, y: player.y },
+  drawCircle(player.position,
     configs.shared.attackRadius,
-    { fillStyle: attackRadiusColor }
+    { fillStyle: attackRadiusColor, strokeStyle: 'black', lineWidth: 1 }
   )
 }
 
@@ -93,20 +104,25 @@ const renderLoop = () => {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+  gameState.field.zones.forEach((zone) => {
+    drawZone(zone, gameState.field.zoneWidth, gameState.field.zoneHeight)
+  })
+
   drawZoneBorders()
 
-  gameState.playerStates.forEach((playerState) => {
-    const playerPos = playerState.position
+  // TODO: implement multipler player-state
+  // gameState.playerStates.forEach((playerState) => {
+  //   const playerPos = playerState.position
 
-    drawPlayer(configs.client.otherPlayersColor, playerPos.x, playerPos.y)
-  })
+  //   drawPlayer(playerPos, configs.client.otherPlayersColor)
+  // })
 
   if (player.action) {
     if (player.action.type === 'attack')
       drawAttackRadius(player)
   }
 
-  drawPlayer(configs.client.playerColor, player.x, player.y)
+  drawPlayer(player.position, configs.client.playerColor)
 
   requestAnimationFrame(renderLoop)
 }

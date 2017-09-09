@@ -6,11 +6,12 @@ const debug = require('./debug')
 const graphics = require('./graphics')
 const global = require('./global')
 
-// const NewGameState = require('../../shared/models/game-state')
+const Coord = require('../../shared/models/coord')
+const NewGameState = require('../../shared/models/game-state')
 
 // going to be gradually replancing the old 1 with this
 // intended for single player / client side for now
-// const gameState = new NewGameState()
+const newGameState = new NewGameState()
 
 const canvas = document.getElementById('canvas')
 
@@ -26,9 +27,12 @@ canvas.addEventListener('keyup', (e) => {
 
 class Player {
   constructor(x, y) {
-    this.x = x
-    this.y = y
+    this.position = new Coord(x, y)
     this.actions = {}
+  }
+
+  updatePosition(movement) {
+
   }
 }
 
@@ -57,7 +61,7 @@ let initGame = true // flag to begin render once first syncAck is received
 
 const gameState = new GameState()
 
-global.register('gameState', gameState)
+global.register('gameState', newGameState)
 
 const wsHost = window.location.hostname === 'localhost' ?
   `ws://localhost:${configs.shared.port}` :
@@ -195,22 +199,22 @@ const playerMoveTick = () => {
   const movementData = { left: false, right: false, up: false, down: false }
 
   if (keyRegister[key.W]) {
-    player.y -= configs.shared.playerSpeed
+    player.position.y -= configs.shared.playerSpeed
     movementData.up = true
   }
 
   if (keyRegister[key.S]) {
-    player.y += configs.shared.playerSpeed
+    player.position.y += configs.shared.playerSpeed
     movementData.down = true
   }
 
   if (keyRegister[key.A]) {
-    player.x -= configs.shared.playerSpeed
+    player.position.x -= configs.shared.playerSpeed
     movementData.left = true
   }
 
   if (keyRegister[key.D]) {
-    player.x += configs.shared.playerSpeed
+    player.position.x += configs.shared.playerSpeed
     movementData.right = true
   }
 
@@ -233,6 +237,15 @@ const playerActionTick = () => {
     const action = { type: 'attack', countdown: configs.shared.attackCountdown }
     player.action = action
     return action
+  }
+
+  // conquer action
+  if (keyRegister[key.B]) {
+    newGameState.conquerZone(player)
+
+    // const action = { type: 'conquer' }
+    // player.action = action
+    // return action
   }
 
   return undefined

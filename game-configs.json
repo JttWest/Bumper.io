@@ -7,7 +7,7 @@
     "mapWidth": 600,
     "mapHeight": 600,
     "playerRadius": 5,
-    "playerSpeed": 2,
+    "playerSpeed": 3,
     "attackRadius": 25,
     "attackCountdown": 100,
     "zoneWidth": 100,
