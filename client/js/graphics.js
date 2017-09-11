@@ -1,6 +1,6 @@
 const configs = require('../../game-configs.json')
 const global = require('./global')
-const Coord = require('./models/coord')
+const Coord = require('../../shared/models/coord')
 
 
 const canvas = document.getElementById('canvas')
@@ -99,7 +99,6 @@ const drawAttackRadius = (player) => {
 }
 
 const renderLoop = () => {
-  const player = global.get('player')
   const gameState = global.get('gameState')
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -111,18 +110,11 @@ const renderLoop = () => {
   drawZoneBorders()
 
   // TODO: implement multipler player-state
-  // gameState.playerStates.forEach((playerState) => {
-  //   const playerPos = playerState.position
+  Object.values(gameState.players).forEach((playerState) => {
+    const playerPos = playerState.position
 
-  //   drawPlayer(playerPos, configs.client.otherPlayersColor)
-  // })
-
-  if (player.action) {
-    if (player.action.type === 'attack')
-      drawAttackRadius(player)
-  }
-
-  drawPlayer(player.position, configs.client.playerColor)
+    drawPlayer(playerPos, configs.client.otherPlayersColor)
+  })
 
   requestAnimationFrame(renderLoop)
 }
