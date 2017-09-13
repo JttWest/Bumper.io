@@ -1,5 +1,6 @@
 const keyRegister = {}
 
+// list of available input keys
 const keyboardCodeMapping = {
   W: 87,
   A: 65,
@@ -29,6 +30,20 @@ const getMovementData = () => {
   return movement
 }
 
+const getActionData = () => {
+  let action = null
+
+  if (keyRegister[keyboardCodeMapping.B]) {
+    action = 'attack'
+  }
+
+  if (keyRegister[keyboardCodeMapping.N]) {
+    action = 'conquer'
+  }
+
+  return action
+}
+
 module.exports = {
   keyboardCodeMapping,
 
@@ -40,12 +55,17 @@ module.exports = {
     keyRegister[event.keyCode] = false
   },
 
-  /*
-  *
+  /**
+  returns input data object:
+  {
+    movement: {}
+    keysPressed: []
+  }
   */
   getUserInputData: () => {
     const movement = getMovementData()
+    const action = getActionData()
 
-    return { movement }
+    return { movement, action }
   }
 }

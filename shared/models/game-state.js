@@ -3,13 +3,14 @@ const configs = require('../../game-configs.json')
 const Field = require('./field')
 const util = require('../util')
 const Coord = require('./coord')
+const actions = require('../actions')
 
 class Player {
   constructor(id, position) {
     this.id = id
     this.position = position
     this.snapshotQueue = []
-    this.action = null
+    this.action = null // current excuting action
   }
 
   /**
@@ -40,28 +41,20 @@ class Player {
   }
 
   /**
-   *  actionData: {
-   *    type: STRING
-   *    countdown: NUMBER
-   *  }
+   *  actionData: string
    */
-  // actionTick(actionData) {
-  //   // action is in progress
-  //   if (this.action === null) {
-  //     this.action = {
-  //       type: actionData.type,
-  //       countdown: actionData.countdown
-  //     }
-  //   } else if (this.action.countdown <= 0) {
-  //     const actionResult = generateActionResult(this.action)
-  //     this.action = null
-  //     return actionResult
-  //   } else {
-  //     this.action.countdown--
-  //   }
-
-  //   return null
-  // }
+  actionTick(actionData, gameState) {
+    // action in progress
+    if (this.action) {
+      if (this.action.readyToExcute()) {
+        this.action.excuteResult(this, gameState) // pass in gameState since action can affect/modify the game state
+        this.action = null
+      } else {
+        this.action.tick()
+      }
+    } else if (actionData) // no action in progress and user want to perform an action
+      this.action = actions.create(actionData)
+  }
 }
 
 module.exports = class GameState {
@@ -92,6 +85,7 @@ module.exports = class GameState {
         return
 
       player.movementTick(currSnapshot.movement)
+      player.actionTick(currSnapshot.action, this)
       // const actionResult = player.actionTick(currSnapshot)
 
       // if (actionResult) {

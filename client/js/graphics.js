@@ -80,8 +80,8 @@ const drawZone = (zone, width, height) => {
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor })
 }
 
-const drawPlayer = (position, color) => {
-  drawCircle(position,
+const drawPlayer = (player, color) => {
+  drawCircle(player.position,
     configs.shared.playerRadius,
     { fillStyle: color, strokeStyle: 'black', lineWidth: 1 }
   )
@@ -109,11 +109,12 @@ const renderLoop = () => {
 
   drawZoneBorders()
 
-  // TODO: implement multipler player-state
-  Object.values(gameState.players).forEach((playerState) => {
-    const playerPos = playerState.position
+  Object.values(gameState.players).forEach((player) => {
+    if (player.action && player.action.type === 'attack') {
+      drawAttackRadius(player)
+    }
 
-    drawPlayer(playerPos, configs.client.otherPlayersColor)
+    drawPlayer(player, configs.client.otherPlayersColor)
   })
 
   requestAnimationFrame(renderLoop)

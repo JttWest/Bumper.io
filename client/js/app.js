@@ -59,7 +59,9 @@ const gameTick = () => {
   setTimeout(gameTick, configs.shared.tickInterval)
 
   const userInputs = control.getUserInputData()
-  player.insertSnapshot({ movement: userInputs.movement })
+
+  // TODO: action
+  player.insertSnapshot({ movement: userInputs.movement, action: userInputs.action })
   gameState.tick()
 }
 
