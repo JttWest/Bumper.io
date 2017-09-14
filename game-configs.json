@@ -6,7 +6,7 @@
     "bulletSpeed": 20,
     "mapWidth": 600,
     "mapHeight": 600,
-    "playerRadius": 5,
+    "playerRadius": 20,
     "playerSpeed": 3,
     "attackRadius": 25,
     "attackCountdown": 100,

@@ -11,16 +11,20 @@ class Player {
     this.position = position
     this.snapshotQueue = []
     this.action = null // current excuting action
+    this.isKilled = false // flag to mark player for clean up
   }
 
   /**
+   * movement: {left: BOOLEAN, right: BOOLEAN, up: BOOLEAN, down: BOOLEAN}
+   * action: STRING
+   *
    * snapshot: {
    *  movement: {left: BOOLEAN, right: BOOLEAN, up: BOOLEAN, down: BOOLEAN},
-   *  action: {type: STRING}
+   *  action: STRING
    * }
    */
-  insertSnapshot(snapshot) {
-    this.snapshotQueue.push(snapshot)
+  insertSnapshot(movement, action) {
+    this.snapshotQueue.push({ movement, action })
   }
 
   /**
@@ -55,10 +59,16 @@ class Player {
     } else if (actionData) // no action in progress and user want to perform an action
       this.action = actions.create(actionData)
   }
+
+  killed() {
+    this.isKilled = true
+  }
 }
 
 module.exports = class GameState {
   constructor() {
+    // is this good enough?
+    this.availablePlayerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     this.players = {}
 
     const hZoneSize = configs.shared.mapWidth / configs.shared.zoneWidth
@@ -79,24 +89,17 @@ module.exports = class GameState {
   tick() {
     // process tick for each player in game
     Object.values(this.players).forEach((player) => {
-      const currSnapshot = player.snapshotQueue.shift()
+      if (player.isKilled) { // remove killed players from game
+        delete this.players[player.id]
+      } else {
+        const currSnapshot = player.snapshotQueue.shift()
 
-      if (!currSnapshot)
-        return
+        if (!currSnapshot)
+          return
 
-      player.movementTick(currSnapshot.movement)
-      player.actionTick(currSnapshot.action, this)
-      // const actionResult = player.actionTick(currSnapshot)
-
-      // if (actionResult) {
-      //   switch (actionResult.type) {
-      //     case 'attack':
-      //       // check if attack hit anyone?
-      //       break
-      //     default:
-      //       throw new Error(`Invalid actionResult type: ${actionResult.type}`)
-      //   }
-      // }
+        player.movementTick(currSnapshot.movement)
+        player.actionTick(currSnapshot.action, this)
+      }
     })
 
     // TODO: zones logic tick
@@ -105,7 +108,10 @@ module.exports = class GameState {
   // pass in player obj
   join() {
     // TODO: implement unique ID logic
-    const playerId = 1
+    const playerId = this.availablePlayerIds.shift()
+
+    if (!playerId)
+      throw new Error('Game is full as no player id is available!')
 
     const initPosition = new Coord(
       util.randomIntFromInterval(0, configs.shared.mapWidth),
