@@ -41,6 +41,10 @@ const getActionData = () => {
     action = 'conquer'
   }
 
+  if (keyRegister[keyboardCodeMapping.M]) {
+    action = 'dash'
+  }
+
   return action
 }
 

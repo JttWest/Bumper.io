@@ -3,15 +3,32 @@ const configs = require('../../game-configs.json')
 const Field = require('./field')
 const util = require('../util')
 const Coord = require('./coord')
-const actions = require('../actions')
+const actionFactory = require('../actions').factory
 
 class Player {
   constructor(id, position) {
     this.id = id
     this.position = position
     this.snapshotQueue = []
-    this.action = null // current excuting action
+    this.actions = {} // current actions in progress
+    this.overrideMovement = false // player movement is not processed when set
     this.isKilled = false // flag to mark player for clean up
+  }
+
+  move(dx, dy) {
+    if (util.isNegativeNumber(dx) && this.position.x + dx < 0) // moving left out of map
+      this.position.x = 0
+    else if (!util.isNegativeNumber(dx) && this.position.x + dx > configs.shared.mapWidth) // moving right out of map
+      this.position.x = configs.shared.mapWidth
+    else
+      this.position.x += dx
+
+    if (util.isNegativeNumber(dy) && this.position.y + dy < 0) // moving up out of map
+      this.position.y = 0
+    else if (!util.isNegativeNumber(dy) && this.position.y + dy > configs.shared.mapHeight) // moving down out of map
+      this.position.y = configs.shared.mapHeight
+    else
+      this.position.y += dy
   }
 
   /**
@@ -31,33 +48,46 @@ class Player {
    *  movementData: { left: BOOLEAN, right: BOOLEAN, up: BOOLEAN, down: BOOLEAN }
    */
   movementTick(movement) {
-    if (movement.left)
-      this.position.x -= configs.shared.playerSpeed
+    // movement has been override by action
+    if (this.overrideMovement)
+      return
 
-    if (movement.right)
-      this.position.x += configs.shared.playerSpeed
+    if (movement.left) {
+      this.move(-configs.shared.playerSpeed, 0)
+    }
 
-    if (movement.up)
-      this.position.y -= configs.shared.playerSpeed
+    if (movement.right) {
+      this.move(configs.shared.playerSpeed, 0)
+    }
 
-    if (movement.down)
-      this.position.y += configs.shared.playerSpeed
+    if (movement.up) {
+      this.move(0, -configs.shared.playerSpeed)
+    }
+
+    if (movement.down) {
+      this.move(0, configs.shared.playerSpeed)
+    }
   }
 
   /**
    *  actionData: string
    */
-  actionTick(actionData, gameState) {
-    // action in progress
-    if (this.action) {
-      if (this.action.readyToExcute()) {
-        this.action.excuteResult(this, gameState) // pass in gameState since action can affect/modify the game state
-        this.action = null
-      } else {
-        this.action.tick()
-      }
-    } else if (actionData) // no action in progress and user want to perform an action
-      this.action = actions.create(actionData)
+  actionTick(snapshot, gameState) {
+    // create the requested new action if it's not already in progress
+    if (snapshot.action && !this.actions[snapshot.action]) {
+      this.actions[snapshot.action] = actionFactory(snapshot)
+    }
+
+    Object.keys(this.actions).forEach((actionName) => {
+      const action = this.actions[actionName]
+
+      if (action.isReadyToExecute())
+        action.executeResult(this, gameState) // pass in gameState since action can affect/modify the game state
+      else if (action.isCompleted() && action.isCooldownOver())
+        delete this.actions[actionName]
+      else
+        action.tick()
+    })
   }
 
   killed() {
@@ -97,8 +127,9 @@ module.exports = class GameState {
         if (!currSnapshot)
           return
 
+        // must do actionTick before movementTick since action could override movment!
+        player.actionTick(currSnapshot, this) // pass in entire snapshot since movement is needed for dash
         player.movementTick(currSnapshot.movement)
-        player.actionTick(currSnapshot.action, this)
       }
     })
 

@@ -89,7 +89,7 @@ const drawPlayer = (player, color) => {
 
 const drawAttackRadius = (player) => {
   // color starts off at orange and becomes redder as it counts down rounded to nearest 1
-  const greenIntensity = Math.round((255 * (player.action.countdown / configs.shared.attackCountdown)))
+  const greenIntensity = Math.round((255 * (player.actions.attack.countdown / configs.shared.attackCountdown)))
   const attackRadiusColor = `rgb(255, ${greenIntensity}, 0)`
 
   drawCircle(player.position,
@@ -110,7 +110,7 @@ const renderLoop = () => {
   drawZoneBorders()
 
   Object.values(gameState.players).forEach((player) => {
-    if (player.action && player.action.type === 'attack') {
+    if (player.actions.attack && !player.actions.attack.isCompleted()) {
       drawAttackRadius(player)
     }
 

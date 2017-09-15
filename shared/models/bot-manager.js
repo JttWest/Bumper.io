@@ -2,7 +2,7 @@ const configs = require('../../game-configs')
 const util = require('./../util')
 
 const minBotMovementRepeat = 5
-const maxBotMovementRepeast = 20
+const maxBotMovementRepeast = 50
 
 class BotPlayer {
   constructor(player) {
