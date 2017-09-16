@@ -12,6 +12,9 @@ const keyboardCodeMapping = {
   SPACE: 32
 }
 
+let mouseX
+let mouseY
+
 const getMovementData = () => {
   const movement = { left: false, right: false, up: false, down: false }
 
@@ -51,12 +54,21 @@ const getActionData = () => {
 module.exports = {
   keyboardCodeMapping,
 
-  onKeydown: (event) => {
-    keyRegister[event.keyCode] = true
+  registerKeysInput(element) {
+    element.addEventListener('keydown', (event) => {
+      keyRegister[event.keyCode] = true
+    })
+
+    element.addEventListener('keyup', (event) => {
+      keyRegister[event.keyCode] = false
+    })
   },
 
-  onKeyup: (event) => {
-    keyRegister[event.keyCode] = false
+  registerMouseDirectionInput(element) {
+    element.addEventListener('mousemove', (event) => {
+      mouseX = event.offsetX
+      mouseY = event.offsetY
+    })
   },
 
   /**

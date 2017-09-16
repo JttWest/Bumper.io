@@ -25,9 +25,12 @@ const canvas = document.getElementById('canvas')
 //   keyRegister[e.keyCode] = false
 // })
 
-canvas.addEventListener('keydown', control.onKeydown)
+// canvas.addEventListener('keydown', control.onKeydown)
 
-canvas.addEventListener('keyup', control.onKeyup)
+// canvas.addEventListener('keyup', control.onKeyup)
+
+control.registerKeysInput(canvas)
+control.registerMouseDirectionInput(canvas)
 
 class PlayerSnapshot {
   // constructor() {
