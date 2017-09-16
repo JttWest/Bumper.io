@@ -1,3 +1,5 @@
+const global = require('./global')
+
 const keyRegister = {}
 
 // list of available input keys
@@ -9,34 +11,26 @@ const keyboardCodeMapping = {
   B: 66,
   N: 78,
   M: 77,
+  Q: 81,
   SPACE: 32
 }
 
-let mouseX
-let mouseY
+let mouseX = 0
+let mouseY = 0
 
 const getMovementData = () => {
-  const movement = { left: false, right: false, up: false, down: false }
+  const player = global.get('player')
 
-  if (keyRegister[keyboardCodeMapping.W])
-    movement.up = true
+  const deltaX = mouseX - player.position.x
+  const deltaY = mouseY - player.position.y
 
-  if (keyRegister[keyboardCodeMapping.S])
-    movement.down = true
-
-  if (keyRegister[keyboardCodeMapping.A])
-    movement.left = true
-
-  if (keyRegister[keyboardCodeMapping.D])
-    movement.right = true
-
-  return movement
+  return Math.atan2(deltaY, deltaX)
 }
 
 const getActionData = () => {
   let action = null
 
-  if (keyRegister[keyboardCodeMapping.B]) {
+  if (keyRegister[keyboardCodeMapping.Q]) {
     action = 'attack'
   }
 
@@ -44,7 +38,7 @@ const getActionData = () => {
     action = 'conquer'
   }
 
-  if (keyRegister[keyboardCodeMapping.M]) {
+  if (keyRegister[keyboardCodeMapping.SPACE]) {
     action = 'dash'
   }
 

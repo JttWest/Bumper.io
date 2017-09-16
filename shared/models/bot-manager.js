@@ -21,12 +21,7 @@ class BotPlayer {
     if (this.movement.movementRepeatCount <= 0) {
       this.movement.movementRepeatCount = util.randomIntFromInterval(minBotMovementRepeat, maxBotMovementRepeast)
 
-      this.movement.direction = {
-        left: util.randBool(),
-        right: util.randBool(),
-        up: util.randBool(),
-        down: util.randBool()
-      }
+      this.movement.direction = util.randomFloatFromInterval(-Math.PI, Math.PI)
     }
 
     // move bot

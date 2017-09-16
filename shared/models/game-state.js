@@ -47,26 +47,30 @@ class Player {
   /**
    *  movementData: { left: BOOLEAN, right: BOOLEAN, up: BOOLEAN, down: BOOLEAN }
    */
-  movementTick(movement) {
+  movementTick(angle) {
     // movement has been override by action
     if (this.overrideMovement)
       return
 
-    if (movement.left) {
-      this.move(-configs.shared.playerSpeed, 0)
-    }
+    const dx = configs.shared.playerSpeed * Math.cos(angle)
+    const dy = configs.shared.playerSpeed * Math.sin(angle)
+    this.move(dx, dy)
 
-    if (movement.right) {
-      this.move(configs.shared.playerSpeed, 0)
-    }
+    // if (movement.left) {
+    //   this.move(-configs.shared.playerSpeed, 0)
+    // }
 
-    if (movement.up) {
-      this.move(0, -configs.shared.playerSpeed)
-    }
+    // if (movement.right) {
+    //   this.move(configs.shared.playerSpeed, 0)
+    // }
 
-    if (movement.down) {
-      this.move(0, configs.shared.playerSpeed)
-    }
+    // if (movement.up) {
+    //   this.move(0, -configs.shared.playerSpeed)
+    // }
+
+    // if (movement.down) {
+    //   this.move(0, configs.shared.playerSpeed)
+    // }
   }
 
   /**

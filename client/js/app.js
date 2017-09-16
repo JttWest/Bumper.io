@@ -15,20 +15,6 @@ const gameState = new GameState()
 
 const canvas = document.getElementById('canvas')
 
-// const keyRegister = {}
-
-// canvas.addEventListener('keydown', (e) => {
-//   keyRegister[e.keyCode] = true
-// })
-
-// canvas.addEventListener('keyup', (e) => {
-//   keyRegister[e.keyCode] = false
-// })
-
-// canvas.addEventListener('keydown', control.onKeydown)
-
-// canvas.addEventListener('keyup', control.onKeyup)
-
 control.registerKeysInput(canvas)
 control.registerMouseDirectionInput(canvas)
 
@@ -51,8 +37,8 @@ global.register('gameState', gameState)
 
 const player = gameState.join()
 
-// const bots = []
-// bots.push(new BotPlayer(gameState.join()))
+global.register('player', player)
+
 const numBots = 5
 const botManager = new BotManager(gameState)
 botManager.createBots(numBots)
@@ -72,13 +58,11 @@ const gameTick = () => {
 
   const userInputs = control.getUserInputData()
 
-  // TODO: action
   player.insertSnapshot(userInputs.movement, userInputs.action)
   gameState.tick()
 }
 
 // run game loop
-// setInterval(gameTick, configs.shared.tickInterval)
 gameTick()
 
 graphics.renderLoop()

@@ -38,7 +38,7 @@ class Action {
 
 class AttackAction extends Action {
   constructor() {
-    super('attack', configs.shared.attackCountdown, 0, 50)
+    super('attack', configs.shared.attackCountdown, 0, 0)
   }
 
   executeResult(player, gameState) {
@@ -79,16 +79,11 @@ class ConquerAction extends Action {
 // Dash player a short distance toward mouse pointer
 // player lose movement control during this time
 class DashAction extends Action {
-  constructor(direction) {
+  constructor(directionAngle) {
     super('dash', 0, 10, 0)
 
-    let dx = 0
-    let dy = 0
-
-    if (direction.left) dx -= 10
-    if (direction.right) dx += 10
-    if (direction.up) dy -= 10
-    if (direction.down) dy += 10
+    const dx = 5 * configs.shared.playerSpeed * Math.cos(directionAngle)
+    const dy = 5 * configs.shared.playerSpeed * Math.sin(directionAngle)
 
     this.dashMovement = { dx, dy }
   }
