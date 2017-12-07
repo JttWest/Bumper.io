@@ -1,6 +1,6 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CircularDependencyPlugin = require('circular-dependency-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
   entry: './client/js/app.js',
@@ -25,4 +25,4 @@ module.exports = {
       failOnError: true
     })
   ]
-}
+};

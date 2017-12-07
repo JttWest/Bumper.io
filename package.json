@@ -14,7 +14,8 @@
     "build:prod": "webpack -p --progress --colors",
     "heroku:publish": "npm run build:prod && git add dist && git commit -m \"build dist for publish to heroku\" && git push heroku master",
     "heroku:off": "heroku ps:scale web=0",
-    "heroku:on": "heroku ps:scale web=1"
+    "heroku:on": "heroku ps:scale web=1",
+    "lint:fix": "eslint . --fix"
   },
   "babel": {
     "presets": [

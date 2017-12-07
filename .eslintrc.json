@@ -12,14 +12,12 @@
     "import"
   ],
   "rules": {
-    "semi": ["error", "never"],
-    "no-unexpected-multiline": "error",
     "no-unused-expressions": ["error", {"allowTernary": true}],
     "comma-dangle":"off",
     "no-plusplus":"off",
     "prefer-const":"off",
     "curly":"off",
-    "no-mixed-operators":"warn",
+    "no-mixed-operators":"off",
     "camelcase":"warn",
     "max-len":"off",
     "no-param-reassign": ["error", { "props": false }],
