@@ -80,7 +80,7 @@ class ConquerAction extends Action {
 // player lose movement control during this time
 class DashAction extends Action {
   constructor(directionAngle) {
-    super('dash', 0, 10, 0)
+    super('dash', 0, 10, 30)
 
     const dx = 5 * configs.shared.playerSpeed * Math.cos(directionAngle)
     const dy = 5 * configs.shared.playerSpeed * Math.sin(directionAngle)

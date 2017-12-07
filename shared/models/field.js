@@ -8,6 +8,13 @@ const zoneStatus = {
   BLOCKED: -2
 }
 
+class Zone {
+  constructor(coord, status) {
+    this.coord = coord
+    this.status = status
+  }
+}
+
 module.exports = class Field {
   constructor(horizontalSize, verticalSize, zoneWidth, zoneHeight) {
     this.horizontalSize = horizontalSize

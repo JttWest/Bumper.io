@@ -48,29 +48,13 @@ class Player {
    *  movementData: { left: BOOLEAN, right: BOOLEAN, up: BOOLEAN, down: BOOLEAN }
    */
   movementTick(angle) {
-    // movement has been override by action
-    if (this.overrideMovement)
+    // movement has been override by action or doesn't have movment angle
+    if (this.overrideMovement || !angle)
       return
 
     const dx = configs.shared.playerSpeed * Math.cos(angle)
     const dy = configs.shared.playerSpeed * Math.sin(angle)
     this.move(dx, dy)
-
-    // if (movement.left) {
-    //   this.move(-configs.shared.playerSpeed, 0)
-    // }
-
-    // if (movement.right) {
-    //   this.move(configs.shared.playerSpeed, 0)
-    // }
-
-    // if (movement.up) {
-    //   this.move(0, -configs.shared.playerSpeed)
-    // }
-
-    // if (movement.down) {
-    //   this.move(0, configs.shared.playerSpeed)
-    // }
   }
 
   /**
@@ -133,7 +117,7 @@ module.exports = class GameState {
 
         // must do actionTick before movementTick since action could override movment!
         player.actionTick(currSnapshot, this) // pass in entire snapshot since movement is needed for dash
-        player.movementTick(currSnapshot.movement)
+        player.movementTick(currSnapshot.movement, this)
       }
     })
 
@@ -158,6 +142,16 @@ module.exports = class GameState {
     this.players[playerId] = newPlayer
 
     return newPlayer
+  }
+
+  getPlayer(playerId) {
+    if (!this.players[playerId]) {
+      return null
+      // TODO: use debug module to log when this happens
+      // throw new Error(`Player with id ${playerId} doesn't exist in game state`)
+    }
+
+    return this.players[playerId]
   }
 
   /* GameState Player Entry model
@@ -195,12 +189,5 @@ module.exports = class GameState {
   //  */
   // get playerStates() {
   //   return Object.values(this.players)
-  // }
-
-  // getPlayerState(playerId) {
-  //   if (!this.players[playerId])
-  //     throw new Error(`Player with id ${playerId} doesn't exist in game state`)
-
-  //   return this.players[playerId]
   // }
 }
