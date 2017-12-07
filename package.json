@@ -7,6 +7,7 @@
   "description": "An HTML5 game",
   "main": "",
   "scripts": {
+    "test": "mocha --recursive",
     "dev": "concurrently --kill-others \"nodemon --exitcrash -w server -w game-configs.json server/server.js\" \"webpack-dev-server -d --open --content-base dist/\"",
     "dev:client": "webpack-dev-server -d --open --content-base dist/",
     "build:dev": "webpack --progress --colors",

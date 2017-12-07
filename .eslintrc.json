@@ -20,7 +20,6 @@
     "prefer-const":"off",
     "curly":"off",
     "no-mixed-operators":"warn",
-    "no-underscore-dangle":"warn",
     "camelcase":"warn",
     "max-len":"off",
     "no-param-reassign": ["error", { "props": false }],
