@@ -1,3 +1,5 @@
+const configs = require('../game-configs.json');
+
 // https://gist.github.com/christopher4lis/f9ccb589ee8ecf751481f05a8e59b1dc
 
 /**
@@ -62,5 +64,19 @@ function resolveCollision(particle, otherParticle) {
 
     otherParticle.velocity.x = vFinal2.x;
     otherParticle.velocity.y = vFinal2.y;
+
+    // return the angles of these velocities instead
   }
 }
+
+// returns true of the 2 players has collided
+const checkCollision = (p1, p2) => {
+  const dx = p1.position.x - p2.position.x;
+  const dy = p1.position.y - p2.position.y;
+
+  // the players has collided
+  if (Math.sqrt((dx * dx) + (dy * dy)) < 2 * configs.shared.playerRadius)
+    return true;
+
+  return false;
+};
