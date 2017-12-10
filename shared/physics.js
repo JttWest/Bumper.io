@@ -22,33 +22,30 @@ function rotate(velocity, angle) {
 }
 
 /**
-* Swaps out two colliding particles' x and y velocities after running through
-* an elastic collision reaction equation
-*
-* @param  Object | particle      | A particle object with x and y coordinates, plus velocity
-* @param  Object | otherParticle | A particle object with x and y coordinates, plus velocity
-* @return Null | Does not return a value
+* @param  Player
+* @param  Player
+* @returns Collision | { direction: Number, speed : Number }
 */
 
-function resolveCollision(particle, otherParticle) {
-  const xVelocityDiff = particle.velocity.x - otherParticle.velocity.x;
-  const yVelocityDiff = particle.velocity.y - otherParticle.velocity.y;
+const resolveCollision = (player1, player2) => {
+  const xVelocityDiff = player1.velocity.x - player2.velocity.x;
+  const yVelocityDiff = player1.velocity.y - player2.velocity.y;
 
-  const xDist = otherParticle.x - particle.x;
-  const yDist = otherParticle.y - particle.y;
+  const xDist = player2.position.x - player1.position.x;
+  const yDist = player2.position.y - player1.position.y;
 
   // Prevent accidental overlap of particles
   if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
     // Grab angle between the two colliding particles
-    const angle = -Math.atan2(otherParticle.y - particle.y, otherParticle.x - particle.x);
+    const angle = -Math.atan2(yDist, xDist);
 
     // Store mass in var for better readability in collision equation
-    const m1 = particle.mass;
-    const m2 = otherParticle.mass;
+    const m1 = player1.mass;
+    const m2 = player2.mass;
 
     // Velocity before equation
-    const u1 = rotate(particle.velocity, angle);
-    const u2 = rotate(otherParticle.velocity, angle);
+    const u1 = rotate(player1.velocity, angle);
+    const u2 = rotate(player2.velocity, angle);
 
     // Velocity after 1d collision equation
     const v1 = { x: u1.x * (m1 - m2) / (m1 + m2) + u2.x * 2 * m2 / (m1 + m2), y: u1.y };
@@ -59,15 +56,13 @@ function resolveCollision(particle, otherParticle) {
     const vFinal2 = rotate(v2, -angle);
 
     // Swap particle velocities for realistic bounce effect
-    particle.velocity.x = vFinal1.x;
-    particle.velocity.y = vFinal1.y;
+    player1.velocity.x = vFinal1.x;
+    player1.velocity.y = vFinal1.y;
 
-    otherParticle.velocity.x = vFinal2.x;
-    otherParticle.velocity.y = vFinal2.y;
-
-    // return the angles of these velocities instead
+    player2.velocity.x = vFinal2.x;
+    player2.velocity.y = vFinal2.y;
   }
-}
+};
 
 // returns true of the 2 players has collided
 const checkCollision = (p1, p2) => {
@@ -79,4 +74,9 @@ const checkCollision = (p1, p2) => {
     return true;
 
   return false;
+};
+
+module.exports = {
+  resolveCollision,
+  checkCollision
 };

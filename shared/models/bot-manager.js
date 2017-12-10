@@ -96,8 +96,6 @@ class BotPlayer {
     const chance = Math.random();
 
     if (chance < 0.01) {
-      this.player.insertSnapshot(null, 'attack');
-    } else if (chance < 0.5 && this.player.actions.attack) {
       // only dash when attacking
       dashClosest(this.player, this.gameState);
     } else {

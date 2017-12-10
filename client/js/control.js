@@ -30,13 +30,13 @@ const getMovementData = () => {
 const getActionData = () => {
   let action = null;
 
-  if (keyRegister[keyboardCodeMapping.Q]) {
-    action = 'attack';
-  }
+  // if (keyRegister[keyboardCodeMapping.Q]) {
+  //   action = 'attack';
+  // }
 
-  if (keyRegister[keyboardCodeMapping.N]) {
-    action = 'conquer';
-  }
+  // if (keyRegister[keyboardCodeMapping.N]) {
+  //   action = 'conquer';
+  // }
 
   if (keyRegister[keyboardCodeMapping.SPACE]) {
     action = 'dash';

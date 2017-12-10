@@ -8,11 +8,13 @@
     "mapHeight": 600,
     "playerRadius": 20,
     "playerSpeed": 3,
+    "playerDashSpeed": 10,
     "attackRadius": 60,
     "attackCountdown": 100,
     "zoneWidth": 100,
     "zoneHeight": 100,
-    "zoneBorderSize": 1
+    "zoneBorderSize": 1,
+    "collisionOverrideDuration": 20
   },
   "server": {
   },

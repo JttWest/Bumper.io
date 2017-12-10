@@ -39,7 +39,7 @@ const player = gameState.join();
 
 global.register('player', player);
 
-const numBots = 5;
+const numBots = 9;
 const botManager = new BotManager(gameState);
 botManager.createBots(numBots);
 
