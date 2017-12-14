@@ -9,6 +9,7 @@ const physics = require('../physics');
 class Player {
   constructor(id, position) {
     this.id = id;
+    this.name = '???';
     this.position = position;
     this.snapshotQueue = [];
     this.actions = {}; // current actions in progress

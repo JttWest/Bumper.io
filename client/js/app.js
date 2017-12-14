@@ -1,7 +1,7 @@
 require('../css/app.css');
 require('../../semantic/dist/semantic.min.css');
 require('../../semantic/dist/semantic.min.js');
-require('./dashboard');
+require('./menu');
 
 const configs = require('../../game-configs.json');
 const control = require('./control');
@@ -43,7 +43,7 @@ const player = gameState.join();
 
 global.register('player', player);
 
-const numBots = 9;
+const numBots = 3;
 const botManager = new BotManager(gameState);
 botManager.createBots(numBots);
 
