@@ -21,19 +21,23 @@ class Player {
   }
 
   move(dx, dy) {
-    if (util.isNegativeNumber(dx) && this.position.x + dx < 0) // moving left out of map
-      this.position.x = 0;
-    else if (!util.isNegativeNumber(dx) && this.position.x + dx > configs.mapWidth) // moving right out of map
-      this.position.x = configs.mapWidth;
-    else
-      this.position.x += dx;
+    // if (util.isNegativeNumber(dx) && this.position.x + dx < 0) // moving left out of map
+    //   this.position.x = 0;
+    // else if (!util.isNegativeNumber(dx) && this.position.x + dx > configs.mapWidth) // moving right out of map
+    //   this.position.x = configs.mapWidth;
+    // else
+    //   this.position.x += dx;
 
-    if (util.isNegativeNumber(dy) && this.position.y + dy < 0) // moving up out of map
-      this.position.y = 0;
-    else if (!util.isNegativeNumber(dy) && this.position.y + dy > configs.mapHeight) // moving down out of map
-      this.position.y = configs.mapHeight;
-    else
-      this.position.y += dy;
+    // if (util.isNegativeNumber(dy) && this.position.y + dy < 0) // moving up out of map
+    //   this.position.y = 0;
+    // else if (!util.isNegativeNumber(dy) && this.position.y + dy > configs.mapHeight) // moving down out of map
+    //   this.position.y = configs.mapHeight;
+    // else
+    //   this.position.y += dy;
+
+    // let players move anywhere; another check is done in gameState tick to kill players out of bound
+    this.position.x += dx;
+    this.position.y += dy;
   }
 
   insertSnapshot(movement, action) {
@@ -133,8 +137,10 @@ module.exports = class GameState {
 
   // process players movement and actions
   tick() {
+    const players = Object.values(this.players);
+
     // process tick for each player in game
-    Object.values(this.players).forEach((player) => {
+    players.forEach((player) => {
       if (player.isKilled) { // remove killed players from game
         delete this.players[player.id];
         console.log(`Player ${player.id} killed`);
@@ -153,9 +159,9 @@ module.exports = class GameState {
 
     // for each player in game -> apply movement + set action
     // for each player in game -> check whether they have collided with another player
-    //    if collided -> set resolve movement direction (for the player himself only)
-    Object.values(this.players).forEach((player) => {
-      Object.values(this.players).forEach((otherPlayer) => {
+    //    if collided -> set resolve movement direction
+    players.forEach((player) => {
+      players.forEach((otherPlayer) => {
         // only resolve collision when player is dashing
         if (player.id !== otherPlayer.id && player.actions.dash && physics.checkCollision(player, otherPlayer)) {
           console.log(`${player.id} collided with ${otherPlayer.id}`);
@@ -169,6 +175,14 @@ module.exports = class GameState {
           physics.resolveCollision(player, otherPlayer);
         }
       });
+    });
+
+    // check which player are in kill zone
+    players.forEach((player) => {
+      // out of bound
+      if (player.position.x < 0 || player.position.x > configs.mapWidth ||
+          player.position.y < 0 || player.position.x > configs.mapHeight)
+        player.isKilled = true;
     });
   }
 
