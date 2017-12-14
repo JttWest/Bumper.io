@@ -181,7 +181,7 @@ module.exports = class GameState {
     players.forEach((player) => {
       // out of bound
       if (player.position.x < 0 || player.position.x > configs.mapWidth ||
-          player.position.y < 0 || player.position.x > configs.mapHeight)
+          player.position.y < 0 || player.position.y > configs.mapHeight)
         player.isKilled = true;
     });
   }

@@ -1,4 +1,5 @@
 const util = require('./../util');
+const configs = require('../../game-configs.json').shared
 
 /**
  * BotPlayer have intention : {
@@ -22,6 +23,16 @@ class Intention {
     this.data = data;
   }
 }
+
+const isCloseToBorder = (coord) => {
+  const buffer = 20;
+
+  if (coord.x < buffer || coord.x > configs.mapWidth - buffer ||
+    coord.y < buffer || coord.y > configs.mapHeight - buffer)
+    return true;
+
+  return false;
+};
 
 // should be a util function
 const getAngleBetweenCoords = (originCoord, targetCoord) => {
@@ -103,6 +114,14 @@ class BotPlayer {
         this.movement.movementRepeatCount = util.randomIntFromInterval(minBotMovementRepeat, maxBotMovementRepeast);
 
         this.movement.direction = util.randomFloatFromInterval(-Math.PI, Math.PI);
+      }
+
+      // redirect bot toward center when its too close to border
+      if (isCloseToBorder(this.player.position)) {
+        const angleToCenter = getAngleBetweenCoords(this.player.position,
+          { x: configs.mapWidth / 2, y: configs.mapHeight / 2 });
+
+        this.movement.direction = angleToCenter;
       }
 
       // move bot
