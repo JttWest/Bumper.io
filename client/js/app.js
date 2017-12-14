@@ -1,4 +1,8 @@
 require('../css/app.css');
+require('../../semantic/dist/semantic.min.css');
+require('../../semantic/dist/semantic.min.js');
+require('./dashboard');
+
 const configs = require('../../game-configs.json');
 const control = require('./control');
 const key = require('./control').keyboardCodeMapping;

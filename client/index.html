@@ -5,12 +5,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,
     user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>Top-down Shooter</title>
+  <title>Game.io</title>
 </head>
 
 <body>
-  <div id="holder">
+  <div id="holder" class="stackable">
     <canvas id="canvas" width="600" height="600" tabindex='1'></canvas>
+  </div>
+
+  <div id="startBtn" class="ui button" tabindex="0">
+    Start
+  </div>
+
+  <div id="dashboard" class="ui modal fullscreen">
+    <div class="ui header">Header</div>
+    <div class="content">
+      <p></p>
+    </div>
   </div>
 </body>
 
