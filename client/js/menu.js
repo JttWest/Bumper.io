@@ -15,7 +15,10 @@ $('#playButton').click(() => {
 
 const showStandbyMenu = () => {
   $('#standbyMenu')
-    .modal('setting', 'transition', 'scale')
+    // .modal('setting', 'transition', 'scale')
+    .modal({
+      inverted: true
+    })
     .modal('show');
 };
 
