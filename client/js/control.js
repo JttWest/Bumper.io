@@ -19,7 +19,7 @@ let mouseX = 0;
 let mouseY = 0;
 
 const getMovementData = () => {
-  const player = global.get('player');
+  const player = global.get('clientPlayer');
 
   const deltaX = mouseX - player.position.x;
   const deltaY = mouseY - player.position.y;
@@ -51,6 +51,7 @@ module.exports = {
   registerKeysInput(element) {
     element.addEventListener('keydown', (event) => {
       keyRegister[event.keyCode] = true;
+      event.preventDefault();
     });
 
     element.addEventListener('keyup', (event) => {

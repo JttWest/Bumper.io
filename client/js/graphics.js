@@ -87,6 +87,10 @@ const drawPlayer = (player, color) => {
   );
 };
 
+const drawPlayerName = (player) => {
+
+}
+
 const drawAttackRadius = (player) => {
   // color starts off at orange and becomes redder as it counts down rounded to nearest 1
   const greenIntensity = Math.round((255 * (player.actions.attack.countdown / configs.shared.attackCountdown)));
@@ -100,6 +104,7 @@ const drawAttackRadius = (player) => {
 
 const renderLoop = () => {
   const gameState = global.get('gameState');
+  const clientPlayer = global.get('clientPlayer');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -114,7 +119,10 @@ const renderLoop = () => {
       drawAttackRadius(player);
     }
 
-    drawPlayer(player, configs.client.otherPlayersColor);
+    if (clientPlayer && player.id === clientPlayer.id)
+      drawPlayer(player, configs.client.clientPlayerColor);
+    else
+      drawPlayer(player, configs.client.otherPlayersColor);
   });
 
   requestAnimationFrame(renderLoop);

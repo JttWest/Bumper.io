@@ -22,6 +22,7 @@
     "camelcase":"warn",
     "max-len":"off",
     "no-param-reassign": ["error", { "props": false }],
-    "object-shorthand":"off"
+    "object-shorthand":"off",
+    "no-prototype-builtins":"off"
   }
 }

@@ -2,15 +2,15 @@ body {
   margin: 0;
 }
 
-canvas {
+#canvas {
   border: solid 1px black;
   position: relative;
-  background: #447604;
+  background: brown;
 }
 
 #holder {
   display: block;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
   width: 600px;
   height: 600px;
 }

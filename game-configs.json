@@ -20,7 +20,7 @@
   },
   "client": {
     "isDebugMode": false,
-    "playerColor": "#2274A5",
+    "clientPlayerColor": "green",
     "otherPlayersColor": "#2274A5",
     "zoneBorderColor": "black"
   }
