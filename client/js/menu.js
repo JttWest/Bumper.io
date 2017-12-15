@@ -1,9 +1,5 @@
 const global = require('./global');
 
-$('#standbyMenu')
-  .modal('setting', 'transition', 'scale')
-  .modal('show');
-
 $('#playButton').click(() => {
   const name = $('#nameInput').val();
   const gameState = global.get('gameState');
@@ -16,3 +12,13 @@ $('#playButton').click(() => {
     .modal('setting', 'transition', 'scale')
     .modal('hide');
 });
+
+const showStandbyMenu = () => {
+  $('#standbyMenu')
+    .modal('setting', 'transition', 'scale')
+    .modal('show');
+};
+
+module.exports = {
+  showStandbyMenu
+};

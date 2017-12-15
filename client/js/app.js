@@ -1,14 +1,13 @@
 require('../css/app.css');
 require('../../semantic/dist/semantic.min.css');
 require('../../semantic/dist/semantic.min.js');
-require('./menu');
 
 const configs = require('../../game-configs.json');
 const control = require('./control');
-const key = require('./control').keyboardCodeMapping;
 const debug = require('./debug');
 const graphics = require('./graphics');
 const global = require('./global');
+const menu = require('./menu');
 
 const GameState = require('../../shared/models/game-state');
 const BotManager = require('../../shared/models/bot-manager');
@@ -17,8 +16,8 @@ const gameState = new GameState();
 
 const canvas = document.getElementById('canvas');
 
-control.registerKeysInput(canvas);
-control.registerMouseDirectionInput(canvas);
+control.trackKeysInput(canvas);
+control.trackMouseDirectionInput(canvas);
 
 global.set('gameState', gameState);
 
@@ -36,8 +35,6 @@ Game Tick:
 const gameLoop = () => {
   setTimeout(gameLoop, configs.shared.tickInterval);
 
-  debug.logGameTickRate();
-
   botManager.tick();
 
   // client is currently playing
@@ -52,13 +49,6 @@ const gameLoop = () => {
 };
 
 gameLoop();
-
 graphics.renderLoop();
 
-/*
-when user click play in standby menu
- start gameLoop and renderLoop
-   if died -> show standby menu
-
-*/
-
+menu.showStandbyMenu();

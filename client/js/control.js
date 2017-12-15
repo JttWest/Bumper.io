@@ -48,7 +48,7 @@ const getActionData = () => {
 module.exports = {
   keyboardCodeMapping,
 
-  registerKeysInput(element) {
+  trackKeysInput(element) {
     element.addEventListener('keydown', (event) => {
       keyRegister[event.keyCode] = true;
       event.preventDefault();
@@ -59,7 +59,7 @@ module.exports = {
     });
   },
 
-  registerMouseDirectionInput(element) {
+  trackMouseDirectionInput(element) {
     element.addEventListener('mousemove', (event) => {
       mouseX = event.offsetX;
       mouseY = event.offsetY;

@@ -21,13 +21,6 @@ module.exports = {
     appStatus = status[newStatus];
   },
 
-  // register: (name, obj) => {
-  //   if (Object.keys(global[name]).length !== 0)
-  //     throw new Error(`REGISTER: Global data with key '${name}' already register`);
-
-  //   global[name] = obj;
-  // },
-
   get: (name) => {
     if (!global.hasOwnProperty(name))
       throw new Error(`Global data with key '${name}' doesn't exist`);
