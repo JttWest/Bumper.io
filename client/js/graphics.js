@@ -146,7 +146,8 @@ const renderLoop = () => {
     drawPlayerName(player);
   });
 
-  requestAnimationFrame(renderLoop);
+  if (global.getAppStatus() === 'PLAYING' || global.getAppStatus() === 'STANDBY')
+    requestAnimationFrame(renderLoop);
 };
 
 module.exports = {

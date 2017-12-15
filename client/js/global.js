@@ -5,8 +5,8 @@ const global = {
 
 const status = {
   PLAYING: 'PLAYING',
-  STANDBY: 'STANDY',
-  MENU: 'MENU'
+  STANDBY: 'STANDBY',
+  MAIN: 'MAIN'
 };
 
 let appStatus = status.MENU;
@@ -14,7 +14,7 @@ let appStatus = status.MENU;
 module.exports = {
   getAppStatus: () => appStatus,
 
-  updateAppStatus: (newStatus) => {
+  setAppStatus: (newStatus) => {
     if (!status[newStatus])
       throw new Error(`Attempting to update app status with invalid value: ${newStatus}`);
 

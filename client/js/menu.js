@@ -1,23 +1,28 @@
 const global = require('./global');
 
-$('#playButton').click(() => {
+const joinGame = () => {
   const name = $('#nameInput').val();
   const gameState = global.get('gameState');
-  const clientPlayer = gameState.join(name);
-  global.set('clientPlayer', clientPlayer);
+  const clientPlayer = gameState.play(name);
 
+  global.set('clientPlayer', clientPlayer);
+  global.setAppStatus('PLAYING');
+};
+
+$('#playButton').click(() => {
   $('#canvas').focus();
 
+  joinGame();
+
   $('#standbyMenu')
-    .modal('setting', 'transition', 'scale')
     .modal('hide');
 });
 
 const showStandbyMenu = () => {
   $('#standbyMenu')
-    // .modal('setting', 'transition', 'scale')
     .modal({
-      inverted: true
+      inverted: true,
+      transition: 'scale'
     })
     .modal('show');
 };

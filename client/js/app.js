@@ -13,13 +13,12 @@ const GameState = require('../../shared/models/game-state');
 const BotManager = require('../../shared/models/bot-manager');
 
 const gameState = new GameState();
+global.set('gameState', gameState);
+global.setAppStatus('STANDBY'); // TODO: intergrate main menu logic
 
 const canvas = document.getElementById('canvas');
-
 control.trackKeysInput(canvas);
 control.trackMouseDirectionInput(canvas);
-
-global.set('gameState', gameState);
 
 const numBots = 3;
 const botManager = new BotManager(gameState);
@@ -45,7 +44,13 @@ const gameLoop = () => {
     clientPlayer.insertSnapshot(userInputs.movement, userInputs.action);
   }
 
-  gameState.tick();
+  if (clientPlayer && clientPlayer.isKilled && global.getAppStatus() === 'PLAYING') {
+    setTimeout(() => menu.showStandbyMenu(), 1000);
+    global.setAppStatus('STANDBY');
+  }
+
+  if (global.getAppStatus() === 'PLAYING' || global.getAppStatus() === 'STANDBY')
+    gameState.tick();
 };
 
 gameLoop();

@@ -193,9 +193,7 @@ module.exports = class GameState {
     });
   }
 
-  // pass in player obj
-  join(name) {
-    // TODO: implement unique ID logic
+  play(name) {
     const playerId = this.availablePlayerIds.shift();
 
     if (playerId === undefined)
