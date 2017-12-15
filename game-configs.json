@@ -3,7 +3,6 @@
     "port": 3000,
     "tickInterval": 50,
     "tickBufferSize": 3,
-    "bulletSpeed": 20,
     "mapWidth": 600,
     "mapHeight": 600,
     "playerRadius": 20,
@@ -14,7 +13,8 @@
     "zoneWidth": 100,
     "zoneHeight": 100,
     "zoneBorderSize": 1,
-    "collisionOverrideDuration": 20
+    "collisionOverrideDuration": 20,
+    "maxPlayerLimit": 10
   },
   "server": {
   },

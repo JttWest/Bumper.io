@@ -1,5 +1,5 @@
 const util = require('./../util');
-const configs = require('../../game-configs.json').shared
+const configs = require('../../game-configs.json').shared;
 
 /**
  * BotPlayer have intention : {
@@ -82,6 +82,10 @@ const dashClosest = (player, gameState) => {
   // look at gameState players and check how far away they are
   // pick first player in range for now
   const closestPlayer = getClosestPlayer(player, gameState);
+
+  // only player in game
+  if (!closestPlayer)
+    return;
 
   const snapshot = generateDashTowardTargetSnapshot(player, closestPlayer);
   player.insertSnapshot(snapshot.movement, snapshot.action);
@@ -178,7 +182,7 @@ module.exports = class BotManager {
 
   createBots(numBots) {
     for (let i = 0; i < numBots; ++i) {
-      const player = this.gameState.join();
+      const player = this.gameState.join(`Bot${i + 1}`);
       this.bots[player.id] = new BotPlayer(player, this.gameState);
     }
   }

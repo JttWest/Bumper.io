@@ -7,9 +7,9 @@ const actionFactory = require('../actions').factory;
 const physics = require('../physics');
 
 class Player {
-  constructor(id, position) {
+  constructor(id, name, position) {
     this.id = id;
-    this.name = '???';
+    this.name = name;
     this.position = position;
     this.snapshotQueue = [];
     this.actions = {}; // current actions in progress
@@ -118,8 +118,7 @@ class Player {
 
 module.exports = class GameState {
   constructor() {
-    // is this good enough?
-    this.availablePlayerIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    this.availablePlayerIds = Array.from(Array(configs.maxPlayerLimit).keys());
     this.players = {};
 
     const hZoneSize = configs.mapWidth / configs.zoneWidth;
@@ -136,6 +135,14 @@ module.exports = class GameState {
     this.field.conquerZone(1, player.position);
   }
 
+  removeFromGame(player) {
+    delete this.players[player.id];
+    this.availablePlayerIds.push(player.id);
+    console.log(`Player ${player.id} killed`);
+
+    // TODO: put players into standby queue so they can rejoin game?
+  }
+
   // process players movement and actions
   tick() {
     const players = Object.values(this.players);
@@ -143,8 +150,7 @@ module.exports = class GameState {
     // process tick for each player in game
     players.forEach((player) => {
       if (player.isKilled) { // remove killed players from game
-        delete this.players[player.id];
-        console.log(`Player ${player.id} killed`);
+        this.removeFromGame(player);
       } else {
         const currSnapshot = player.snapshotQueue.shift();
 
@@ -182,25 +188,25 @@ module.exports = class GameState {
     players.forEach((player) => {
       // out of bound
       if (player.position.x < 0 || player.position.x > configs.mapWidth ||
-          player.position.y < 0 || player.position.y > configs.mapHeight)
+        player.position.y < 0 || player.position.y > configs.mapHeight)
         player.isKilled = true;
     });
   }
 
   // pass in player obj
-  join() {
+  join(name) {
     // TODO: implement unique ID logic
     const playerId = this.availablePlayerIds.shift();
 
-    if (!playerId)
-      throw new Error('Game is full as no player id is available!');
+    if (playerId === undefined)
+      throw new Error('Game is full (no player id is available)');
 
     const initPosition = new Coord(
       util.randomIntFromInterval(0, configs.mapWidth),
       util.randomIntFromInterval(0, configs.mapHeight)
     );
 
-    const newPlayer = new Player(playerId, initPosition);
+    const newPlayer = new Player(playerId, name, initPosition);
 
     this.players[playerId] = newPlayer;
 
