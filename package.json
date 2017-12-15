@@ -1,8 +1,8 @@
 {
-  "name": "top-down-shooter",
-  "version": "0.0.1",
+  "name": "game.io",
+  "version": "0.1.0",
   "engines": {
-    "node": "7.8.0"
+    "node": "8.9.3"
   },
   "description": "An HTML5 game",
   "main": "",

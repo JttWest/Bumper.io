@@ -182,7 +182,7 @@ module.exports = class BotManager {
 
   createBots(numBots) {
     for (let i = 0; i < numBots; ++i) {
-      const player = this.gameState.join(`Bot${i + 1}`);
+      const player = this.gameState.join(`Bot ${i + 1}`);
       this.bots[player.id] = new BotPlayer(player, this.gameState);
     }
   }

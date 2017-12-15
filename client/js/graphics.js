@@ -38,18 +38,24 @@ const drawLine = (startCoord, endCoord, setting = {}) => {
   ctx.stroke();
 };
 
-const drawRectangle = (originCoord, width, height, setting) => {
+const drawRectangle = (coord, width, height, setting) => {
   ctx.beginPath();
 
   applyCtxSetting(setting);
 
-  ctx.rect(originCoord.x, originCoord.y, width, height);
+  ctx.rect(coord.x, coord.y, width, height);
 
   if (setting.fillStyle)
     ctx.fill();
 
   if (setting.strokeStyle)
     ctx.stroke();
+};
+
+const drawText = (text, coord, maxWidth, setting) => {
+  applyCtxSetting(setting);
+
+  ctx.fillText(text, coord.x, coord.y, maxWidth);
 };
 
 const drawZoneBorders = () => {
@@ -88,8 +94,18 @@ const drawPlayer = (player, color) => {
 };
 
 const drawPlayerName = (player) => {
+  const maxWidth = 1000; // TODO: figure out max width of name
+  const setting = {
+    font: 'bold 1vw Impact',
+    fillStyle: 'white',
+    textAlign: 'center',
+  };
 
-}
+  drawText(player.name,
+    { x: player.position.x, y: player.position.y + 35 },
+    maxWidth,
+    setting);
+};
 
 const drawAttackRadius = (player) => {
   // color starts off at orange and becomes redder as it counts down rounded to nearest 1
@@ -123,6 +139,11 @@ const renderLoop = () => {
       drawPlayer(player, configs.client.clientPlayerColor);
     else
       drawPlayer(player, configs.client.otherPlayersColor);
+  });
+
+  // draw names seperately to prevent players from blocking eachother's name
+  Object.values(gameState.players).forEach((player) => {
+    drawPlayerName(player);
   });
 
   requestAnimationFrame(renderLoop);
