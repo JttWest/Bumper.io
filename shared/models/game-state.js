@@ -1,120 +1,9 @@
-// const PlayerState = require('./player-state.js')
+const Player = require('./player.js');
 const configs = require('../../game-configs.json').shared;
 const Field = require('./field');
 const util = require('../util');
 const Coord = require('./coord');
-const actionFactory = require('../actions').factory;
 const physics = require('../physics');
-
-class Player {
-  constructor(id, name, position) {
-    this.id = id;
-    this.name = name;
-    this.position = position;
-    this.snapshotQueue = [];
-    this.actions = {}; // current actions in progress
-    this.isKilled = false; // flag to mark player for clean up
-    this.velocity = { x: 0, y: 0 };
-    this.speed = configs.playerSpeed;
-    this.direction = 0;
-    this.mass = 1;
-    this.overridePlayerControl = 0; // how to long to override player control
-  }
-
-  move(dx, dy) {
-    // if (util.isNegativeNumber(dx) && this.position.x + dx < 0) // moving left out of map
-    //   this.position.x = 0;
-    // else if (!util.isNegativeNumber(dx) && this.position.x + dx > configs.mapWidth) // moving right out of map
-    //   this.position.x = configs.mapWidth;
-    // else
-    //   this.position.x += dx;
-
-    // if (util.isNegativeNumber(dy) && this.position.y + dy < 0) // moving up out of map
-    //   this.position.y = 0;
-    // else if (!util.isNegativeNumber(dy) && this.position.y + dy > configs.mapHeight) // moving down out of map
-    //   this.position.y = configs.mapHeight;
-    // else
-    //   this.position.y += dy;
-
-    // let players move anywhere; another check is done in gameState tick to kill players out of bound
-    this.position.x += dx;
-    this.position.y += dy;
-  }
-
-  insertSnapshot(movement, action) {
-    this.snapshotQueue.push({ movement, action });
-  }
-
-  processSnapshot(snapshot) {
-    const angle = snapshot.movement;
-
-    this.velocity.x = this.speed * Math.cos(angle);
-    this.velocity.y = this.speed * Math.sin(angle);
-
-    const action = snapshot.action;
-
-    // create the requested new action if it's not already in progress
-    if (action && !this.actions[action]) {
-      this.actions[action] = actionFactory(snapshot);
-    }
-  }
-
-  // movementTick() {
-  //   // movement has been override by action or doesn't have movment angle
-  //   if (this.overrideMovement)
-  //     return;
-
-  //   // const dx = configs.playerSpeed * Math.cos(angle);
-  //   // const dy = configs.playerSpeed * Math.sin(angle);
-  //   this.move(this.velocity.x, this.velocity.y);
-  // }
-
-  tick() {
-    if (this.overridePlayerControl)
-      this.overridePlayerControl--;
-
-    // action tick
-    Object.keys(this.actions).forEach((actionName) => {
-      const action = this.actions[actionName];
-
-      if (action.isReadyToExecute())
-        action.executeResult(this);
-      else if (action.isCompleted() && action.isCooldownOver())
-        delete this.actions[actionName];
-      else
-        action.tick();
-    });
-
-    // movement tick
-    // if (!this.overrideMovement)
-    this.move(this.velocity.x, this.velocity.y);
-  }
-
-  /**
-   *  actionData: string
-   */
-  // actionTick(snapshot, gameState) {
-  //   // create the requested new action if it's not already in progress
-  //   if (snapshot.action && !this.actions[snapshot.action]) {
-  //     this.actions[snapshot.action] = actionFactory(snapshot);
-  //   }
-
-  //   Object.keys(this.actions).forEach((actionName) => {
-  //     const action = this.actions[actionName];
-
-  //     if (action.isReadyToExecute())
-  //       action.executeResult(this, gameState); // pass in gameState since action can affect/modify the game state
-  //     else if (action.isCompleted() && action.isCooldownOver())
-  //       delete this.actions[actionName];
-  //     else
-  //       action.tick();
-  //   });
-  // }
-
-  killed() {
-    this.isKilled = true;
-  }
-}
 
 module.exports = class GameState {
   constructor() {
@@ -158,8 +47,6 @@ module.exports = class GameState {
         if (currSnapshot && !player.overridePlayerControl)
           player.processSnapshot(currSnapshot);
 
-        // must do actionTick before movementTick since action could override movment!
-        // player.actionTick(currSnapshot, this); // pass in entire snapshot since movement is needed for dash
         player.tick();
       }
     });
@@ -173,9 +60,11 @@ module.exports = class GameState {
         if (player.id !== otherPlayer.id && player.actions.dash && physics.checkCollision(player, otherPlayer)) {
           console.log(`${player.id} collided with ${otherPlayer.id}`);
 
+          // player was already collision; refresh duration
           if (player.overridePlayerControl < configs.collisionOverrideDuration)
             player.overridePlayerControl = configs.collisionOverrideDuration;
 
+          // other player was already collision; refresh duration
           if (otherPlayer.overridePlayerControl < configs.collisionOverrideDuration)
             otherPlayer.overridePlayerControl = configs.collisionOverrideDuration;
 

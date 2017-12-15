@@ -40,8 +40,8 @@ const gameLoop = () => {
   const clientPlayer = global.get('clientPlayer');
 
   if (clientPlayer && !clientPlayer.isKilled) {
-    const userInputs = control.getUserInputData();
-    clientPlayer.insertSnapshot(userInputs.movement, userInputs.action);
+    const { movement, action } = control.getUserInputData();
+    clientPlayer.insertSnapshot(movement, action);
   }
 
   if (clientPlayer && clientPlayer.isKilled && global.getAppStatus() === 'PLAYING') {

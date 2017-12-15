@@ -102,7 +102,7 @@ const drawPlayerName = (player) => {
   };
 
   drawText(player.name,
-    { x: player.position.x, y: player.position.y + 35 },
+    new Coord(player.position.x, player.position.y + 35),
     maxWidth,
     setting);
 };
