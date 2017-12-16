@@ -1,6 +1,7 @@
 require('../css/app.css');
 require('../../semantic/dist/semantic.min.css');
 require('../../semantic/dist/semantic.min.js');
+require('./ui/leaderboard'); // TODO: remove this
 
 const configs = require('../../game-configs.json');
 const control = require('./control');
