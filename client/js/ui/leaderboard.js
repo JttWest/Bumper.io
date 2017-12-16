@@ -8,7 +8,7 @@ const updateLeaderboard = () => {
   const scoreboardElements = Object.values(gameState.players)
     .map(player => `<li>${player.name}: ${player.points}</li>`);
 
-  $('#leaderboardContainer').html(scoreboardElements.join());
+  $('#leaderboardContainer').html(scoreboardElements.join(''));
 };
 
 setInterval(updateLeaderboard, leaderboardUpdateInterval);

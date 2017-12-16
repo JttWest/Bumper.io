@@ -92,7 +92,8 @@ const dashClosest = (player, gameState) => {
 };
 
 class BotPlayer {
-  constructor(player, gameState) {
+  constructor(id, player, gameState) {
+    this.id = id;
     this.player = player;
     this.movement = {
       direction: null,
@@ -182,17 +183,21 @@ module.exports = class BotManager {
 
   createBots(numBots) {
     for (let i = 0; i < numBots; ++i) {
-      const player = this.gameState.play(`Bot ${i + 1}`);
-      this.bots[player.id] = new BotPlayer(player, this.gameState);
+      const botId = i + 1;
+      const player = this.gameState.play(`Bot ${botId}`);
+      this.bots[botId] = new BotPlayer(botId, player, this.gameState);
     }
   }
 
   tick() {
     Object.values(this.bots).forEach((bot) => {
-      if (bot.isKilled())
-        delete this.bots[bot.player.id];
-      else
+      if (bot.isKilled()) {
+        // rejoin game is killed
+        const player = this.gameState.play(`Bot ${bot.id}`);
+        this.bots[bot.id] = new BotPlayer(bot.id, player, this.gameState);
+      } else {
         bot.tick();
+      }
     });
   }
 };
