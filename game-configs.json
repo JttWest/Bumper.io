@@ -13,7 +13,7 @@
     "zoneWidth": 100,
     "zoneHeight": 100,
     "zoneBorderSize": 1,
-    "collisionOverrideDuration": 20,
+    "collisionDisplacementDuration": 20,
     "maxPlayerLimit": 10
   },
   "server": {

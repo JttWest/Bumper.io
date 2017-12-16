@@ -152,7 +152,7 @@ class BotPlayer {
         // target is no longer in game
         if (!targetPlayer) {
           // TODO: create new decision
-          return;
+          return null;
         }
 
         const deltaX = targetPlayer.position.x - this.player.position.x;

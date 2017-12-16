@@ -76,16 +76,10 @@ class Action {
 // }
 
 
-// Dash player a short distance toward mouse pointer
-// player lose movement control during this time
+// Rename to attack??
 class DashAction extends Action {
   constructor() {
     super('dash', 0, 10, 20);
-
-    // const dx = 5 * configs.shared.playerSpeed * Math.cos(directionAngle);
-    // const dy = 5 * configs.shared.playerSpeed * Math.sin(directionAngle);
-
-    // this.dashMovement = { dx, dy };
   }
 
   executeResult(player) {
@@ -105,14 +99,6 @@ class DashAction extends Action {
 
   tick() {
     super.tick();
-
-    // // dash player while action is being executed but yet to finish its duration
-    // if (this.executed && !this.isCompleted()) {
-    //   this.player.overridePlayerControl = 10; // TODO: temp fix
-
-    // } else if (this.isCompleted()) {
-    //   this.player.speed = configs.shared.playerSpeed;
-    // }
 
     if (this.isCompleted()) {
       this.player.speed = configs.shared.playerSpeed;

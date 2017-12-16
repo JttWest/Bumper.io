@@ -25,6 +25,10 @@ module.exports = class GameState {
   }
 
   removeFromGame(player) {
+    // award point to player that did the attack
+    if (player.collision.collidedWith && this.players[player.collision.collidedWith])
+      this.players[player.collision.collidedWith].points++;
+
     delete this.players[player.id];
     this.availablePlayerIds.push(player.id);
     console.log(`Player ${player.id} killed`);
@@ -51,26 +55,38 @@ module.exports = class GameState {
       }
     });
 
-    // for each player in game -> apply movement + set action
-    // for each player in game -> check whether they have collided with another player
-    //    if collided -> set resolve movement direction
+    // collision
     players.forEach((player) => {
-      players.forEach((otherPlayer) => {
-        // only resolve collision when player is dashing
-        if (player.id !== otherPlayer.id && player.actions.dash && physics.checkCollision(player, otherPlayer)) {
-          console.log(`${player.id} collided with ${otherPlayer.id}`);
+      if (player.collision.duration > 0) {
+        player.collision.duration--;
+      } else {
+        player.collision.collidedWith = null;
+      }
 
-          // player was already collision; refresh duration
-          if (player.overridePlayerControl < configs.collisionOverrideDuration)
-            player.overridePlayerControl = configs.collisionOverrideDuration;
+      // resolve any collision when player is dashing
+      if (player.actions.dash) {
+        players.forEach((otherPlayer) => {
+          // only resolve collision when player is dashing
+          if (player.id !== otherPlayer.id && physics.checkCollision(player, otherPlayer)) {
+            console.log(`${player.name}(${player.id}) collided with ${otherPlayer.name}(${otherPlayer.id})`);
 
-          // other player was already collision; refresh duration
-          if (otherPlayer.overridePlayerControl < configs.collisionOverrideDuration)
-            otherPlayer.overridePlayerControl = configs.collisionOverrideDuration;
+            if (player.overridePlayerControl < configs.collisionDisplacementDuration)
+              player.overridePlayerControl = configs.collisionDisplacementDuration;
 
-          physics.resolveCollision(player, otherPlayer);
-        }
-      });
+            if (otherPlayer.overridePlayerControl < configs.collisionDisplacementDuration)
+              otherPlayer.overridePlayerControl = configs.collisionDisplacementDuration;
+
+            // track collision to allocate credit if there's a kill
+            player.collision.collidedWith = otherPlayer.id;
+            player.collision.duration = configs.collisionDisplacementDuration;
+
+            otherPlayer.collision.collidedWith = player.id;
+            otherPlayer.collision.duration = configs.collisionDisplacementDuration;
+
+            physics.resolveCollision(player, otherPlayer);
+          }
+        });
+      }
     });
 
     // check which player are in kill zone
