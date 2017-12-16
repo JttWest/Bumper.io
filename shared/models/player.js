@@ -1,4 +1,4 @@
-const actionFactory = require('../actions').factory;
+const playerActionFactory = require('./player-action').factory;
 const configs = require('../../game-configs.json').shared;
 
 module.exports = class Player {
@@ -41,7 +41,7 @@ module.exports = class Player {
 
     // create the requested new action if it's not already in progress
     if (action && !this.actions[action]) {
-      this.actions[action] = actionFactory(snapshot);
+      this.actions[action] = playerActionFactory(action);
     }
   }
 

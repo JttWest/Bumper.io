@@ -1,37 +1,10 @@
-const configs = require('../game-configs.json');
+const configs = require('../../game-configs.json');
+const MultiTickEvent = require('./multi-tick-event');
 
-class Action {
+class PlayerAction extends MultiTickEvent {
   constructor(type, countdown, duration, cooldown) {
+    super(countdown, duration, cooldown);
     this.type = type;
-    this.executed = false;
-    this.countdown = countdown; // how long before action is executed
-    this.duration = duration; // how long will action remain after its executed
-    this.cooldown = cooldown; // how long before user can perform same action again
-  }
-
-  tick() {
-    if (this.countdown > 0)
-      this.countdown--;
-    else if (this.duration > 0)
-      this.duration--;
-    else if (this.cooldown > 0)
-      this.cooldown--;
-  }
-
-  isReadyToExecute() {
-    return !this.executed && this.countdown <= 0; // has not yet been excuted and is ready to do so
-  }
-
-  excuteResult() {
-    this.executed = true;
-  }
-
-  isCompleted() {
-    return this.executed && this.duration <= 0; // has been excuted and no duration left
-  }
-
-  isCooldownOver() {
-    return this.executed && this.cooldown <= 0;
   }
 }
 
@@ -76,8 +49,7 @@ class Action {
 // }
 
 
-// Rename to attack??
-class DashAction extends Action {
+class DashAction extends PlayerAction {
   constructor() {
     super('dash', 0, 10, 20);
   }
@@ -113,20 +85,11 @@ const actionTypeMapper = {
 };
 
 module.exports = {
-  /**
-   * snapshot: {
-   *  action: STRING
-   *  movement: {left, right, up, down}
-   * }
-   */
-  factory: (snapshot) => {
-    const ActionConstructor = actionTypeMapper[snapshot.action];
+  factory: (actionType) => {
+    const ActionConstructor = actionTypeMapper[actionType];
 
     if (!ActionConstructor)
-      throw new Error(`Inavlid action type: ${snapshot.action}`);
-
-    if (snapshot.action === 'dash')
-      return new ActionConstructor(snapshot.movement);
+      throw new Error(`Inavlid action type: ${actionType}`);
 
     return new ActionConstructor();
   }
