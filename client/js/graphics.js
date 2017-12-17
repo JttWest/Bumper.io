@@ -81,7 +81,14 @@ const drawZoneBorders = () => {
 };
 
 const drawZone = (zone, width, height) => {
-  const zoneColor = zone.isOn() ? 'black' : 'brown';
+  let greenIntensity;
+
+  if (zone.isTransitioning() && zone.statusTransition.countdown > 0)
+    greenIntensity = Math.round((125 * (zone.statusTransition.countdown / configs.shared.zoneTransitionCountdown)));
+  else
+    greenIntensity = zone.isOn() ? '0' : '125'; // lime is rgb(0.255.0)
+
+  const zoneColor = `rgb(0, ${greenIntensity}, 0)`;
 
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
 };

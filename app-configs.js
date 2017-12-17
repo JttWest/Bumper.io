@@ -13,13 +13,14 @@ module.exports = {
     zoneWidth: 100,
     zoneHeight: 100,
     maxOnZones: 3,
+    zoneTransitionCountdown: 50,
     zoneBorderSize: 1,
     collisionDisplacementDuration: 20,
     maxPlayerLimit: 10,
   },
   client: {
     isDebugMode: false,
-    clientPlayerColor: 'green',
+    clientPlayerColor: 'lime',
     otherPlayersColor: '#2274A5',
     zoneBorderColor: 'black'
   },
