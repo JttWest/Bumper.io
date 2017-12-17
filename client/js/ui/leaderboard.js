@@ -15,7 +15,7 @@ const updateLeaderboard = () => {
 
       return 0;
     })
-    .map(player => `<li>${player.name}: ${player.points}</li>`);
+    .map(player => `<li class="item">${player.name}: ${player.points}</li>`);
 
   $('#leaderboardContainer').html(scoreboardElements.join(''));
 };

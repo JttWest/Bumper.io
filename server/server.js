@@ -1,7 +1,7 @@
 const express = require('express');
 const WebSocket = require('ws');
 const path = require('path');
-const configs = require('../game-configs.json');
+const configs = require('../app-configs');
 const Player = require('./models/player');
 
 const PORT = process.env.PORT || configs.shared.port;

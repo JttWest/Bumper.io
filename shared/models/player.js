@@ -1,5 +1,5 @@
 const playerActionFactory = require('./player-action').factory;
-const configs = require('../../game-configs.json').shared;
+const configs = require('../../app-configs').shared;
 
 module.exports = class Player {
   constructor(id, name, position) {
@@ -54,7 +54,7 @@ module.exports = class Player {
       const action = this.actions[actionName];
 
       if (action.isReadyToExecute())
-        action.executeResult(this);
+        action.executeEvent(this);
       else if (action.isCompleted() && action.isCooldownOver())
         delete this.actions[actionName];
       else

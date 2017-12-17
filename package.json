@@ -8,7 +8,7 @@
   "main": "",
   "scripts": {
     "test": "mocha --recursive",
-    "dev": "concurrently --kill-others \"nodemon --exitcrash -w server -w game-configs.json server/server.js\" \"webpack-dev-server -d --open --content-base dist/\"",
+    "dev": "concurrently --kill-others \"nodemon --exitcrash -w server -w app-configs.js server/server.js\" \"webpack-dev-server -d --open --content-base dist/\"",
     "dev:client": "webpack-dev-server -d --open --content-base dist/",
     "build:dev": "webpack --progress --colors",
     "build:prod": "webpack -p --progress --colors",

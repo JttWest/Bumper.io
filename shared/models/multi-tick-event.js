@@ -31,7 +31,7 @@ module.exports = class MultiTickEvent {
       this.cooldown--;
   }
 
-  excuteResult() {
+  executeEvent() {
     this.executed = true;
   }
 

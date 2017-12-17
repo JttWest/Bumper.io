@@ -1,54 +1,78 @@
 const Coord = require('./coord');
-
+const configs = require('../../app-configs').shared;
+const util = require('../util');
+const Zone = require('./zone');
 /**
  * claimed zone has the playerId in it, which are greater than 0
  */
 const zoneStatus = {
-  UNCLAIMED: -1,
-  BLOCKED: -2
+  ON: 'ON',
+  OFF: 'OFF'
 };
 
-class Zone {
-  constructor(coord, status) {
-    this.coord = coord;
-    this.status = status;
-  }
-}
+// class Zone {
+//   constructor(coord) {
+//     this.coord = coord;
+//     this.status = zoneStatus.OFF; // ???
+//     this.onCountdown
+//     this.onDuration
+//   }
+
+//   setOn() {
+//     this.transitionCountdown =
+
+//   }
+
+//   tick() {
+//     if ()
+
+
+//   }
+// }
 
 module.exports = class Field {
-  constructor(horizontalSize, verticalSize, zoneWidth, zoneHeight) {
-    this.horizontalSize = horizontalSize;
-    this.verticalSize = verticalSize;
+  constructor(numZonesH, numZonesV, zoneWidth, zoneHeight) {
+    this.numZonesH = numZonesH;
+    this.numZonesV = numZonesV;
     this.zoneWidth = zoneWidth;
     this.zoneHeight = zoneHeight;
 
-    // this.zones = Array(horizontalSize * verticalSize).fill(zoneType.UNCLAIMED)
     this.zones = [];
+    this.numberOnZones = 0;
 
-    for (let i = 0; i < horizontalSize * verticalSize; ++i) {
-      const zoneCoord = new Coord(i % horizontalSize * zoneWidth, Math.floor(i / horizontalSize) * zoneHeight);
-      const zone = { coord: zoneCoord, status: zoneStatus.UNCLAIMED };
-
-      this.zones.push(zone);
+    for (let i = 0; i < numZonesH * numZonesV; ++i) {
+      const zoneCoord = new Coord(i % numZonesH * zoneWidth, Math.floor(i / numZonesH) * zoneHeight);
+      this.zones.push(new Zone(zoneCoord));
     }
-  }
-
-  conquerZone(playerId, coord) {
-    const zone = this.getZoneByCoord(coord);
-
-    zone.status = playerId;
   }
 
   getZoneByCoord(coord) {
     // get index by calculating starting row index then adding column offset
-    const zoneIndex = (Math.floor(coord.y / this.zoneHeight) * this.horizontalSize) + Math.floor(coord.x / this.zoneWidth);
+    const zoneIndex = (Math.floor(coord.y / this.zoneHeight) * this.numZonesH) + Math.floor(coord.x / this.zoneWidth);
 
     return this.zones[zoneIndex];
   }
 
   getZoneByIndex(rowIndex, columnIndex) {
-    const zoneIndex = (rowIndex * this.horizontalSize) + columnIndex;
+    const zoneIndex = (rowIndex * this.numZonesH) + columnIndex;
 
     return this.zones[zoneIndex];
+  }
+
+  tick() {
+    this.numberOnZones = 0;
+
+    // look at how many zones are currently on
+    this.zones.forEach((zone) => {
+      zone.tick();
+      if (zone.isOn() || zone.isTransitioning())
+        this.numberOnZones++;
+    });
+
+    // turn on a random zone there's not enough
+    if (this.numberOnZones < configs.maxOnZones) {
+      const randZoneIndex = util.randomIntFromInterval(0, (this.numZonesH * this.numZonesV) - 1);
+      this.zones[randZoneIndex].setOn();
+    }
   }
 };

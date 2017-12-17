@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const configs = require('../../game-configs.json');
+const configs = require('../../app-configs');
 const util = require('../util');
 
 const defaultPlayerSnapshot = {

@@ -1,5 +1,5 @@
 const util = require('./../util');
-const configs = require('../../game-configs.json').shared;
+const configs = require('../../app-configs').shared;
 
 /**
  * BotPlayer have intention : {

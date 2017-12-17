@@ -1,5 +1,5 @@
 const Player = require('./player.js');
-const configs = require('../../game-configs.json').shared;
+const configs = require('../../app-configs').shared;
 const Field = require('./field');
 const util = require('../util');
 const Coord = require('./coord');
@@ -10,18 +10,14 @@ module.exports = class GameState {
     this.availablePlayerIds = Array.from(Array(configs.maxPlayerLimit).keys());
     this.players = {};
 
-    const hZoneSize = configs.mapWidth / configs.zoneWidth;
-    const vZoneSize = configs.mapHeight / configs.zoneHeight;
+    const numZonesH = configs.mapWidth / configs.zoneWidth;
+    const numZonesV = configs.mapHeight / configs.zoneHeight;
 
-    if (!util.isInt(hZoneSize) || !util.isInt(vZoneSize)) {
-      throw new Error('Invalid game config: The game currently require all zones to be same size with no left over region.');
+    if (!util.isInt(numZonesH) || !util.isInt(numZonesV)) {
+      throw new Error('Invalid game config: All zones must be same size and no left over region.');
     }
 
-    this.field = new Field(hZoneSize, vZoneSize, configs.zoneWidth, configs.zoneHeight);
-  }
-
-  conquerZone(player) {
-    this.field.conquerZone(1, player.position);
+    this.field = new Field(numZonesH, numZonesV, configs.zoneWidth, configs.zoneHeight);
   }
 
   removeFromGame(player) {
@@ -89,13 +85,18 @@ module.exports = class GameState {
       }
     });
 
+    this.field.tick();
+
     // check which player are in kill zone
     players.forEach((player) => {
-      // out of bound
-      if (player.position.x < 0 || player.position.x > configs.mapWidth ||
-        player.position.y < 0 || player.position.y > configs.mapHeight)
+      if (
+        player.position.x < 0 || player.position.x > configs.mapWidth || // out of bound horizontally
+        player.position.y < 0 || player.position.y > configs.mapHeight || // out of bound vertically
+        this.field.getZoneByCoord(player.position).isOn() // in a kill zone
+      ) {
         player.isKilled = true;
-    });
+      }
+    }, this);
   }
 
   play(name) {

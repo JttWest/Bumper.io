@@ -1,4 +1,4 @@
-const configs = require('../../game-configs.json');
+const configs = require('../../app-configs');
 const global = require('./global');
 const Coord = require('../../shared/models/coord');
 
@@ -81,7 +81,7 @@ const drawZoneBorders = () => {
 };
 
 const drawZone = (zone, width, height) => {
-  const zoneColor = zone.status === 1 ? 'green' : 'brown';
+  const zoneColor = zone.isOn() ? 'black' : 'brown';
 
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
 };

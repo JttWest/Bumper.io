@@ -3,7 +3,7 @@ require('../../semantic/dist/semantic.min.css');
 require('../../semantic/dist/semantic.min.js');
 require('./ui/leaderboard'); // TODO: remove this
 
-const configs = require('../../game-configs.json');
+const configs = require('../../app-configs');
 const control = require('./control');
 const debug = require('./debug');
 const graphics = require('./graphics');

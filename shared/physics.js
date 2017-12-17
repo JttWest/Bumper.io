@@ -1,4 +1,4 @@
-const configs = require('../game-configs.json');
+const configs = require('../app-configs');
 
 // https://gist.github.com/christopher4lis/f9ccb589ee8ecf751481f05a8e59b1dc
 

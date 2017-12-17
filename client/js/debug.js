@@ -1,4 +1,4 @@
-const configs = require('../../game-configs.json');
+const configs = require('../../app-configs');
 
 const isDebugMode = () => window.isDebugMode || configs.client.isDebugMode;
 
