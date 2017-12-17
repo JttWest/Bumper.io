@@ -2,33 +2,6 @@ const Coord = require('./coord');
 const configs = require('../../app-configs').shared;
 const util = require('../util');
 const Zone = require('./zone');
-/**
- * claimed zone has the playerId in it, which are greater than 0
- */
-const zoneStatus = {
-  ON: 'ON',
-  OFF: 'OFF'
-};
-
-// class Zone {
-//   constructor(coord) {
-//     this.coord = coord;
-//     this.status = zoneStatus.OFF; // ???
-//     this.onCountdown
-//     this.onDuration
-//   }
-
-//   setOn() {
-//     this.transitionCountdown =
-
-//   }
-
-//   tick() {
-//     if ()
-
-
-//   }
-// }
 
 module.exports = class Field {
   constructor(numZonesH, numZonesV, zoneWidth, zoneHeight) {

@@ -15,6 +15,10 @@ module.exports = {
     maxOnZones: 3,
     zoneTransitionCountdown: 50,
     zoneBorderSize: 1,
+    zone: {
+      minOnDuration: 100,
+      maxOnDuration: 500
+    },
     collisionDisplacementDuration: 20,
     maxPlayerLimit: 10,
   },

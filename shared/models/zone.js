@@ -1,5 +1,6 @@
 const MultiTickEvent = require('./multi-tick-event');
 const configs = require('../../app-configs').shared;
+const util = require('../util');
 
 const zoneStatus = {
   ON: 'ON',
@@ -8,7 +9,9 @@ const zoneStatus = {
 
 class ZoneStatusTransition extends MultiTickEvent {
   constructor(zone) {
-    super(configs.zoneTransitionCountdown, 200, 50);
+    super(configs.zoneTransitionCountdown,
+      util.randomIntFromInterval(configs.zone.minOnDuration, configs.zone.maxOnDuration),
+      0);
 
     this.zone = zone;
   }
@@ -51,7 +54,7 @@ module.exports = class Zone {
         this.statusTransition.executeEvent();
       } else if (this.status === zoneStatus.ON && this.statusTransition.isCompleted()) {
         this.status = zoneStatus.OFF;
-      } else if (this.statusTransition.isCooldownOver()) {
+      } else if (this.status === zoneStatus.OFF && this.statusTransition.isCooldownOver()) {
         this.statusTransition = null;
       }
     }
