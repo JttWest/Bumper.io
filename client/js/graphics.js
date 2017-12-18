@@ -84,7 +84,8 @@ const drawZone = (zone, width, height) => {
   let greenIntensity;
 
   if (zone.isTransitioning() && zone.statusTransition.countdown > 0)
-    greenIntensity = Math.round((125 * (zone.statusTransition.countdown / configs.shared.zoneTransitionCountdown)));
+    // min 25 intensity for clarity between on/off
+    greenIntensity = Math.round((100 * (zone.statusTransition.countdown / configs.shared.zoneTransitionCountdown))) + 25;
   else
     greenIntensity = zone.isOn() ? '0' : '125'; // lime is rgb(0.255.0)
 
