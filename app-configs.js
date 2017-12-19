@@ -12,7 +12,7 @@ module.exports = {
     attackCountdown: 100,
     zoneWidth: 100,
     zoneHeight: 100,
-    maxOnZones: 3,
+    maxOnZones: 2,
     zoneTransitionCountdown: 50,
     zoneBorderSize: 1,
     zone: {

@@ -94,7 +94,35 @@ const drawZone = (zone, width, height) => {
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
 };
 
+
+// testing for client prediction
+/*
+playerId
+position
+delay
+*/
+const pastPlayerPostion = {};
+
+const drawPastPlayerPostion = (player, delay) => {
+  if (!pastPlayerPostion[player.id]) {
+    pastPlayerPostion[player.id] = { positions: [Object.assign({}, player.position)], delayCount: 1 };
+  } else if (pastPlayerPostion[player.id].delayCount < delay) {
+    pastPlayerPostion[player.id].positions.push(Object.assign({}, player.position));
+    pastPlayerPostion[player.id].delayCount++;
+  } else {
+    pastPlayerPostion[player.id].positions.push(Object.assign({}, player.position));
+
+    drawCircle(pastPlayerPostion[player.id].positions.shift(),
+      configs.shared.playerRadius,
+      { strokeStyle: 'black', lineWidth: 1 }
+    );
+  }
+};
+
+
 const drawPlayer = (player, color) => {
+  drawPastPlayerPostion(player, 4);
+
   drawCircle(player.position,
     configs.shared.playerRadius,
     { fillStyle: color, strokeStyle: 'black', lineWidth: 1 }
