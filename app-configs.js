@@ -29,5 +29,10 @@ module.exports = {
     zoneBorderColor: 'black'
   },
   server: {
+    passcodeExpiration: 30000, // 30 seconds
+    gameRoom: {
+      maxRooms: 1,
+      maxPlayers: 10
+    }
   }
 };

@@ -1,4 +1,4 @@
-const Player = require('./player.js');
+const PlayerState = require('./player-state.js');
 const configs = require('../../app-configs').shared;
 const Field = require('./field');
 const util = require('../util');
@@ -7,7 +7,7 @@ const physics = require('../physics');
 
 module.exports = class GameState {
   constructor() {
-    this.availablePlayerIds = Array.from(Array(configs.maxPlayerLimit).keys());
+    // this.availablePlayerIds = Array.from(Array(configs.maxPlayerLimit).keys());
     this.players = {};
 
     const numZonesH = configs.mapWidth / configs.zoneWidth;
@@ -26,10 +26,8 @@ module.exports = class GameState {
       this.players[player.collision.collidedWith].points++;
 
     delete this.players[player.id];
-    this.availablePlayerIds.push(player.id);
+    // this.availablePlayerIds.push(player.id);
     console.log(`Player ${player.id} killed`);
-
-    // TODO: put players into standby queue so they can rejoin game?
   }
 
   // process players movement and actions
@@ -38,7 +36,7 @@ module.exports = class GameState {
 
     // process tick for each player in game
     players.forEach((player) => {
-      if (player.isKilled) { // remove killed players from game
+      if (player.isKilled) {
         this.removeFromGame(player);
       } else {
         const currSnapshot = player.snapshotQueue.shift();
@@ -99,8 +97,8 @@ module.exports = class GameState {
     }, this);
   }
 
-  play(name) {
-    const playerId = this.availablePlayerIds.shift();
+  play(name, id) {
+    const playerId = id; // this.availablePlayerIds.shift();
 
     if (playerId === undefined)
       throw new Error('Game is full (no player id is available)');
@@ -110,7 +108,7 @@ module.exports = class GameState {
       util.randomIntFromInterval(0, configs.mapHeight)
     );
 
-    const newPlayer = new Player(playerId, name, initPosition);
+    const newPlayer = new PlayerState(playerId, name, initPosition);
 
     this.players[playerId] = newPlayer;
 
