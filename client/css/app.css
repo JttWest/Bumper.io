@@ -1,5 +1,7 @@
 body {
   margin: 0;
+  height: 100%;
+  overflow: hidden; /* disable scrolling */
 }
 
 #canvas {
@@ -8,9 +10,22 @@ body {
   background: brown;
 }
 
-#holder {
+#canvasContainer {
   display: block;
   margin: 0 auto;
   width: 600px;
   height: 600px;
+}
+
+.masthead {
+  /* text-align: center; */
+  min-height: 700px;
+  padding: '1em 0em';
+}
+
+.masthead h1.ui.header {
+  margin-top: 3em;
+  margin-bottom: 0em;
+  font-size: 4em;
+  font-weight: normal;
 }

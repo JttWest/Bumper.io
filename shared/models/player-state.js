@@ -6,7 +6,7 @@ module.exports = class Player {
     this.id = id;
     this.name = name;
     this.position = position;
-    this.snapshotQueue = [];
+    this.controlInputQueue = [];
     this.actions = {}; // current actions in progress
     this.isKilled = false; // used to mark player for clean up
     this.velocity = { x: 0, y: 0 };
@@ -27,17 +27,17 @@ module.exports = class Player {
     this.position.y += dy;
   }
 
-  insertSnapshot(movement, action) {
-    this.snapshotQueue.push({ movement, action });
+  insertControlInput(movement, action) {
+    this.controlInputQueue.push({ movement, action });
   }
 
-  processSnapshot(snapshot) {
-    const angle = snapshot.movement;
+  processControlInput(controlInput) {
+    const angle = controlInput.movement;
 
     this.velocity.x = this.speed * Math.cos(angle);
     this.velocity.y = this.speed * Math.sin(angle);
 
-    const action = snapshot.action;
+    const action = controlInput.action;
 
     // create the requested new action if it's not already in progress
     if (action && !this.actions[action]) {
@@ -77,5 +77,12 @@ module.exports = class Player {
       console.log(`${this.id} killed by ${this.collision.collidedWith}`);
   }
 
-
+  getSnapshot() {
+    return {
+      id: this.id,
+      name: this.name,
+      position: this.position,
+      points: this.points
+    };
+  }
 };

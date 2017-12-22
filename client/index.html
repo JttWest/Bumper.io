@@ -9,24 +9,38 @@
 </head>
 
 <body>
-  <div id="holder" class="ui">
-    <canvas id="canvas" width="600" height="600" tabindex='1'></canvas>
-  </div>
-
-  <div id="standbyMenu" class="ui basic modal">
-    <div class="ui center aligned segment">
-      <div class="ui action left icon input">
-        <i class="tag icon"></i>
-        <input id="nameInput" type="text" placeholder="Enter Name">
-        <button id="playButton" class="ui button">Play</button>
+  <div id="mainMenu" class="ui inverted vertical masthead center aligned segment">
+    <div class="ui text container">
+      <h1 class="ui inverted header">
+        Game.io
+      </h1>
+      <h2>Dash out the other players.</h2>
+      <div id="joinButton" class="ui medium green button">Join a game!
+        <i class="right arrow icon"></i>
       </div>
     </div>
   </div>
 
-  <div id="leaderboard" style="position:fixed; top:1em; right:1em;">
-    <div class="ui right sticky">
-      <h3 class="ui header">Scoreboard</h3>
-      <div id="leaderboardContainer" class="ui list"></div>
+  <div id="gameView" class="ui">
+    <div id="canvasContainer" class="ui">
+      <canvas id="canvas" width="600" height="600" tabindex='1'></canvas>
+    </div>
+
+    <div id="standbyMenu" class="ui basic modal">
+      <div class="ui center aligned segment">
+        <div class="ui action left icon input">
+          <i class="tag icon"></i>
+          <input id="nameInput" type="text" placeholder="Enter Name">
+          <button id="playButton" class="ui button">Play</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="leaderboard" style="position:fixed; top:1em; right:1em;">
+      <div class="ui right sticky">
+        <h3 class="ui header">Scoreboard</h3>
+        <div id="leaderboardContainer" class="ui list"></div>
+      </div>
     </div>
   </div>
 </body>

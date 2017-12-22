@@ -1,5 +1,6 @@
 const GameState = require('../../shared/models/game-state');
 const configs = require('../../app-configs');
+const WebSocket = require('ws');
 
 class Player {
   constructor(id, roomId) {
@@ -10,7 +11,8 @@ class Player {
   }
 
   sendData(data) {
-    this.ws.send(data);
+    if (this.ws && this.ws.readyState === WebSocket.OPEN)
+      this.ws.send(data);
   }
 }
 
@@ -48,5 +50,11 @@ module.exports = class GameRoom {
   removePlayer(player) {
     this.availablePlayerIds.push(player.id);
     this.players.delete(player.id);
+  }
+
+  broadcast(data) {
+    this.players.forEach((player) => {
+      player.sendData(data);
+    });
   }
 };

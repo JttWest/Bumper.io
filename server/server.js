@@ -1,3 +1,4 @@
+const http = require('http');
 const express = require('express');
 const WebSocket = require('ws');
 const httpStatus = require('http-status-codes');
@@ -5,6 +6,7 @@ const path = require('path');
 const configs = require('../app-configs');
 const GameRoom = require('./models/game-room');
 const uuidv4 = require('uuid/v4');
+const cors = require('cors');
 
 const PORT = process.env.PORT || configs.shared.port;
 
@@ -13,7 +15,7 @@ const gameRooms = Array.from(new Array(configs.server.gameRoom.maxRooms), (_, id
 // maps passcode to the player that has been created for that code
 const passcodeManager = new Map();
 
-const server = express();
+const app = express();
 const router = express.Router();
 
 router.route('/ping').get((req, res) => {
@@ -57,12 +59,15 @@ router.route('/join').get((req, res) => {
   res.status(httpStatus.BAD_REQUEST).json({ message: 'No available spot' });
 });
 
-server.use(express.static(path.join(__dirname, '../dist'))); // serve the game files
-server.use('/', router);
-server.listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.use(cors());
+app.use(express.static(path.join(__dirname, '../dist'))); // serve the game files
+app.use('/', router);
+// app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-// const server = http.createServer(app);
-const wss = new WebSocket.Server({ port: 8080 });
+const server = http.createServer(app);
+server.listen(PORT, () => console.log('Listening on %d', server.address().port));
+
+const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (ws, req) => {
   let player;
@@ -72,8 +77,12 @@ wss.on('connection', (ws, req) => {
     try { // TODO: move these logic to seperate file
       const { type, data } = JSON.parse(message);
 
+      // only time where player is not set should be the init join request
+      if (type !== 'join' && !player)
+        throw new Error(`Player doesn't exist for websocket at ip: ${req.connection.remoteAddress}`);
+
       switch (type) {
-        // used to establish websocket connection b/w client and server
+        // use to set the player variable for this websocket connection
         case 'join': {
           const { passcode } = data;
           const initPlayerData = passcodeManager.get(passcode);
@@ -85,30 +94,52 @@ wss.on('connection', (ws, req) => {
             player.ws = ws;
 
             passcodeManager.delete(passcode); // prevent the code from being use again
+
+            player.sendData(JSON.stringify({ type: 'joinAck' }));
           }
           break;
         }
         // puts the player into the game and start playing
         case 'play': {
-          if (!player)
-            throw new Error(`Player doesn't exist for websocket at ip: ${req.connection.remoteAddress}`);
-
           const { name } = data;
           player.playerState = gameRooms[player.roomId].gameState.play(name, player.id);
+
+          player.sendData(JSON.stringify({ type: 'playAck' }));
+          break;
+        }
+        case 'controlInput': {
+          if (!player.playerState)
+            throw new Error(`Player ${player.id} attempting to send control input before initiating play packet`);
+
+          // TODO: must validate these inputs are valid;
+          const { movement, action } = data;
+          player.playerState.insertControlInput(movement, action);
           break;
         }
         default:
-          console.log(`Received invalid message type from client: ${type}`);
+          throw new Error(`Received invalid message type from client: ${type}`);
       }
     } catch (e) {
+      // TODO: remove player from game room
       console.log(e);
-      ws.terminate();
+      ws.close();
     }
   });
+
+  ws.on('close', () => { }); // TODO: clean up player associated with ws (NOTE: must check player is set)
 });
 
 setInterval(() => {
   gameRooms.forEach((gameRoom) => {
+    // TODO: remove inactive players from game room
     gameRoom.tick();
+
+    // broadcast new game state data
+    const gameStateSnapshot = {
+      type: 'gameStateSnapshot',
+      data: gameRoom.gameState.getSnapshot()
+    };
+
+    gameRoom.broadcast(JSON.stringify(gameStateSnapshot));
   });
 }, configs.shared.tickInterval);

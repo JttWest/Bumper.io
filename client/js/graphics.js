@@ -81,6 +81,7 @@ const drawZoneBorders = () => {
 };
 
 const drawZone = (zone, width, height) => {
+  /*
   let greenIntensity;
 
   if (zone.isTransitioning() && zone.statusTransition.countdown > 0)
@@ -90,6 +91,9 @@ const drawZone = (zone, width, height) => {
     greenIntensity = zone.isOn() ? '0' : '125'; // lime is rgb(0.255.0)
 
   const zoneColor = `rgb(0, ${greenIntensity}, 0)`;
+  */
+
+  const zoneColor = zone.status === 'ON' ? 'rgb(0, 0, 0)' : 'rgb(0, 125, 0)';
 
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
 };
@@ -121,7 +125,7 @@ const drawPastPlayerPostion = (player, delay) => {
 
 
 const drawPlayer = (player, color) => {
-  drawPastPlayerPostion(player, 4);
+  // drawPastPlayerPostion(player, 4);
 
   drawCircle(player.position,
     configs.shared.playerRadius,
@@ -143,44 +147,31 @@ const drawPlayerName = (player) => {
     setting);
 };
 
-const drawAttackRadius = (player) => {
-  // color starts off at orange and becomes redder as it counts down rounded to nearest 1
-  const greenIntensity = Math.round((255 * (player.actions.attack.countdown / configs.shared.attackCountdown)));
-  const attackRadiusColor = `rgb(255, ${greenIntensity}, 0)`;
-
-  drawCircle(player.position,
-    configs.shared.attackRadius,
-    { fillStyle: attackRadiusColor, strokeStyle: 'black', lineWidth: 1 }
-  );
-};
-
 const renderLoop = () => {
   const gameState = global.get('gameState');
-  const clientPlayer = global.get('clientPlayer');
+  // const clientPlayer = global.get('clientPlayer');
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (gameState) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  gameState.field.zones.forEach((zone) => {
-    drawZone(zone, gameState.field.zoneWidth, gameState.field.zoneHeight);
-  });
+    gameState.field.zones.forEach((zone) => {
+      drawZone(zone, gameState.field.zoneWidth, gameState.field.zoneHeight);
+    });
 
-  drawZoneBorders();
+    drawZoneBorders();
 
-  Object.values(gameState.players).forEach((player) => {
-    if (player.actions.attack && !player.actions.attack.isCompleted()) {
-      drawAttackRadius(player);
-    }
-
-    if (clientPlayer && player.id === clientPlayer.id)
-      drawPlayer(player, configs.client.clientPlayerColor);
-    else
+    gameState.players.forEach((player) => {
+      // if (clientPlayer && player.id === clientPlayer.id)
+      //   drawPlayer(player, configs.client.clientPlayerColor);
+      // else
       drawPlayer(player, configs.client.otherPlayersColor);
-  });
+    });
 
-  // draw names seperately to prevent players from blocking eachother's name
-  Object.values(gameState.players).forEach((player) => {
-    drawPlayerName(player);
-  });
+    // draw names seperately to prevent players from blocking eachother's name
+    gameState.players.forEach((player) => {
+      drawPlayerName(player);
+    });
+  }
 
   if (global.getAppStatus() === 'PLAYING' || global.getAppStatus() === 'STANDBY')
     requestAnimationFrame(renderLoop);

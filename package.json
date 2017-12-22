@@ -28,7 +28,9 @@
   "license": "ISC",
   "repository": "placeholder.com",
   "dependencies": {
+    "axios": "^0.17.1",
     "bufferutil": "^3.0.2",
+    "cors": "^2.8.4",
     "express": "^4.16.2",
     "http-status-codes": "^1.3.0",
     "jquery": "^3.2.1",

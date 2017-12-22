@@ -39,11 +39,11 @@ module.exports = class GameState {
       if (player.isKilled) {
         this.removeFromGame(player);
       } else {
-        const currSnapshot = player.snapshotQueue.shift();
+        const currInput = player.controlInputQueue.shift();
 
-        // uppdate current player's state with snapshot data
-        if (currSnapshot && !player.overridePlayerControl)
-          player.processSnapshot(currSnapshot);
+        // uppdate current player's state with control input data
+        if (currInput && !player.overridePlayerControl)
+          player.processControlInput(currInput);
 
         player.tick();
       }
@@ -98,21 +98,24 @@ module.exports = class GameState {
   }
 
   play(name, id) {
-    const playerId = id; // this.availablePlayerIds.shift();
+    if (this.players[id])
+      throw new Error(`Duplicate player id in game state: ${id}`);
 
-    if (playerId === undefined)
-      throw new Error('Game is full (no player id is available)');
+    let playerId = id; // this.availablePlayerIds.shift();
+
+    // if (playerId === undefined) // TODO: undo this
+    //   playerId = this.playerId++; // throw new Error('Game is full (no player id is available)');
 
     const initPosition = new Coord(
       util.randomIntFromInterval(0, configs.mapWidth),
       util.randomIntFromInterval(0, configs.mapHeight)
     );
 
-    const newPlayer = new PlayerState(playerId, name, initPosition);
+    const playerState = new PlayerState(playerId, name, initPosition);
 
-    this.players[playerId] = newPlayer;
+    this.players[playerId] = playerState;
 
-    return newPlayer;
+    return playerState;
   }
 
   getPlayer(playerId) {
@@ -123,5 +126,17 @@ module.exports = class GameState {
     }
 
     return this.players[playerId];
+  }
+
+  getSnapshot() {
+    return {
+      players: Object.values(this.players).map(player => player.getSnapshot()),
+      field: {
+        zones: this.field.zones.map(zone => ({
+          coord: zone.coord,
+          status: zone.status
+        }))
+      }
+    };
   }
 };

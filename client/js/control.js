@@ -19,10 +19,14 @@ let mouseX = 0;
 let mouseY = 0;
 
 const getMovementData = () => {
-  const player = global.get('clientPlayer');
+  // const player = global.get('clientPlayer');
 
-  const deltaX = mouseX - player.position.x;
-  const deltaY = mouseY - player.position.y;
+  // TODO: temp
+  const originX = 300;
+  const originY = 300;
+
+  const deltaX = mouseX - originX;
+  const deltaY = mouseY - originY;
 
   return Math.atan2(deltaY, deltaX);
 };

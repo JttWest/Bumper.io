@@ -1,3 +1,53 @@
+WS payload format
+
+CLIENT -> SERVER
+
+joinReq
+{
+  type: 'join'
+  data: {
+    passcode: STRING
+  }
+}
+
+play
+{
+  type: 'play'
+  data: {
+    name: STRING
+  }
+}
+
+controlInput
+{
+  type: 'controlInput'
+  data: {
+    movement: NUMBER,
+    action: ENUM,
+  }
+}
+
+
+SERVER -> CLIENT
+
+gameStateSnapshot
+{
+  type: 'state',
+  data: {
+    players: [{
+      position: COORD,
+      name: STRING,
+      id: NUMBER,
+      points: NUMBER
+    }],
+    field: [{
+      coord: COORD,
+      status: ENUM
+    }]
+  }
+}
+
+
 ----------------------Shared----------------------------------
 
 playerSnapshot: {
@@ -101,29 +151,3 @@ playerSnapshot: {
   },
   action?: fireAction
 }
-
-
-
-
-And for the bullets, we used extrapolation.
-Which means that the client simulated the position of the bullet in the future
-and displayed it a little bit ahead of the actual position received from the server.
-
-// Trick to improve proformance on client?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Game scene rendering, user input processing, and applying updates from the server –
-all this was processed by a single handler now.
-
-// Load balancing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-There was a much simpler and cleaner solution, though.
-Our client was written using HTML and JavaScript,
-it was essentially just a couple of .html and .js files.
-And that meant we could use Amazon S3 to host our entire client!
-Which is precisely what we did. We’ve introduced the load balancing logic to the client itself, and S3 gave us great availability so that we didn’t need to worry about the single point of failure anymore.
-
-Moving forward, we went even further: we’ve put CloudFlare in front of our S3 files.
-It’s free and provides a CDN functionality – exactly what we needed to reduce
-the game’s page load time.
-
-//  Tick interval syncing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Another issue was that, over time, the client clocks went out of sync with the server.
-We fixed that by doing periodic clock synchronizations during the game.
