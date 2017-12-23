@@ -8,6 +8,7 @@ class Player {
     this.roomId = roomId;
     this.playerState = null;
     this.ws = null;
+    this.numInactiveTicks = 0;
   }
 
   sendData(data) {

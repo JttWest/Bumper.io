@@ -25,7 +25,7 @@ const establishWS = passcode => new Promise((resolve, reject) => {
   ws = new WebSocket(wsEndpoint);
   let clientPlayerId;
 
-  setTimeout(() => reject(new Error('Could not set up websocket in time'), 3000));
+  setTimeout(() => reject(new Error('Could not set up websocket in time')), configs.client.initJoinTimeout);
 
   ws.onopen = () => {
     const payload = JSON.stringify({ type: 'join', data: { passcode: passcode } });
@@ -38,8 +38,9 @@ const establishWS = passcode => new Promise((resolve, reject) => {
     switch (type) {
       case 'joinAck':
         clientPlayerId = data.id;
-        statusController.toStandbyMenu(clientPlayerId);
-        resolve();
+        // Do this in promise chain to prevent going to game view if join init failed
+        // statusController.toStandbyMenu(clientPlayerId);
+        resolve(clientPlayerId);
         break;
       case 'playAck':
         statusController.toPlaying(clientPlayerId, ws);
@@ -87,6 +88,9 @@ statusController.toMainMenu();
 menu.registerOnJoinButtonClick(() => {
   joinServer(`${serverUrl}/join`)
     .then(establishWS)
+    .then((clientPlayerId) => {
+      statusController.toStandbyMenu(clientPlayerId);
+    })
     .catch(err => console.log('Error joining server', err));
 });
 

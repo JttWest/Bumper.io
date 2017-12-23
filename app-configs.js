@@ -20,19 +20,21 @@ module.exports = {
       maxOnDuration: 500
     },
     collisionDisplacementDuration: 20,
-    maxPlayerLimit: 10,
+    maxPlayerLimit: 10
   },
   client: {
     isDebugMode: false,
     clientPlayerColor: 'lime',
     otherPlayersColor: '#2274A5',
-    zoneBorderColor: 'black'
+    zoneBorderColor: 'black',
+    initJoinTimeout: 3000
   },
   server: {
     passcodeExpiration: 30000, // 30 seconds
     gameRoom: {
       maxRooms: 1,
       maxPlayers: 10
-    }
+    },
+    inactiveTickLimit: 600 // 30 second if tick interval is 50ms
   }
 };

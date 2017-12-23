@@ -98,8 +98,9 @@ module.exports = class GameState {
   }
 
   play(name, id) {
-    if (this.players[id])
-      throw new Error(`Duplicate player id in game state: ${id}`);
+    // allow new player to overwrite old one
+    // if (this.players[id])
+    //   throw new Error(`Duplicate player id in game state: ${id}`);
 
     let playerId = id; // this.availablePlayerIds.shift();
 

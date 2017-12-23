@@ -161,7 +161,7 @@ const renderLoop = (clientPlayerId) => {
     drawZoneBorders();
 
     gameState.players.forEach((player) => {
-      if (clientPlayerId && player.id === clientPlayerId)
+      if (player.id === clientPlayerId)
         drawPlayer(player, configs.client.clientPlayerColor);
       else
         drawPlayer(player, configs.client.otherPlayersColor);

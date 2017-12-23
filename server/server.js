@@ -80,6 +80,9 @@ wss.on('connection', (ws, req) => {
       if (type !== 'join' && !player)
         throw new Error(`Player doesn't exist for websocket at ip: ${req.connection.remoteAddress}`);
 
+      if (player)
+        player.numInactiveTicks = 0;
+
       switch (type) {
         // use to set the player variable for this websocket connection
         case 'join': {
@@ -133,12 +136,26 @@ setInterval(() => {
     // TODO: remove inactive players from game room
     gameRoom.tick();
 
-    // broadcast new game state data
     const gameStateSnapshotPayload = {
       type: 'gameStateSnapshot',
       data: gameRoom.gameState.getSnapshot()
     };
 
-    gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
+    gameRoom.players.forEach((player) => {
+      player.numInactiveTicks++;
+
+      if (player.numInactiveTicks > configs.server.inactiveTickLimit)
+        gameRoom.removePlayer(player);
+      else // broadcast new game state data
+        player.sendData(JSON.stringify(gameStateSnapshotPayload));
+    });
+
+    // broadcast new game state data
+    // const gameStateSnapshotPayload = {
+    //   type: 'gameStateSnapshot',
+    //   data: gameRoom.gameState.getSnapshot()
+    // };
+
+    // gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
 }, configs.shared.tickInterval);
