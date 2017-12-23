@@ -32,6 +32,13 @@ module.exports = class Player {
   }
 
   processControlInput(controlInput) {
+    // no control input from player (lagging); just put player in place
+    if (!controlInput) {
+      this.velocity.x = 0;
+      this.velocity.y = 0;
+      return;
+    }
+
     const angle = controlInput.movement;
 
     this.velocity.x = this.speed * Math.cos(angle);
@@ -82,7 +89,8 @@ module.exports = class Player {
       id: this.id,
       name: this.name,
       position: this.position,
-      points: this.points
+      points: this.points,
+      isKilled: this.isKilled
     };
   }
 };

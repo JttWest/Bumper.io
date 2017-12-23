@@ -9,11 +9,8 @@ const debug = require('./debug');
 const graphics = require('./graphics');
 const global = require('./global');
 const axios = require('axios');
-
-// const GameState = require('../../shared/models/game-state');
-// const gameState = new GameState();
-// global.set('gameState', gameState);
-global.setAppStatus('MAIN'); // TODO: intergrate main menu logic
+const statusController = require('./status-controller');
+const menu = require('./menu');
 
 const canvas = document.getElementById('canvas');
 control.trackKeysInput(canvas);
@@ -24,20 +21,11 @@ let ws;
 const serverUrl = 'http://localhost:3000';
 const wsEndpoint = 'ws://localhost:3000';
 
-const playGame = (websocket) => {
-  const inputPayload = {
-    type: 'controlInput',
-    data: control.getUserInputData()
-  };
-
-  websocket.send(JSON.stringify(inputPayload));
-
-  if (global.getAppStatus() === 'PLAYING')
-    setTimeout(playGame, configs.shared.tickInterval, websocket);
-};
-
-const establishWS = (passcode) => {
+const establishWS = passcode => new Promise((resolve, reject) => {
   ws = new WebSocket(wsEndpoint);
+  let clientPlayerId;
+
+  setTimeout(() => reject(new Error('Could not set up websocket in time'), 3000));
 
   ws.onopen = () => {
     const payload = JSON.stringify({ type: 'join', data: { passcode: passcode } });
@@ -49,15 +37,12 @@ const establishWS = (passcode) => {
 
     switch (type) {
       case 'joinAck':
-        global.setAppStatus('STANDBY');
-
-        graphics.renderLoop();
+        clientPlayerId = data.id;
+        statusController.toStandbyMenu(clientPlayerId);
+        resolve();
         break;
       case 'playAck':
-        global.setAppStatus('PLAYING');
-
-        // start sending client game input data to server
-        playGame(ws);
+        statusController.toPlaying(clientPlayerId, ws);
         break;
       case 'gameStateSnapshot':
         global.set('gameState', data);
@@ -71,7 +56,7 @@ const establishWS = (passcode) => {
   ws.onclose = () => console.log('Websocket to server closed');
 
   window.onbeforeunload = () => ws.close();
-};
+});
 
 const joinServer = endpoint => axios.get(endpoint)
   .then((response) => {
@@ -96,31 +81,16 @@ const joinServer = endpoint => axios.get(endpoint)
 
 // ---------------------------- UI ----------------------------------- //
 
-// hide game view and show only main menu on start
-$('#gameView').hide();
+// start with Main Menu
+statusController.toMainMenu();
 
-const showStandbyMenu = () => {
-  $('#standbyMenu')
-    .modal({
-      inverted: true,
-      transition: 'scale'
-    })
-    .modal('show');
-};
-
-const onJoinButtonClick = () => {
+menu.registerOnJoinButtonClick(() => {
   joinServer(`${serverUrl}/join`)
     .then(establishWS)
-    .then(() => {
-      $('#mainMenu').hide();
-      $('#gameView').show();
-
-      showStandbyMenu();
-    })
     .catch(err => console.log('Error joining server', err));
-};
+});
 
-const onPlayButtonClick = () => {
+menu.registerOnPlayButtonClick(() => {
   const name = $('#nameInput').val();
   // const gameState = global.get('gameState');
 
@@ -132,16 +102,27 @@ const onPlayButtonClick = () => {
   };
 
   ws.send(JSON.stringify(joinPayload));
-  // const clientPlayer = gameState.play(name);
+});
 
-  // global.set('clientPlayer', clientPlayer);
-  global.setAppStatus('PLAYING');
+// const onJoinButtonClick = () => {
+//   joinServer(`${serverUrl}/join`)
+//     .then(establishWS)
+//     .catch(err => console.log('Error joining server', err));
+// };
 
-  $('#standbyMenu')
-    .modal('hide');
+// const onPlayButtonClick = () => {
+//   const name = $('#nameInput').val();
+//   // const gameState = global.get('gameState');
 
-  $('#canvas').focus();
-};
+//   const joinPayload = {
+//     type: 'play',
+//     data: {
+//       name: name
+//     }
+//   };
 
-$('#joinButton').click(onJoinButtonClick);
-$('#playButton').click(onPlayButtonClick);
+//   ws.send(JSON.stringify(joinPayload));
+// };
+
+// $('#joinButton').click(onJoinButtonClick);
+// $('#playButton').click(onPlayButtonClick);

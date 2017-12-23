@@ -62,7 +62,6 @@ router.route('/join').get((req, res) => {
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../dist'))); // serve the game files
 app.use('/', router);
-// app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const server = http.createServer(app);
 server.listen(PORT, () => console.log('Listening on %d', server.address().port));
@@ -95,7 +94,7 @@ wss.on('connection', (ws, req) => {
 
             passcodeManager.delete(passcode); // prevent the code from being use again
 
-            player.sendData(JSON.stringify({ type: 'joinAck' }));
+            player.sendData(JSON.stringify({ type: 'joinAck', data: { id: player.id } }));
           }
           break;
         }
@@ -135,11 +134,11 @@ setInterval(() => {
     gameRoom.tick();
 
     // broadcast new game state data
-    const gameStateSnapshot = {
+    const gameStateSnapshotPayload = {
       type: 'gameStateSnapshot',
       data: gameRoom.gameState.getSnapshot()
     };
 
-    gameRoom.broadcast(JSON.stringify(gameStateSnapshot));
+    gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
 }, configs.shared.tickInterval);

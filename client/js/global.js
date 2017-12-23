@@ -1,15 +1,11 @@
+const status = require('../../shared/enums').client.appStatus;
+
 const global = {
-  clientPlayer: null,
+  clientPlayerId: null,
   gameState: null,
 };
 
-const status = {
-  PLAYING: 'PLAYING',
-  STANDBY: 'STANDBY',
-  MAIN: 'MAIN'
-};
-
-let appStatus = status.MENU;
+let appStatus = status.MAIN;
 
 module.exports = {
   getAppStatus: () => appStatus,

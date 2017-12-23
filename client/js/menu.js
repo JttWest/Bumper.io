@@ -1,46 +1,27 @@
-const global = require('./global');
-const graphics = require('./graphics');
-
-// hide game view and show only main menu on start
-$('#gameView').hide();
-
 const showStandbyMenu = () => {
   $('#standbyMenu')
     .modal({
+      closable: false,
       inverted: true,
       transition: 'scale'
     })
     .modal('show');
 };
 
-const onJoinButtonClick = () => {
-  // TODO: make api call to server and wait for response; this is for success only
-  $('#mainMenu').hide();
-  $('#gameView').show();
-
-  global.setAppStatus('STANDBY');
-
-  graphics.renderLoop();
-  showStandbyMenu();
-};
-
-const onPlayButtonClick = () => {
-  const name = $('#nameInput').val();
-  const gameState = global.get('gameState');
-  const clientPlayer = gameState.play(name);
-
-  global.set('clientPlayer', clientPlayer);
-  global.setAppStatus('PLAYING');
-
+const hideStandbyMenu = () => {
   $('#standbyMenu')
     .modal('hide');
-
-  $('#canvas').focus();
 };
 
-$('#joinButton').click(onJoinButtonClick);
-$('#playButton').click(onPlayButtonClick);
-
 module.exports = {
-  showStandbyMenu
+  showStandbyMenu,
+  hideStandbyMenu,
+
+  registerOnJoinButtonClick: (func) => {
+    $('#joinButton').click(func);
+  },
+
+  registerOnPlayButtonClick: (func) => {
+    $('#playButton').click(func);
+  }
 };

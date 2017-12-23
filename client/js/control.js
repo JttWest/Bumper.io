@@ -1,4 +1,6 @@
+const configs = require('../../app-configs');
 const global = require('./global');
+const appStatus = require('../../shared/enums').client.appStatus;
 
 const keyRegister = {};
 
@@ -49,6 +51,29 @@ const getActionData = () => {
   return action;
 };
 
+const getUserInputData = () => {
+  const movement = getMovementData();
+  const action = getActionData();
+
+  return { movement, action };
+};
+
+const sendUserInputLoop = (websocket) => {
+  /*
+    input data object format:
+    {
+      movement: NUMBER
+      keysPressed: STRING
+    }
+  */
+  const inputPayload = {
+    type: 'controlInput',
+    data: getUserInputData()
+  };
+
+  websocket.send(JSON.stringify(inputPayload));
+};
+
 module.exports = {
   keyboardCodeMapping,
 
@@ -70,17 +95,5 @@ module.exports = {
     });
   },
 
-  /**
-  returns input data object:
-  {
-    movement: {}
-    keysPressed: []
-  }
-  */
-  getUserInputData: () => {
-    const movement = getMovementData();
-    const action = getActionData();
-
-    return { movement, action };
-  }
+  sendUserInputLoop
 };

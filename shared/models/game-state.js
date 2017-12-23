@@ -42,7 +42,7 @@ module.exports = class GameState {
         const currInput = player.controlInputQueue.shift();
 
         // uppdate current player's state with control input data
-        if (currInput && !player.overridePlayerControl)
+        if (!player.overridePlayerControl)
           player.processControlInput(currInput);
 
         player.tick();
@@ -103,9 +103,6 @@ module.exports = class GameState {
 
     let playerId = id; // this.availablePlayerIds.shift();
 
-    // if (playerId === undefined) // TODO: undo this
-    //   playerId = this.playerId++; // throw new Error('Game is full (no player id is available)');
-
     const initPosition = new Coord(
       util.randomIntFromInterval(0, configs.mapWidth),
       util.randomIntFromInterval(0, configs.mapHeight)
@@ -116,16 +113,6 @@ module.exports = class GameState {
     this.players[playerId] = playerState;
 
     return playerState;
-  }
-
-  getPlayer(playerId) {
-    if (!this.players[playerId]) {
-      return null;
-      // TODO: use debug module to log when this happens
-      // throw new Error(`Player with id ${playerId} doesn't exist in game state`)
-    }
-
-    return this.players[playerId];
   }
 
   getSnapshot() {

@@ -147,7 +147,7 @@ const drawPlayerName = (player) => {
     setting);
 };
 
-const renderLoop = () => {
+const renderLoop = (clientPlayerId) => {
   const gameState = global.get('gameState');
   // const clientPlayer = global.get('clientPlayer');
 
@@ -155,16 +155,16 @@ const renderLoop = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     gameState.field.zones.forEach((zone) => {
-      drawZone(zone, gameState.field.zoneWidth, gameState.field.zoneHeight);
+      drawZone(zone, configs.shared.zoneWidth, configs.shared.zoneHeight);
     });
 
     drawZoneBorders();
 
     gameState.players.forEach((player) => {
-      // if (clientPlayer && player.id === clientPlayer.id)
-      //   drawPlayer(player, configs.client.clientPlayerColor);
-      // else
-      drawPlayer(player, configs.client.otherPlayersColor);
+      if (clientPlayerId && player.id === clientPlayerId)
+        drawPlayer(player, configs.client.clientPlayerColor);
+      else
+        drawPlayer(player, configs.client.otherPlayersColor);
     });
 
     // draw names seperately to prevent players from blocking eachother's name
@@ -174,7 +174,7 @@ const renderLoop = () => {
   }
 
   if (global.getAppStatus() === 'PLAYING' || global.getAppStatus() === 'STANDBY')
-    requestAnimationFrame(renderLoop);
+    requestAnimationFrame(() => renderLoop(clientPlayerId));
 };
 
 module.exports = {

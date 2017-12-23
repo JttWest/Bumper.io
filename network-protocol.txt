@@ -2,7 +2,7 @@ WS payload format
 
 CLIENT -> SERVER
 
-joinReq
+join
 {
   type: 'join'
   data: {
@@ -29,6 +29,24 @@ controlInput
 
 
 SERVER -> CLIENT
+
+joinAck
+{
+  type: 'joinAck',
+  data: {
+    id: NUMBER
+  }
+}
+
+playAck
+{
+  type: 'playAck'
+}
+
+killed
+{
+  type: 'killed'
+}
 
 gameStateSnapshot
 {

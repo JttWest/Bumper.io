@@ -5,7 +5,7 @@
     "node": "8.9.3"
   },
   "description": "An HTML5 game",
-  "main": "",
+  "main": "server/server.js",
   "scripts": {
     "test": "mocha --recursive",
     "dev": "concurrently --kill-others \"nodemon --exitcrash -w server -w app-configs.js server/server.js\" \"webpack-dev-server -d --open --content-base dist/\"",
