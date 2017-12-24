@@ -51,6 +51,9 @@ module.exports = class GameRoom {
     this.availablePlayerIds.push(player.id);
     this.players.delete(player.id);
 
+    if (player.ws)
+      player.ws.close();
+
     // if player is still in game state
     const playerState = this.gameState.players[player.id];
     if (playerState)

@@ -17,11 +17,13 @@ control.trackMouseDirectionInput(canvas);
 
 let ws;
 
-const serverUrl = 'http://localhost:3000';
-const wsEndpoint = 'ws://localhost:3000';
+const host = window.location.hostname;
+
+const serverUrl = `http://${host}:${configs.shared.port}`;
+const wsUrl = `ws://${host}:${configs.shared.port}`;
 
 const establishWS = passcode => new Promise((resolve, reject) => {
-  ws = new WebSocket(wsEndpoint);
+  ws = new WebSocket(wsUrl);
   let clientPlayerId;
 
   setTimeout(() => reject(new Error('Could not set up websocket in time')), configs.client.initJoinTimeout);

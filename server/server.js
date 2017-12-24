@@ -129,7 +129,8 @@ wss.on('connection', (ws, req) => {
   });
 
   ws.on('close', () => {
-    if (player)
+    // make sure player is still in the game room before removing
+    if (player && gameRooms[player.roomId].players.get(player.id))
       gameRooms[player.roomId].removePlayer(player);
   });
 });
@@ -147,9 +148,11 @@ setInterval(() => {
     gameRoom.players.forEach((player) => {
       player.numInactiveTicks++;
 
+      // remove inactive player
       if (player.numInactiveTicks > configs.server.inactiveTickLimit)
         gameRoom.removePlayer(player);
-      else // broadcast new game state data
+      // broadcast new game state data
+      else
         player.sendData(JSON.stringify(gameStateSnapshotPayload));
     });
 
