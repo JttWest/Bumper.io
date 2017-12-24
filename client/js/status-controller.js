@@ -1,5 +1,5 @@
 const appStatus = require('../../shared/enums').client.appStatus;
-const menu = require('./menu');
+const ui = require('./ui');
 const global = require('./global');
 const graphics = require('./graphics');
 const control = require('./control');
@@ -11,8 +11,7 @@ const toMainMenu = () => {
 
   global.setAppStatus(appStatus.MAIN);
 
-  $('#mainMenu').show();
-  $('#gameView').hide();
+  ui.mainView();
 };
 
 const toStandbyMenu = (clientPlayerId) => {
@@ -23,10 +22,9 @@ const toStandbyMenu = (clientPlayerId) => {
 
   global.setAppStatus(appStatus.STANDBY);
 
-  $('#mainMenu').hide();
-  $('#gameView').show();
+  ui.gameView();
 
-  menu.showStandbyMenu();
+  ui.showStandbyMenu();
 
   global.set('clientPlayerId', clientPlayerId);
 
@@ -52,7 +50,7 @@ const toPlaying = (clientPlayerId, clientWebsocket) => {
 
   global.setAppStatus(appStatus.PLAYING);
 
-  menu.hideStandbyMenu();
+  ui.hideStandbyMenu();
 
   $('#canvas').focus();
 

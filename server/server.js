@@ -128,7 +128,10 @@ wss.on('connection', (ws, req) => {
     }
   });
 
-  ws.on('close', () => { }); // TODO: clean up player associated with ws (NOTE: must check player is set)
+  ws.on('close', () => {
+    if (player)
+      gameRooms[player.roomId].removePlayer(player);
+  });
 });
 
 setInterval(() => {

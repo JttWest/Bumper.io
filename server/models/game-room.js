@@ -47,10 +47,14 @@ module.exports = class GameRoom {
     this.gameState.tick();
   }
 
-  // if player is inactive for too long
   removePlayer(player) {
     this.availablePlayerIds.push(player.id);
     this.players.delete(player.id);
+
+    // if player is still in game state
+    const playerState = this.gameState.players[player.id];
+    if (playerState)
+      this.gameState.removeFromGame(playerState);
   }
 
   broadcast(data) {

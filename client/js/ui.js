@@ -1,3 +1,13 @@
+const mainView = () => {
+  $('#mainMenu').show();
+  $('#gameView').hide();
+};
+
+const gameView = () => {
+  $('#mainMenu').hide();
+  $('#gameView').show();
+};
+
 const showStandbyMenu = () => {
   $('#standbyMenu')
     .modal({
@@ -14,6 +24,9 @@ const hideStandbyMenu = () => {
 };
 
 module.exports = {
+  mainView,
+  gameView,
+
   showStandbyMenu,
   hideStandbyMenu,
 

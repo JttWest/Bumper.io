@@ -20,14 +20,13 @@ module.exports = class GameState {
     this.field = new Field(numZonesH, numZonesV, configs.zoneWidth, configs.zoneHeight);
   }
 
-  removeFromGame(player) {
+  removeFromGame(pState) {
     // award point to player that did the attack
-    if (player.collision.collidedWith && this.players[player.collision.collidedWith])
-      this.players[player.collision.collidedWith].points++;
+    if (pState.collision.collidedWith && this.players[pState.collision.collidedWith])
+      this.players[pState.collision.collidedWith].points++;
 
-    delete this.players[player.id];
-    // this.availablePlayerIds.push(player.id);
-    console.log(`Player ${player.id} killed`);
+    delete this.players[pState.id];
+    console.log(`Player ${pState.id} killed`);
   }
 
   // process players movement and actions

@@ -6,11 +6,10 @@ require('../../semantic/dist/semantic.min.js');
 const configs = require('../../app-configs');
 const control = require('./control');
 const debug = require('./debug');
-const graphics = require('./graphics');
 const global = require('./global');
 const axios = require('axios');
 const statusController = require('./status-controller');
-const menu = require('./menu');
+const ui = require('./ui');
 
 const canvas = document.getElementById('canvas');
 control.trackKeysInput(canvas);
@@ -85,7 +84,7 @@ const joinServer = endpoint => axios.get(endpoint)
 // start with Main Menu
 statusController.toMainMenu();
 
-menu.registerOnJoinButtonClick(() => {
+ui.registerOnJoinButtonClick(() => {
   joinServer(`${serverUrl}/join`)
     .then(establishWS)
     .then((clientPlayerId) => {
@@ -94,7 +93,7 @@ menu.registerOnJoinButtonClick(() => {
     .catch(err => console.log('Error joining server', err));
 });
 
-menu.registerOnPlayButtonClick(() => {
+ui.registerOnPlayButtonClick(() => {
   const name = $('#nameInput').val();
   // const gameState = global.get('gameState');
 
@@ -107,26 +106,3 @@ menu.registerOnPlayButtonClick(() => {
 
   ws.send(JSON.stringify(joinPayload));
 });
-
-// const onJoinButtonClick = () => {
-//   joinServer(`${serverUrl}/join`)
-//     .then(establishWS)
-//     .catch(err => console.log('Error joining server', err));
-// };
-
-// const onPlayButtonClick = () => {
-//   const name = $('#nameInput').val();
-//   // const gameState = global.get('gameState');
-
-//   const joinPayload = {
-//     type: 'play',
-//     data: {
-//       name: name
-//     }
-//   };
-
-//   ws.send(JSON.stringify(joinPayload));
-// };
-
-// $('#joinButton').click(onJoinButtonClick);
-// $('#playButton').click(onPlayButtonClick);
