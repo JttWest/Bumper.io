@@ -39,7 +39,10 @@ module.exports = class Zone {
     return this.status === zoneStatus.ON;
   }
 
-  // TODO: still needed?
+  isOff() {
+    return this.status === zoneStatus.OFF;
+  }
+
   isTransitioning() {
     return this.statusTransition !== null;
   }

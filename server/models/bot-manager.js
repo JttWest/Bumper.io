@@ -1,5 +1,6 @@
-const util = require('./../util');
+const util = require('../../shared/util');
 const configs = require('../../app-configs').shared;
+const Coord = require('../../shared/models/coord');
 
 const minBotMovementRepeat = 5;
 const maxBotMovementRepeast = 50;
@@ -12,6 +13,20 @@ const isCloseToBorder = (coord) => {
     return true;
 
   return false;
+};
+
+const isMovingIntoDangerZone = (field, currPos, direction, scanDist) => {
+  const xDisplacement = scanDist * Math.cos(direction);
+  const yDisplacement = scanDist * Math.sin(direction);
+
+  const newPos = new Coord(currPos.x + xDisplacement, currPos.y + yDisplacement);
+
+  const zone = field.getZoneByCoord(newPos);
+
+  if (!zone || zone.isOff())
+    return false;
+
+  return true;
 };
 
 // should be a util function
@@ -68,13 +83,13 @@ const dashClosest = (player, gameState) => {
     return;
 
   const snapshot = generateDashTowardTargetSnapshot(player, closestPlayer);
-  player.insertSnapshot(snapshot.movement, snapshot.action);
+  player.insertControlInput(snapshot.movement, snapshot.action);
 };
 
 class BotPlayer {
   constructor(id, playerState, gameState) {
     this.id = id;
-    this.player = playerState;
+    this.playerState = playerState;
     this.movement = {
       direction: null,
       movementRepeatCount: 0
@@ -85,7 +100,7 @@ class BotPlayer {
   }
 
   isKilled() {
-    return this.player.isKilled;
+    return this.playerState.isKilled;
   }
 
   tick() {
@@ -93,7 +108,7 @@ class BotPlayer {
 
     if (chance < 0.01) {
       // only dash when attacking
-      dashClosest(this.player, this.gameState);
+      dashClosest(this.playerState, this.gameState);
     } else {
       if (this.movement.movementRepeatCount <= 0) {
         this.movement.movementRepeatCount = util.randomIntFromInterval(minBotMovementRepeat, maxBotMovementRepeast);
@@ -101,63 +116,38 @@ class BotPlayer {
         this.movement.direction = util.randomFloatFromInterval(-Math.PI, Math.PI);
       }
 
-      // redirect bot toward center when its too close to border
-      if (isCloseToBorder(this.player.position)) {
-        const angleToCenter = getAngleBetweenCoords(this.player.position,
+      const scanDist = 6;
+
+      // reverse direction if moving into a danger zone
+      if (isMovingIntoDangerZone(this.gameState.field, this.playerState.position, this.movement.direction, scanDist)) {
+        this.movement.direction += Math.PI;
+        // redirect bot toward center when its too close to border
+      } else if (isCloseToBorder(this.playerState.position)) {
+        const angleToCenter = getAngleBetweenCoords(this.playerState.position,
           { x: configs.mapWidth / 2, y: configs.mapHeight / 2 });
 
         this.movement.direction = angleToCenter;
       }
 
       // move bot
-      this.player.insertSnapshot(this.movement.direction);
+      this.playerState.insertControlInput(this.movement.direction);
       this.movement.movementRepeatCount--;
     }
-  }
-
-  generateDecisionSnapshot() {
-    const intention = this.intention;
-    let decisionSnapshot;
-
-    switch (intention.type) {
-      case 'attack': {
-        const targetPlayer = this.gameState.getPlayer(intention.data.target);
-
-        // target is no longer in game
-        if (!targetPlayer) {
-          // TODO: create new decision
-          return null;
-        }
-
-        const deltaX = targetPlayer.position.x - this.player.position.x;
-        const deltaY = targetPlayer.position.y - this.player.position.y;
-
-        // move toward data.target
-        const direction = Math.atan2(deltaY, deltaX);
-
-        decisionSnapshot = { movement: direction, action: 'dash' };
-        break;
-      }
-      case 'wander':
-        break;
-      default:
-        throw new Error(`Invalid intention type: ${intention.type}`);
-    }
-
-    return decisionSnapshot;
   }
 }
 
 module.exports = class BotManager {
-  constructor(gameState) {
+  constructor(gameState, numInitBots) {
     this.gameState = gameState;
     this.bots = {};
+    this.createBots(numInitBots);
   }
 
   createBots(numBots) {
-    for (let i = 0; i < numBots; ++i) {
-      const botId = i + 1;
-      const player = this.gameState.play(`Bot ${botId}`);
+    for (let i = 1; i <= numBots; ++i) {
+      const botId = i;
+      // TODO: using negative # for ids in gameState to avoid conflicts; find cleaner solution
+      const player = this.gameState.play(`Bot ${botId}`, -botId);
       this.bots[botId] = new BotPlayer(botId, player, this.gameState);
     }
   }
@@ -166,7 +156,7 @@ module.exports = class BotManager {
     Object.values(this.bots).forEach((bot) => {
       if (bot.isKilled()) {
         // rejoin game is killed
-        const player = this.gameState.play(`Bot ${bot.id}`);
+        const player = this.gameState.play(`Bot ${bot.id}`, bot.id);
         this.bots[bot.id] = new BotPlayer(bot.id, player, this.gameState);
       } else {
         bot.tick();

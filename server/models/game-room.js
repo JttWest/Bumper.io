@@ -1,6 +1,7 @@
 const GameState = require('../../shared/models/game-state');
 const configs = require('../../app-configs');
 const WebSocket = require('ws');
+const BotManager = require('./bot-manager');
 
 class Player {
   constructor(id, roomId) {
@@ -24,6 +25,8 @@ module.exports = class GameRoom {
     this.roomId = roomId;
     this.players = new Map();
     this.gameState = new GameState();
+
+    this.BotManager = new BotManager(this.gameState, configs.server.bot.numPerRoom);
   }
 
   hasAvailableSpot() {
@@ -44,6 +47,7 @@ module.exports = class GameRoom {
   }
 
   tick() {
+    this.BotManager.tick();
     this.gameState.tick();
   }
 

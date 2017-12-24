@@ -21,7 +21,7 @@ module.exports = class GameState {
   }
 
   removeFromGame(pState) {
-    // award point to player that did the attack
+    // award point to collidee player (if there is 1) before removing current player
     if (pState.collision.collidedWith && this.players[pState.collision.collidedWith])
       this.players[pState.collision.collidedWith].points++;
 

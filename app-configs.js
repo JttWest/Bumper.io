@@ -19,7 +19,7 @@ module.exports = {
       maxOnDuration: 500
     },
     collisionDisplacementDuration: 20,
-    maxPlayerLimit: 10
+    maxPlayerLimit: 10 // doesn't include bots
   },
   client: {
     isDebugMode: false,
@@ -39,6 +39,9 @@ module.exports = {
     gameRoom: {
       maxRooms: 1,
       maxPlayers: 10
+    },
+    bot: {
+      numPerRoom: 3
     },
     inactiveTickLimit: 600 // 30 second if tick interval is 50ms
   }
