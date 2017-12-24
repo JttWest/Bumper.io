@@ -47,6 +47,7 @@ const establishWS = passcode => new Promise((resolve, reject) => {
         statusController.toPlaying(clientPlayerId, ws);
         break;
       case 'gameStateSnapshot':
+        debug.logGameStatePacketReceiveRate(50);
         global.set('gameState', data);
         break;
       default:

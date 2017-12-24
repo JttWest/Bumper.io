@@ -145,9 +145,8 @@ module.exports = class BotManager {
 
   createBots(numBots) {
     for (let i = 1; i <= numBots; ++i) {
-      const botId = i;
-      // TODO: using negative # for ids in gameState to avoid conflicts; find cleaner solution
-      const player = this.gameState.play(`Bot ${botId}`, -botId);
+      const botId = -i; // TODO: using negative # for ids in gameState to avoid conflicts; find cleaner solution
+      const player = this.gameState.play(`Bot ${botId}`, botId);
       this.bots[botId] = new BotPlayer(botId, player, this.gameState);
     }
   }
@@ -156,7 +155,7 @@ module.exports = class BotManager {
     Object.values(this.bots).forEach((bot) => {
       if (bot.isKilled()) {
         // rejoin game is killed
-        const player = this.gameState.play(`Bot ${bot.id}`, bot.id);
+        const player = this.gameState.play(`Bot${bot.id}`, bot.id);
         this.bots[bot.id] = new BotPlayer(bot.id, player, this.gameState);
       } else {
         bot.tick();
