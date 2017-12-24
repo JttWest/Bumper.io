@@ -1,7 +1,7 @@
 const configs = require('../../app-configs');
 const global = require('./global');
 const Coord = require('../../shared/models/coord');
-
+const zoneStatus = require('../../shared/enums').shared.zoneStatus;
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -65,7 +65,7 @@ const drawZoneBorders = () => {
     const endCoord = new Coord(configs.shared.mapHeight, i * configs.shared.zoneHeight);
 
     drawLine(startCoord, endCoord,
-      { strokeStyle: configs.client.zoneBorderColor, lineWidth: configs.shared.zoneBorderSize }
+      { strokeStyle: configs.client.zone.borderColor, lineWidth: configs.client.zone.borderSize }
     );
   }
 
@@ -81,19 +81,21 @@ const drawZoneBorders = () => {
 };
 
 const drawZone = (zone, width, height) => {
-  /*
-  let greenIntensity;
+  let zoneColor;
 
-  if (zone.isTransitioning() && zone.statusTransition.countdown > 0)
-    // min 25 intensity for clarity between on/off
-    greenIntensity = Math.round((100 * (zone.statusTransition.countdown / configs.shared.zoneTransitionCountdown))) + 25;
-  else
-    greenIntensity = zone.isOn() ? '0' : '125'; // lime is rgb(0.255.0)
-
-  const zoneColor = `rgb(0, ${greenIntensity}, 0)`;
-  */
-
-  const zoneColor = zone.status === 'ON' ? 'rgb(0, 0, 0)' : 'rgb(0, 125, 0)';
+  switch (zone.status) {
+    case zoneStatus.ON:
+      zoneColor = configs.client.zone.onColor;
+      break;
+    case zoneStatus.OFF:
+      zoneColor = configs.client.zone.offColor;
+      break;
+    case zoneStatus.TRANSITION:
+      zoneColor = configs.client.zone.transitionColor;
+      break;
+    default:
+      throw new Error(`Invalid zone status: ${zone.status}`);
+  }
 
   drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
 };
@@ -149,7 +151,6 @@ const drawPlayerName = (player) => {
 
 const renderLoop = (clientPlayerId) => {
   const gameState = global.get('gameState');
-  // const clientPlayer = global.get('clientPlayer');
 
   if (gameState) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -1,31 +1,11 @@
 const util = require('./../util');
 const configs = require('../../app-configs').shared;
 
-/**
- * BotPlayer have intention : {
- *  type: string
- *  data: ??
- * }
- *
- * on each BotPlayer tick:
- * generateDecisionSnapshot(intention): snapshot
- *
- * updateIntention -> looks at gameState data and recaclulate intention
- *
- */
-
 const minBotMovementRepeat = 5;
 const maxBotMovementRepeast = 50;
 
-class Intention {
-  constructor(type, data) {
-    this.type = type;
-    this.data = data;
-  }
-}
-
 const isCloseToBorder = (coord) => {
-  const buffer = 20;
+  const buffer = 30;
 
   if (coord.x < buffer || coord.x > configs.mapWidth - buffer ||
     coord.y < buffer || coord.y > configs.mapHeight - buffer)
@@ -92,9 +72,9 @@ const dashClosest = (player, gameState) => {
 };
 
 class BotPlayer {
-  constructor(id, player, gameState) {
+  constructor(id, playerState, gameState) {
     this.id = id;
-    this.player = player;
+    this.player = playerState;
     this.movement = {
       direction: null,
       movementRepeatCount: 0
@@ -132,13 +112,6 @@ class BotPlayer {
       // move bot
       this.player.insertSnapshot(this.movement.direction);
       this.movement.movementRepeatCount--;
-    }
-  }
-
-  updateIntention() {
-    // player currently have no intention
-    if (!this.intention) {
-      this.intention = new Intention('attack', { target: util.randomIntFromInterval(2, 5) });
     }
   }
 

@@ -14,7 +14,6 @@ module.exports = {
     zoneHeight: 100,
     maxOnZones: 2,
     zoneTransitionCountdown: 50,
-    zoneBorderSize: 1,
     zone: {
       minOnDuration: 100,
       maxOnDuration: 500
@@ -26,7 +25,13 @@ module.exports = {
     isDebugMode: false,
     clientPlayerColor: 'lime',
     otherPlayersColor: '#2274A5',
-    zoneBorderColor: 'black',
+    zone: {
+      onColor: 'rgb(0, 0, 0)',
+      offColor: 'rgb(0, 125, 0)',
+      transitionColor: 'rgb(0, 70, 0)',
+      borderColor: 'black',
+      borderSize: 1
+    },
     initJoinTimeout: 3000
   },
   server: {

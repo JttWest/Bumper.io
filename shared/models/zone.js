@@ -1,11 +1,7 @@
 const MultiTickEvent = require('./multi-tick-event');
 const configs = require('../../app-configs').shared;
 const util = require('../util');
-
-const zoneStatus = {
-  ON: 'ON',
-  OFF: 'OFF'
-};
+const zoneStatus = require('../enums').shared.zoneStatus;
 
 class ZoneStatusTransition extends MultiTickEvent {
   constructor(zone) {
@@ -26,7 +22,7 @@ class ZoneStatusTransition extends MultiTickEvent {
 module.exports = class Zone {
   constructor(coord) {
     this.coord = coord;
-    this.status = zoneStatus.OFF; // ???
+    this.status = zoneStatus.OFF;
     this.statusTransition = null;
   }
 
@@ -36,12 +32,14 @@ module.exports = class Zone {
       return;
 
     this.statusTransition = new ZoneStatusTransition(this);
+    this.status = zoneStatus.TRANSITION;
   }
 
   isOn() {
     return this.status === zoneStatus.ON;
   }
 
+  // TODO: still needed?
   isTransitioning() {
     return this.statusTransition !== null;
   }
