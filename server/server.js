@@ -143,7 +143,9 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-setInterval(() => {
+const serverLoop = () => {
+  setTimeout(serverLoop, configs.shared.tickInterval);
+
   debug.logGameTickRate(55);
 
   gameRooms.forEach((gameRoom) => {
@@ -174,4 +176,6 @@ setInterval(() => {
 
     // gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
-}, configs.shared.tickInterval - 5); // tick 5 second in advance to deal with server timeout delays
+};
+
+serverLoop();
