@@ -53,6 +53,9 @@ module.exports = class Game {
   }
 
   tick() {
+    // TODO: remove this
+    $('#leaderboardContainer').text(this.serverGameSnapshotQueue.length);
+
     if (this.serverGameSnapshotQueue.length === 0) {
       this.requestSync();
     } else {
