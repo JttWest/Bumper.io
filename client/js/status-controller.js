@@ -3,11 +3,13 @@ const ui = require('./ui');
 const global = require('./global');
 const control = require('./control');
 const configs = require('../../app-configs');
+// const status = require('../../shared/enums').client.appStatus;
 
 let game;
+let currentStatus = appStatus.MAIN;
 
 const renderLoop = () => {
-  if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
+  if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
     requestAnimationFrame(renderLoop);
 
     game.render();
@@ -15,12 +17,12 @@ const renderLoop = () => {
 };
 
 const gameLoop = () => {
-  if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
+  if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
     setTimeout(gameLoop, configs.shared.tickInterval);
 
     game.tick();
 
-    if (global.getAppStatus() === appStatus.PLAYING) {
+    if (currentStatus === appStatus.PLAYING) {
       if (game.isClientPlayerKilled()) {
         toStandbyMenu();
       } else {
@@ -32,7 +34,7 @@ const gameLoop = () => {
 };
 
 function toMainMenu() {
-  global.setAppStatus(appStatus.MAIN);
+  currentStatus = appStatus.MAIN;
 
   ui.mainView();
   ui.hideStandbyMenu();
@@ -41,7 +43,7 @@ function toMainMenu() {
 }
 
 function toStandbyMenu() {
-  const oldStatus = global.getAppStatus();
+  const oldStatus = currentStatus;
 
   if (oldStatus !== appStatus.MAIN && oldStatus !== appStatus.PLAYING)
     throw new Error('Must be in MAIN/PLAYING to change status to STANDBY');
@@ -49,7 +51,7 @@ function toStandbyMenu() {
   if (!game)
     throw new Error('No Game initialized in Status Controller');
 
-  global.setAppStatus(appStatus.STANDBY);
+  currentStatus = appStatus.STANDBY;
 
   ui.gameView();
 
@@ -63,14 +65,14 @@ function toStandbyMenu() {
 }
 
 function toPlaying() {
-  if (global.getAppStatus() !== appStatus.STANDBY)
+  if (currentStatus !== appStatus.STANDBY)
     throw new Error('Must be in STANDBY to change status to PLAYING');
 
   if (!game)
     throw new Error('No Game initialized in Status Controller');
 
 
-  global.setAppStatus(appStatus.PLAYING);
+  currentStatus = appStatus.PLAYING;
 
   ui.hideStandbyMenu();
 

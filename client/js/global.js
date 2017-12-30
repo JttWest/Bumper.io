@@ -1,3 +1,4 @@
+/*
 const status = require('../../shared/enums').client.appStatus;
 
 // const global = {
@@ -29,3 +30,4 @@ module.exports = {
   //   global[name] = obj;
   // }
 };
+*/

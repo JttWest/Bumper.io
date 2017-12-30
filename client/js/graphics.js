@@ -173,9 +173,6 @@ const render = (clientPlayerId, gameSnapshot) => {
       drawPlayerName(player);
     });
   }
-
-  // if (global.getAppStatus() === 'PLAYING' || global.getAppStatus() === 'STANDBY')
-  //   requestAnimationFrame(() => renderLoop(clientPlayerId));
 };
 
 module.exports = {
