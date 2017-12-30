@@ -60,7 +60,7 @@ const establishWS = passcode => new Promise((resolve, reject) => {
         statusController.toPlaying();
         break;
       case 'gameStateSnapshot':
-        debug.logGameStatePacketReceiveRate(50);
+        debug.logGameStatePacketReceiveRate(200);
         // global.set('gameState', data);
         game.insertGameStateSnapshot(data);
         break;

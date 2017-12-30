@@ -1,5 +1,6 @@
 const GameState = require('../../shared/models/game-state');
 const graphics = require('./graphics');
+const debug = require('../../shared/debug');
 
 module.exports = class Game {
   // create on join
@@ -48,6 +49,7 @@ module.exports = class Game {
     if (this.serverGameSnapshotQueue.length === 0) {
       this.requestSync();
     } else {
+      debug.logEmptySnapshotQueueDuration(200);
       this.serverGameSnapshotQueue.shift();
     }
   }

@@ -146,7 +146,7 @@ module.exports = class BotManager {
   createBots(numBots) {
     for (let i = 1; i <= numBots; ++i) {
       const botId = -i; // TODO: using negative # for ids in gameState to avoid conflicts; find cleaner solution
-      const player = this.gameState.play(`Bot ${botId}`, botId);
+      const player = this.gameState.play(`Bot${botId}`, botId);
       this.bots[botId] = new BotPlayer(botId, player, this.gameState);
     }
   }
