@@ -174,4 +174,4 @@ setInterval(() => {
 
     // gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
-}, configs.shared.tickInterval);
+}, configs.shared.tickInterval - 10); //
