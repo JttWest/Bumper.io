@@ -10,6 +10,7 @@ class Player {
     this.playerState = null;
     this.ws = null;
     this.numInactiveTicks = 0;
+    this.syncing = true; // do not send regular game snapshots until syncing is set to false;
   }
 
   sendData(data) {
@@ -18,19 +19,23 @@ class Player {
   }
 }
 
-
 module.exports = class GameRoom {
   constructor(roomId) {
     this.availablePlayerIds = Array.from(Array(configs.server.gameRoom.maxPlayers).keys());
     this.roomId = roomId;
     this.players = new Map();
     this.gameState = new GameState();
+    this.gameStateSnapshotQueue = Array(configs.shared.tickBufferSize).fill(this.gameState.getSnapshot());
 
     this.BotManager = new BotManager(this.gameState, configs.server.bot.numPerRoom);
   }
 
   hasAvailableSpot() {
     return this.availablePlayerIds.length > 0;
+  }
+
+  getSyncSnapshots() {
+    return this.gameStateSnapshotQueue;
   }
 
   join() {
@@ -49,6 +54,9 @@ module.exports = class GameRoom {
   tick() {
     this.BotManager.tick();
     this.gameState.tick();
+
+    this.gameStateSnapshotQueue.shift();
+    this.gameStateSnapshotQueue.push(this.gameState.getSnapshot());
   }
 
   removePlayer(player) {

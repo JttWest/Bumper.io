@@ -87,8 +87,8 @@ module.exports = class GameState {
     // check which player are in kill zone
     players.forEach((player) => {
       if (
-        player.position.x < 0 || player.position.x > configs.mapWidth || // out of bound horizontally
-        player.position.y < 0 || player.position.y > configs.mapHeight || // out of bound vertically
+        player.position.x <= 0 || player.position.x >= configs.mapWidth || // out of bound horizontally
+        player.position.y <= 0 || player.position.y >= configs.mapHeight || // out of bound vertically
         this.field.getZoneByCoord(player.position).isOn() // in a kill zone
       ) {
         player.isKilled = true;

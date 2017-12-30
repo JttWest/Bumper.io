@@ -10,6 +10,7 @@ const global = require('./global');
 const axios = require('axios');
 const statusController = require('./status-controller');
 const ui = require('./ui');
+const Game = require('./game');
 
 const canvas = document.getElementById('canvas');
 control.trackKeysInput(canvas);
@@ -25,6 +26,7 @@ const wsUrl = `ws://${host}:${configs.shared.port}`;
 const establishWS = passcode => new Promise((resolve, reject) => {
   ws = new WebSocket(wsUrl);
   let clientPlayerId;
+  let game;
 
   setTimeout(() => reject(new Error('Could not set up websocket in time')), configs.client.initJoinTimeout);
 
@@ -39,16 +41,28 @@ const establishWS = passcode => new Promise((resolve, reject) => {
     switch (type) {
       case 'joinAck':
         clientPlayerId = data.id;
+        game = new Game(ws, clientPlayerId);
+        statusController.setGame(game);
+
+        // immediately send sync request on join
+        // ws.send(JSON.stringify({ type: 'syncReq' }));
+
         // Do this in promise chain to prevent going to game view if join init failed
         // statusController.toStandbyMenu(clientPlayerId);
-        resolve(clientPlayerId);
+
+        resolve();
+        break;
+      case 'syncAck':
+        game.sync(data);
+        ws.send(JSON.stringify({ type: 'syncAck2' }));
         break;
       case 'playAck':
-        statusController.toPlaying(clientPlayerId, ws);
+        statusController.toPlaying();
         break;
       case 'gameStateSnapshot':
         debug.logGameStatePacketReceiveRate(50);
-        global.set('gameState', data);
+        // global.set('gameState', data);
+        game.insertGameStateSnapshot(data);
         break;
       default:
         throw new Error(`Received invalid message type from server: ${type}`);
@@ -56,7 +70,10 @@ const establishWS = passcode => new Promise((resolve, reject) => {
     // console.log('Receive from WS', data);
   };
 
-  ws.onclose = () => console.log('Websocket to server closed');
+  ws.onclose = () => {
+    console.log('Websocket to server closed');
+    statusController.toMainMenu();
+  };
 
   window.onbeforeunload = () => ws.close();
 });
@@ -90,8 +107,8 @@ statusController.toMainMenu();
 ui.registerOnJoinButtonClick(() => {
   joinServer(`${serverUrl}/join`)
     .then(establishWS)
-    .then((clientPlayerId) => {
-      statusController.toStandbyMenu(clientPlayerId);
+    .then(() => {
+      statusController.toStandbyMenu();
     })
     .catch(err => console.log('Error joining server', err));
 });

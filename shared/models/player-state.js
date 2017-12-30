@@ -90,7 +90,8 @@ module.exports = class Player {
       name: this.name,
       position: this.position,
       points: this.points,
-      isKilled: this.isKilled
+      isKilled: this.isKilled,
+      overridePlayerControl: this.overridePlayerControl
     };
   }
 };

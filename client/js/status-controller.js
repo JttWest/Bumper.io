@@ -5,20 +5,44 @@ const graphics = require('./graphics');
 const control = require('./control');
 const configs = require('../../app-configs');
 
-const toMainMenu = () => {
-  if (global.getAppStatus() !== appStatus.MAIN && global.getAppStatus() !== appStatus.STANDBY)
-    throw new Error('Must be in MAIN/STANDBY to change status to MAIN');
+let game;
 
+const toMainMenu = () => {
   global.setAppStatus(appStatus.MAIN);
 
   ui.mainView();
+  ui.hideStandbyMenu();
+
+  game = null;
 };
 
-const toStandbyMenu = (clientPlayerId) => {
+const renderLoop = () => {
+  if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
+    game.renderGameSnapshot();
+
+    requestAnimationFrame(renderLoop);
+  }
+};
+
+const gameLoop = () => {
+  if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
+    game.tick();
+
+    // if (global.getAppStatus() === appStatus.PLAYING)
+    // control.sendUserInputLoop(clientWebsocket);
+
+    setTimeout(gameLoop, configs.shared.tickInterval);
+  }
+};
+
+const toStandbyMenu = () => {
   const oldStatus = global.getAppStatus();
 
   if (oldStatus !== appStatus.MAIN && oldStatus !== appStatus.PLAYING)
     throw new Error('Must be in MAIN/PLAYING to change status to STANDBY');
+
+  if (!game)
+    throw new Error('No Game initialized in Status Controller');
 
   global.setAppStatus(appStatus.STANDBY);
 
@@ -26,41 +50,33 @@ const toStandbyMenu = (clientPlayerId) => {
 
   ui.showStandbyMenu();
 
-  global.set('clientPlayerId', clientPlayerId);
-
   // start rendering if coming from MAIN
-  if (oldStatus === appStatus.MAIN)
-    graphics.renderLoop(clientPlayerId);
+  if (oldStatus === appStatus.MAIN) {
+    gameLoop(); // game tick happens here
+    renderLoop();
+  }
 };
 
-const playLoop = (clientPlayerId, clientWebsocket) => {
-  control.sendUserInputLoop(clientWebsocket);
-
-  // current client's player is killed
-  if (global.get('gameState').players.some(player => player.id === clientPlayerId && player.isKilled))
-    toStandbyMenu();
-
-  if (global.getAppStatus() === appStatus.PLAYING)
-    setTimeout(playLoop, configs.shared.tickInterval, clientPlayerId, clientWebsocket);
-};
-
-const toPlaying = (clientPlayerId, clientWebsocket) => {
+const toPlaying = () => {
   if (global.getAppStatus() !== appStatus.STANDBY)
     throw new Error('Must be in STANDBY to change status to PLAYING');
+
+  if (!game)
+    throw new Error('No Game initialized in Status Controller');
+
 
   global.setAppStatus(appStatus.PLAYING);
 
   ui.hideStandbyMenu();
 
   $('#canvas').focus();
-
-  // need to be in PLAYING
-  playLoop(clientPlayerId, clientWebsocket);
 };
-
 
 module.exports = {
   toMainMenu,
   toStandbyMenu,
-  toPlaying
+  toPlaying,
+  setGame: (g) => {
+    game = g;
+  }
 };

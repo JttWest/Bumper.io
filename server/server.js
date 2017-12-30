@@ -109,6 +109,13 @@ wss.on('connection', (ws, req) => {
           player.sendData(JSON.stringify({ type: 'playAck' }));
           break;
         }
+        case 'syncReq':
+          player.syncing = true;
+          player.sendData(JSON.stringify({ type: 'syncAck', data: gameRooms[player.roomId].getSyncSnapshots() }));
+          break;
+        case 'syncAck2':
+          player.syncing = false; // sync complete; can now send regular game snapshots to this player
+          break;
         case 'controlInput': {
           if (!player.playerState)
             throw new Error(`Player ${player.id} attempting to send control input before initiating play packet`);
@@ -151,8 +158,8 @@ setInterval(() => {
       // remove inactive player
       if (player.numInactiveTicks > configs.server.inactiveTickLimit)
         gameRoom.removePlayer(player);
-      // broadcast new game state data
-      else
+      // broadcast new game state data (if they are not currently syncing)
+      else if (!player.syncing)
         player.sendData(JSON.stringify(gameStateSnapshotPayload));
     });
 
