@@ -1,9 +1,7 @@
 const status = require('../../shared/enums').client.appStatus;
 
-const global = {
-  clientPlayerId: null,
-  gameState: null,
-};
+// const global = {
+// };
 
 let appStatus = status.MAIN;
 
@@ -17,17 +15,17 @@ module.exports = {
     appStatus = status[newStatus];
   },
 
-  get: (name) => {
-    if (!global.hasOwnProperty(name))
-      throw new Error(`Global data with key '${name}' doesn't exist`);
+  // get: (name) => {
+  //   if (!global.hasOwnProperty(name))
+  //     throw new Error(`Global data with key '${name}' doesn't exist`);
 
-    return global[name];
-  },
+  //   return global[name];
+  // },
 
-  set: (name, obj) => {
-    if (!global.hasOwnProperty(name))
-      throw new Error(`Global data with key '${name}' doesn't exist`);
+  // set: (name, obj) => {
+  //   if (!global.hasOwnProperty(name))
+  //     throw new Error(`Global data with key '${name}' doesn't exist`);
 
-    global[name] = obj;
-  }
+  //   global[name] = obj;
+  // }
 };

@@ -1,6 +1,14 @@
 const configs = require('../app-configs');
 
-const isDebugMode = () => (typeof window !== 'undefined' && window.isDebugMode) || configs.server.debug.active;
+const isDebugMode = () => {
+  if (typeof window === 'undefined') { // browser
+    // return window.isDebugMode === true;
+    return true; // TODO: undo this
+  }
+
+  // node.js
+  return configs.server.debug.active === true;
+};
 
 const lastTimeTracker = {
   playerPacketSend: null,
