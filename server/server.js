@@ -174,4 +174,4 @@ setInterval(() => {
 
     // gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
-}, configs.shared.tickInterval - 10); //
+}, configs.shared.tickInterval - 5); // tick 5 second in advance to deal with server timeout delays
