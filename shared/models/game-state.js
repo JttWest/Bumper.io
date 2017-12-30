@@ -61,8 +61,6 @@ module.exports = class GameState {
         players.forEach((otherPlayer) => {
           // only resolve collision when player is dashing
           if (player.id !== otherPlayer.id && physics.checkCollision(player, otherPlayer)) {
-            console.log(`${player.name}(${player.id}) collided with ${otherPlayer.name}(${otherPlayer.id})`);
-
             if (player.overridePlayerControl < configs.collisionDisplacementDuration)
               player.overridePlayerControl = configs.collisionDisplacementDuration;
 

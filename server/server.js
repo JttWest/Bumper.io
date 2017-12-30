@@ -7,6 +7,7 @@ const configs = require('../app-configs');
 const GameRoom = require('./models/game-room');
 const uuidv4 = require('uuid/v4');
 const cors = require('cors');
+const debug = require('../shared/debug');
 
 const PORT = process.env.PORT || configs.shared.port;
 
@@ -143,6 +144,8 @@ wss.on('connection', (ws, req) => {
 });
 
 setInterval(() => {
+  debug.logGameTickRate(55);
+
   gameRooms.forEach((gameRoom) => {
     // TODO: remove inactive players from game room
     gameRoom.tick();

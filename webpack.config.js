@@ -25,10 +25,11 @@ module.exports = {
       exclude: /node_modules/,
       // add errors to webpack instead of warnings
       failOnError: true
-    }),
-    new webpack.ProvidePlugin({ // global import jQuery on client-side
-      $: 'jquery',
-      jQuery: 'jquery'
     })
+    // using CDN instead
+    // new webpack.ProvidePlugin({ // global import jQuery on client-side
+    //   $: 'jquery',
+    //   jQuery: 'jquery'
+    // }
   ]
 };

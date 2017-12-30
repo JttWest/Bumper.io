@@ -1,11 +1,19 @@
-const configs = require('../../app-configs');
+const configs = require('../app-configs');
 
-const isDebugMode = () => window.isDebugMode || configs.client.isDebugMode;
+const isDebugMode = () => (typeof window !== 'undefined' && window.isDebugMode) || configs.server.debug.active;
 
 const lastTimeTracker = {
   playerPacketSend: null,
   gameStatePacketReceive: null,
-  gameTick: null
+  gameTick: null,
+  serverTick: null
+};
+
+const getCurrentTime = () => {
+  if (typeof performance !== 'undefined')
+    return performance.now();
+
+  return Date.now();
 };
 
 const logTargetRate = (target, threshold = null) => {
@@ -13,15 +21,15 @@ const logTargetRate = (target, threshold = null) => {
     return;
 
   if (!lastTimeTracker[target]) {
-    lastTimeTracker[target] = performance.now();
+    lastTimeTracker[target] = getCurrentTime();
   } else {
-    const elapseTime = performance.now() - lastTimeTracker[target];
+    const elapseTime = getCurrentTime() - lastTimeTracker[target];
     if (threshold && elapseTime > threshold)
       console.log(`${target} took ${Math.round(elapseTime)}ms. Exceeded threshold of ${threshold}`);
     else if (!threshold)
       console.log(`${target} took ${Math.round(elapseTime)}ms`);
 
-    lastTimeTracker[target] = performance.now();
+    lastTimeTracker[target] = getCurrentTime();
   }
 };
 
@@ -42,14 +50,18 @@ module.exports = {
     logTargetRate('gameTick', threshold);
   },
 
+  logServerTickRate: (threshold) => {
+    logTargetRate('serverTick', threshold);
+  },
+
   logEmptySnapshotQueueDuration: (length) => {
     if (!isDebugMode())
       return;
 
     if (length === 0 && !emptySnapshotQueueStartTime) { // start timer
-      emptySnapshotQueueStartTime = performance.now();
+      emptySnapshotQueueStartTime = getCurrentTime();
     } else if (length !== 0 && emptySnapshotQueueStartTime) { // there was timer in process
-      console.log(`GameState snapshot queue was empty for ${Math.round(performance.now() - emptySnapshotQueueStartTime)}ms`);
+      console.log(`GameState snapshot queue was empty for ${Math.round(getCurrentTime() - emptySnapshotQueueStartTime)}ms`);
       emptySnapshotQueueStartTime = null; // reset timer
     }
   }
