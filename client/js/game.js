@@ -20,7 +20,7 @@ module.exports = class Game {
   insertGameStateSnapshot(snapshot) {
     if (!this.syncing) {
       // clear old snapshot that are too out dated
-      if (this.serverGameSnapshotQueue.length > configs.shared.tickBufferSize) {
+      if (this.serverGameSnapshotQueue.length >= configs.shared.tickBufferSize) {
         this.serverGameSnapshotQueue.shift();
       }
 
