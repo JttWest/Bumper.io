@@ -1,7 +1,6 @@
 const appStatus = require('../../shared/enums').client.appStatus;
 const ui = require('./ui');
 const global = require('./global');
-const graphics = require('./graphics');
 const control = require('./control');
 const configs = require('../../app-configs');
 
@@ -18,20 +17,22 @@ const toMainMenu = () => {
 
 const renderLoop = () => {
   if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
-    game.renderGameSnapshot();
-
     requestAnimationFrame(renderLoop);
+
+    game.render();
   }
 };
 
 const gameLoop = () => {
   if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
+    setTimeout(gameLoop, configs.shared.tickInterval);
+
     game.tick();
 
-    // if (global.getAppStatus() === appStatus.PLAYING)
-    // control.sendUserInputLoop(clientWebsocket);
-
-    setTimeout(gameLoop, configs.shared.tickInterval);
+    if (global.getAppStatus() === appStatus.PLAYING) {
+      const controlInput = control.getUserInputData();
+      game.sendControlInput(controlInput);
+    }
   }
 };
 

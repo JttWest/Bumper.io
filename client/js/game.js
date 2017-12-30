@@ -13,8 +13,13 @@ module.exports = class Game {
     this.serverGameSnapshotQueue = [];
   }
 
-  isClientPlayer(id) {
-    return id === this.clientPlayerId;
+  sendControlInput(data) {
+    const controlInputPayload = {
+      type: 'controlInput',
+      data: data
+    };
+
+    this.ws.send(JSON.stringify(controlInputPayload));
   }
 
   insertGameStateSnapshot(snapshot) {
@@ -45,7 +50,7 @@ module.exports = class Game {
     return this.serverGameSnapshotQueue[0];
   }
 
-  renderGameSnapshot() {
+  render() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
     if (currSnapshot)

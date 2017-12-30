@@ -51,27 +51,18 @@ const getActionData = () => {
   return action;
 };
 
+/*
+  input data object format:
+  {
+    movement: NUMBER
+    keysPressed: STRING
+  }
+*/
 const getUserInputData = () => {
   const movement = getMovementData();
   const action = getActionData();
 
   return { movement, action };
-};
-
-const sendUserInputLoop = (websocket) => {
-  /*
-    input data object format:
-    {
-      movement: NUMBER
-      keysPressed: STRING
-    }
-  */
-  const inputPayload = {
-    type: 'controlInput',
-    data: getUserInputData()
-  };
-
-  websocket.send(JSON.stringify(inputPayload));
 };
 
 module.exports = {
@@ -95,5 +86,5 @@ module.exports = {
     });
   },
 
-  sendUserInputLoop
+  getUserInputData
 };
