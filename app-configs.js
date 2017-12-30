@@ -42,7 +42,7 @@ module.exports = {
     bot: {
       numPerRoom: 3
     },
-    inactiveTickLimit: 600, // 30 second if tick interval is 50ms
+    inactiveTickLimit: 6000, // TODO: make timeout shorter
     debug: {
       active: true
     }
