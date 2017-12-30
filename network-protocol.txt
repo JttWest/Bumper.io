@@ -18,6 +18,16 @@ play
   }
 }
 
+syncReq
+{
+  type: 'syncReq'
+}
+
+syncAck2
+{
+  type: 'syncAck2'
+}
+
 controlInput
 {
   type: 'controlInput'
@@ -41,6 +51,12 @@ joinAck
 playAck
 {
   type: 'playAck'
+}
+
+syncAck
+{
+  type: 'syncAck',
+  data: [gameSnapshot]
 }
 
 killed

@@ -15,6 +15,12 @@ const isCloseToBorder = (coord) => {
   return false;
 };
 
+const isInDangerZone = (field, position) => {
+  const zone = field.getZoneByCoord(position);
+
+  return !zone.isOff();
+};
+
 const isMovingIntoDangerZone = (field, currPos, direction, scanDist) => {
   const xDisplacement = scanDist * Math.cos(direction);
   const yDisplacement = scanDist * Math.sin(direction);
@@ -29,7 +35,6 @@ const isMovingIntoDangerZone = (field, currPos, direction, scanDist) => {
   return true;
 };
 
-// should be a util function
 const getAngleBetweenCoords = (originCoord, targetCoord) => {
   const deltaX = targetCoord.x - originCoord.x;
   const deltaY = targetCoord.y - originCoord.y;
@@ -119,7 +124,10 @@ class BotPlayer {
       const scanDist = 6;
 
       // reverse direction if moving into a danger zone
-      if (isMovingIntoDangerZone(this.gameState.field, this.playerState.position, this.movement.direction, scanDist)) {
+      if (isInDangerZone(this.gameState.field, this.playerState.position)) {
+        // TODO: look at surronding zones and go to a none on/transition one
+        this.movement.direction = this.movement.direction;
+      } else if (isMovingIntoDangerZone(this.gameState.field, this.playerState.position, this.movement.direction, scanDist)) {
         this.movement.direction += Math.PI;
         // redirect bot toward center when its too close to border
       } else if (isCloseToBorder(this.playerState.position)) {
