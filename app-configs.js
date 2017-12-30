@@ -2,7 +2,7 @@ module.exports = {
   shared: {
     port: 3000,
     tickInterval: 50,
-    tickBufferSize: 4,
+    tickBufferSize: 5,
     mapWidth: 600,
     mapHeight: 600,
     playerRadius: 20,
@@ -12,11 +12,11 @@ module.exports = {
     attackCountdown: 100,
     zoneWidth: 100,
     zoneHeight: 100,
-    maxOnZones: 2,
+    maxOnZones: 3,
     zoneTransitionCountdown: 50,
     zone: {
-      minOnDuration: 100,
-      maxOnDuration: 500
+      minOnDuration: 200,
+      maxOnDuration: 1000
     },
     collisionDisplacementDuration: 20,
     maxPlayerLimit: 10 // doesn't include bots

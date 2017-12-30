@@ -1,12 +1,9 @@
 require('../css/app.css');
-// require('../../semantic/dist/semantic.min.css');
-// require('../../semantic/dist/semantic.min.js');
 // require('./ui/leaderboard');
 
 const configs = require('../../app-configs');
 const control = require('./control');
 const debug = require('../../shared/debug');
-const global = require('./global');
 const axios = require('axios');
 const statusController = require('./status-controller');
 const ui = require('./ui');
