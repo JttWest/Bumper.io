@@ -1,6 +1,7 @@
 const GameState = require('../../shared/models/game-state');
 const graphics = require('./graphics');
 const debug = require('../../shared/debug');
+const configs = require('../../app-configs');
 
 module.exports = class Game {
   // create on join
@@ -17,8 +18,14 @@ module.exports = class Game {
   }
 
   insertGameStateSnapshot(snapshot) {
-    if (!this.syncing)
+    if (!this.syncing) {
+      // clear old snapshot that are too out dated
+      while (this.serverGameSnapshotQueue.length > configs.shared.tickBufferSize) {
+        this.serverGameSnapshotQueue.shift();
+      }
+
       this.serverGameSnapshotQueue.push(snapshot);
+    }
   }
 
   requestSync() {
