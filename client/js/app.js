@@ -16,15 +16,13 @@ const canvas = document.getElementById('canvas');
 control.trackKeysInput(canvas);
 control.trackMouseDirectionInput(canvas);
 
-let ws;
-
 const host = window.location.hostname;
 
 const serverUrl = `http://${host}:${configs.shared.port}`;
 const wsUrl = `ws://${host}:${configs.shared.port}`;
 
 const establishWS = passcode => new Promise((resolve, reject) => {
-  ws = new WebSocket(wsUrl);
+  const ws = new WebSocket(wsUrl);
   let clientPlayerId;
   let game;
 
@@ -44,13 +42,7 @@ const establishWS = passcode => new Promise((resolve, reject) => {
         game = new Game(ws, clientPlayerId);
         statusController.setGame(game);
 
-        // immediately send sync request on join
-        // ws.send(JSON.stringify({ type: 'syncReq' }));
-
-        // Do this in promise chain to prevent going to game view if join init failed
-        // statusController.toStandbyMenu(clientPlayerId);
-
-        resolve();
+        resolve(ws);
         break;
       case 'syncAck':
         game.sync(data);
@@ -67,7 +59,6 @@ const establishWS = passcode => new Promise((resolve, reject) => {
       default:
         throw new Error(`Received invalid message type from server: ${type}`);
     }
-    // console.log('Receive from WS', data);
   };
 
   ws.onclose = () => {
@@ -107,22 +98,22 @@ statusController.toMainMenu();
 ui.registerOnJoinButtonClick(() => {
   joinServer(`${serverUrl}/join`)
     .then(establishWS)
-    .then(() => {
+    .then((ws) => {
+      // register play with the connected websocket
+      ui.registerOnPlayButtonClick(() => {
+        const name = $('#nameInput').val();
+
+        const joinPayload = {
+          type: 'play',
+          data: {
+            name: name
+          }
+        };
+
+        ws.send(JSON.stringify(joinPayload));
+      });
+
       statusController.toStandbyMenu();
     })
     .catch(err => console.log('Error joining server', err));
-});
-
-ui.registerOnPlayButtonClick(() => {
-  const name = $('#nameInput').val();
-  // const gameState = global.get('gameState');
-
-  const joinPayload = {
-    type: 'play',
-    data: {
-      name: name
-    }
-  };
-
-  ws.send(JSON.stringify(joinPayload));
 });
