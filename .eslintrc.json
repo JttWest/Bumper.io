@@ -13,7 +13,7 @@
     "import"
   ],
   "rules": {
-    "no-unused-expressions": ["error", {"allowTernary": true}],
+    "no-unused-expressions": ["error", { "allowTernary": true }],
     "comma-dangle":"off",
     "no-plusplus":"off",
     "prefer-const":"off",
@@ -23,6 +23,7 @@
     "max-len":"off",
     "no-param-reassign": ["error", { "props": false }],
     "object-shorthand":"off",
-    "no-prototype-builtins":"off"
+    "no-prototype-builtins":"off",
+    "no-use-before-define": ["error", { "functions": false }]
   }
 }

@@ -1,4 +1,3 @@
-const GameState = require('../../shared/models/game-state');
 const graphics = require('./graphics');
 const debug = require('../../shared/debug');
 const configs = require('../../app-configs');
@@ -11,6 +10,15 @@ module.exports = class Game {
     this.syncing = true;
 
     this.serverGameSnapshotQueue = [];
+  }
+
+  isClientPlayerKilled() {
+    const currSnapshot = this.serverGameSnapshotQueue[0];
+
+    if (currSnapshot)
+      return currSnapshot.players.some(player => player.id === this.clientPlayerId && player.isKilled);
+
+    return false;
   }
 
   sendControlInput(data) {

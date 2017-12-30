@@ -7,7 +7,7 @@ body {
 #canvas {
   border: solid 1px black;
   position: relative;
-  background: brown;
+  background: rgb(0, 125, 0);
 }
 
 #canvasContainer {

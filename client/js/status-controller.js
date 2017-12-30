@@ -6,15 +6,6 @@ const configs = require('../../app-configs');
 
 let game;
 
-const toMainMenu = () => {
-  global.setAppStatus(appStatus.MAIN);
-
-  ui.mainView();
-  ui.hideStandbyMenu();
-
-  game = null;
-};
-
 const renderLoop = () => {
   if (global.getAppStatus() === appStatus.STANDBY || global.getAppStatus() === appStatus.PLAYING) {
     requestAnimationFrame(renderLoop);
@@ -30,13 +21,26 @@ const gameLoop = () => {
     game.tick();
 
     if (global.getAppStatus() === appStatus.PLAYING) {
-      const controlInput = control.getUserInputData();
-      game.sendControlInput(controlInput);
+      if (game.isClientPlayerKilled()) {
+        toStandbyMenu();
+      } else {
+        const controlInput = control.getUserInputData();
+        game.sendControlInput(controlInput);
+      }
     }
   }
 };
 
-const toStandbyMenu = () => {
+function toMainMenu() {
+  global.setAppStatus(appStatus.MAIN);
+
+  ui.mainView();
+  ui.hideStandbyMenu();
+
+  game = null;
+}
+
+function toStandbyMenu() {
   const oldStatus = global.getAppStatus();
 
   if (oldStatus !== appStatus.MAIN && oldStatus !== appStatus.PLAYING)
@@ -56,9 +60,9 @@ const toStandbyMenu = () => {
     gameLoop(); // game tick happens here
     renderLoop();
   }
-};
+}
 
-const toPlaying = () => {
+function toPlaying() {
   if (global.getAppStatus() !== appStatus.STANDBY)
     throw new Error('Must be in STANDBY to change status to PLAYING');
 
@@ -71,7 +75,7 @@ const toPlaying = () => {
   ui.hideStandbyMenu();
 
   $('#canvas').focus();
-};
+}
 
 module.exports = {
   toMainMenu,
