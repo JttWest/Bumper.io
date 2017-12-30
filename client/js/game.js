@@ -20,7 +20,7 @@ module.exports = class Game {
   insertGameStateSnapshot(snapshot) {
     if (!this.syncing) {
       // clear old snapshot that are too out dated
-      while (this.serverGameSnapshotQueue.length > configs.shared.tickBufferSize * 2) {
+      if (this.serverGameSnapshotQueue.length > configs.shared.tickBufferSize) {
         this.serverGameSnapshotQueue.shift();
       }
 
@@ -58,6 +58,8 @@ module.exports = class Game {
 
     if (this.serverGameSnapshotQueue.length === 0) {
       this.requestSync();
+    } else if (this.serverGameSnapshotQueue.length > configs.shared.tickBufferSize) {
+      throw new Error(`serverGameSnapshotQueue exceeded size: ${this.serverGameSnapshotQueue.length}`);
     } else {
       debug.logEmptySnapshotQueueDuration(200);
       this.serverGameSnapshotQueue.shift();

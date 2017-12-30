@@ -2,7 +2,7 @@ module.exports = {
   shared: {
     port: 3000,
     tickInterval: 50,
-    tickBufferSize: 3,
+    tickBufferSize: 4,
     mapWidth: 600,
     mapHeight: 600,
     playerRadius: 20,
