@@ -1,5 +1,4 @@
 const configs = require('../../app-configs');
-const global = require('./global');
 const Coord = require('../../shared/models/coord');
 const zoneStatus = require('../../shared/enums').shared.zoneStatus;
 
@@ -13,8 +12,9 @@ const applyCtxSetting = (setting) => {
 };
 
 const drawCircle = (originCoord, radius, setting = {}) => {
-  ctx.beginPath();
+  ctx.save();
 
+  ctx.beginPath();
   applyCtxSetting(setting);
 
   ctx.arc(originCoord.x, originCoord.y, radius, 0, 2 * Math.PI, false);
@@ -24,10 +24,14 @@ const drawCircle = (originCoord, radius, setting = {}) => {
 
   if (setting.strokeStyle)
     ctx.stroke();
+
+  ctx.restore();
 };
 
 
 const drawLine = (startCoord, endCoord, setting = {}) => {
+  ctx.save();
+
   ctx.beginPath();
 
   applyCtxSetting(setting);
@@ -36,9 +40,13 @@ const drawLine = (startCoord, endCoord, setting = {}) => {
   ctx.lineTo(endCoord.x, endCoord.y);
 
   ctx.stroke();
+
+  ctx.restore();
 };
 
 const drawRectangle = (coord, width, height, setting) => {
+  ctx.save();
+
   ctx.beginPath();
 
   applyCtxSetting(setting);
@@ -50,12 +58,18 @@ const drawRectangle = (coord, width, height, setting) => {
 
   if (setting.strokeStyle)
     ctx.stroke();
+
+  ctx.restore();
 };
 
 const drawText = (text, coord, maxWidth, setting) => {
+  ctx.save();
+
   applyCtxSetting(setting);
 
   ctx.fillText(text, coord.x, coord.y, maxWidth);
+
+  ctx.restore();
 };
 
 const drawZoneBorders = () => {
@@ -127,11 +141,14 @@ const drawPastPlayerPostion = (player, delay) => {
 
 
 const drawPlayer = (player, color) => {
-  // drawPastPlayerPostion(player, 4);
+  const ctxSetting = { fillStyle: color, strokeStyle: 'black', lineWidth: 1 };
+
+  if (player.status.unmaterialized)
+    ctxSetting.globalAlpha = 0.3;
 
   drawCircle(player.position,
     configs.shared.playerRadius,
-    { fillStyle: color, strokeStyle: 'black', lineWidth: 1 }
+    ctxSetting
   );
 };
 

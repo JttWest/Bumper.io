@@ -100,7 +100,7 @@ module.exports = class Player {
       position: this.position,
       points: this.points,
       isKilled: this.isKilled,
-      overridePlayerControl: this.overridePlayerControl
+      status: this.status
     };
   }
 };
