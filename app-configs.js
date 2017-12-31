@@ -46,7 +46,7 @@ module.exports = {
       maxPlayers: 10
     },
     bot: {
-      numPerRoom: 3
+      numPerRoom: 5
     },
     inactiveTickLimit: 6000, // TODO: make timeout shorter
     debug: {
