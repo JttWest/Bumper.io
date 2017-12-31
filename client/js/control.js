@@ -20,15 +20,9 @@ const keyboardCodeMapping = {
 let mouseX = 0;
 let mouseY = 0;
 
-const getMovementData = () => {
-  // const player = global.get('clientPlayer');
-
-  // TODO: temp
-  const originX = 300;
-  const originY = 300;
-
-  const deltaX = mouseX - originX;
-  const deltaY = mouseY - originY;
+const getMovementData = (clientPlayerPosition) => {
+  const deltaX = mouseX - clientPlayerPosition.x;
+  const deltaY = mouseY - clientPlayerPosition.y;
 
   return Math.atan2(deltaY, deltaX);
 };
@@ -58,8 +52,8 @@ const getActionData = () => {
     keysPressed: STRING
   }
 */
-const getUserInputData = () => {
-  const movement = getMovementData();
+const getUserInputData = (clientPlayerPosition) => {
+  const movement = getMovementData(clientPlayerPosition);
   const action = getActionData();
 
   return { movement, action };

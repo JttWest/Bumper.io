@@ -26,8 +26,12 @@ const gameLoop = () => {
       if (game.isClientPlayerKilled()) {
         toStandbyMenu();
       } else {
-        const controlInput = control.getUserInputData();
-        game.sendControlInput(controlInput);
+        const clientPlayer = game.getCurrentClient();
+
+        if (clientPlayer) {
+          const controlInput = control.getUserInputData(clientPlayer.position);
+          game.sendControlInput(controlInput);
+        }
       }
     }
   }

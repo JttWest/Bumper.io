@@ -12,6 +12,19 @@ module.exports = class Game {
     this.serverGameSnapshotQueue = [];
   }
 
+  getCurrentClient() {
+    const currSnapshot = this.serverGameSnapshotQueue[0];
+
+    if (currSnapshot) {
+      const clientPlayer = currSnapshot.players
+        .find(player => player.id === this.clientPlayerId && !player.isKilled);
+
+      return clientPlayer;
+    }
+
+    return undefined;
+  }
+
   isClientPlayerKilled() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
