@@ -144,7 +144,7 @@ const drawPlayer = (player, color) => {
   const ctxSetting = { fillStyle: color, strokeStyle: 'black', lineWidth: 1 };
 
   if (player.status.unmaterialized)
-    ctxSetting.globalAlpha = 0.3;
+    ctxSetting.globalAlpha = configs.client.player.unmaterializedTransparency;
 
   drawCircle(player.position,
     configs.shared.playerRadius,
@@ -180,9 +180,9 @@ const render = (clientPlayerId, gameSnapshot) => {
 
     gameSnapshot.players.forEach((player) => {
       if (player.id === clientPlayerId)
-        drawPlayer(player, configs.client.clientPlayerColor);
+        drawPlayer(player, configs.client.player.clientColor);
       else
-        drawPlayer(player, configs.client.otherPlayersColor);
+        drawPlayer(player, configs.client.player.otherColor);
     });
 
     // draw names seperately to prevent players from blocking eachother's name

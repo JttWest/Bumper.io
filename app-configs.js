@@ -25,8 +25,11 @@ module.exports = {
     maxPlayerLimit: 10 // doesn't include bots
   },
   client: {
-    clientPlayerColor: 'lime',
-    otherPlayersColor: '#2274A5',
+    player: {
+      clientColor: 'lime',
+      otherColor: '#2274A5',
+      unmaterializedTransparency: 0.5
+    },
     zone: {
       onColor: 'rgb(0, 0, 0)',
       offColor: 'rgb(0, 125, 0)',
