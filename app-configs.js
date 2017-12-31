@@ -9,14 +9,14 @@ module.exports = {
     playerSpeed: 3,
     playerDashSpeed: 10,
     player: {
-      startInmaterializedDuration: 100
+      startUnmaterializedDuration: 60
     },
     attackRadius: 60,
     attackCountdown: 100,
     zoneWidth: 100,
     zoneHeight: 100,
     maxOnZones: 3,
-    zoneTransitionCountdown: 50,
+    zoneTransitionCountdown: 75,
     zone: {
       minOnDuration: 200,
       maxOnDuration: 1000

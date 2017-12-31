@@ -20,7 +20,7 @@ module.exports = class Player {
     };
     this.points = 0;
     this.status = {
-      inmaterialized: configs.player.startInmaterializedDuration
+      unmaterialized: configs.player.startUnmaterializedDuration
     };
   }
 
@@ -56,8 +56,8 @@ module.exports = class Player {
   }
 
   statusTick() {
-    if (this.status.inmaterialized > 0)
-      this.status.inmaterialized--;
+    if (this.status.unmaterialized > 0)
+      this.status.unmaterialized--;
   }
 
   movementTick() {
