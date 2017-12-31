@@ -19,6 +19,9 @@ module.exports = class Player {
       duration: 0,
     };
     this.points = 0;
+    this.status = {
+      inmaterialized: configs.player.startInmaterializedDuration
+    };
   }
 
   move(dx, dy) {
@@ -52,6 +55,11 @@ module.exports = class Player {
     }
   }
 
+  statusTick() {
+    if (this.status.inmaterialized > 0)
+      this.status.inmaterialized--;
+  }
+
   movementTick() {
     this.move(this.velocity.x, this.velocity.y);
   }
@@ -73,6 +81,7 @@ module.exports = class Player {
     if (this.overridePlayerControl)
       this.overridePlayerControl--;
 
+    this.statusTick();
     this.movementTick();
     this.actionTick();
   }

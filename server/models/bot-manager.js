@@ -18,6 +18,9 @@ const isCloseToBorder = (coord) => {
 const isInDangerZone = (field, position) => {
   const zone = field.getZoneByCoord(position);
 
+  if (!zone)
+    return false;
+
   return !zone.isOff();
 };
 

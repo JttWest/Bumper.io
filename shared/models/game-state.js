@@ -57,10 +57,10 @@ module.exports = class GameState {
       }
 
       // resolve any collision when player is dashing
-      if (player.actions.dash) {
+      if (player.actions.dash && player.status.inmaterialized === 0) {
         players.forEach((otherPlayer) => {
           // only resolve collision when player is dashing
-          if (player.id !== otherPlayer.id && physics.checkCollision(player, otherPlayer)) {
+          if (player.id !== otherPlayer.id && physics.checkCollision(player, otherPlayer) && otherPlayer.status.inmaterialized === 0) {
             if (player.overridePlayerControl < configs.collisionDisplacementDuration)
               player.overridePlayerControl = configs.collisionDisplacementDuration;
 
@@ -89,7 +89,8 @@ module.exports = class GameState {
         player.position.y <= 0 || player.position.y >= configs.mapHeight || // out of bound vertically
         this.field.getZoneByCoord(player.position).isOn() // in a kill zone
       ) {
-        player.isKilled = true;
+        if (player.status.inmaterialized === 0) // only kill player if materialized
+          player.isKilled = true;
       }
     }, this);
   }

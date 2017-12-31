@@ -8,6 +8,9 @@ module.exports = {
     playerRadius: 20,
     playerSpeed: 3,
     playerDashSpeed: 10,
+    player: {
+      startInmaterializedDuration: 100
+    },
     attackRadius: 60,
     attackCountdown: 100,
     zoneWidth: 100,
