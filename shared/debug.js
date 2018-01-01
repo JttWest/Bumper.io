@@ -1,9 +1,8 @@
 const configs = require('../app-configs');
 
 const isDebugMode = () => {
-  if (typeof window === 'undefined') { // browser
-    // return window.isDebugMode === true;
-    return true; // TODO: undo this
+  if (typeof window !== 'undefined') { // browser
+    return window.isDebugMode === true;
   }
 
   // node.js
