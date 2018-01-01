@@ -7,4 +7,6 @@ sed -i -E 's/port: [0-9]+/port: 80/g' app-configs.js
 
 npm install --only=production
 npm run build:prod
-node server/server.js
+
+pm2 delete all
+pm2 start server/server.js

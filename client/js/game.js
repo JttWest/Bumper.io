@@ -31,7 +31,7 @@ module.exports = class Game {
     if (currSnapshot)
       return currSnapshot.players.some(player => player.id === this.clientPlayerId && player.isKilled);
 
-    return false;
+    return true;
   }
 
   sendControlInput(data) {
