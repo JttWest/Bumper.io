@@ -26,24 +26,24 @@ const renderLoop = () => {
   }
 };
 
+const controlLoop = () => {
+  if (currentStatus === appStatus.PLAYING) {
+    setTimeout(controlLoop, configs.shared.tickInterval);
+
+    const clientPlayer = game.getCurrentClient();
+
+    if (clientPlayer) {
+      const controlInput = control.getUserInputData(clientPlayer.position);
+      game.sendControlInput(controlInput);
+    }
+  }
+};
+
 const gameLoop = () => {
   if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
     setTimeout(gameLoop, configs.shared.tickInterval);
 
     game.tick();
-
-    if (currentStatus === appStatus.PLAYING) {
-      if (game.isClientPlayerKilled()) {
-        toStandbyMenu();
-      } else {
-        const clientPlayer = game.getCurrentClient();
-
-        if (clientPlayer) {
-          const controlInput = control.getUserInputData(clientPlayer.position);
-          game.sendControlInput(controlInput);
-        }
-      }
-    }
   }
 };
 
@@ -71,9 +71,9 @@ function toStandbyMenu() {
 
   ui.showStandbyMenu();
 
-  // start rendering if coming from MAIN
+  // start loops if coming from MAIN
   if (oldStatus === appStatus.MAIN) {
-    gameLoop(); // game tick happens here
+    gameLoop();
     renderLoop();
     leaderboardLoop();
   }
@@ -92,6 +92,8 @@ function toPlaying() {
   ui.hideStandbyMenu();
 
   $('#canvas').focus();
+
+  controlLoop();
 }
 
 module.exports = {

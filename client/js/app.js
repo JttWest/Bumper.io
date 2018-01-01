@@ -1,3 +1,5 @@
+import { setTimeout } from 'timers';
+
 require('../css/app.css');
 // require('./ui/leaderboard');
 
@@ -51,6 +53,9 @@ const establishWS = passcode => new Promise((resolve, reject) => {
       case 'gameStateSnapshot':
         debug.logGameStatePacketReceiveRate(200);
         game.insertGameStateSnapshot(data);
+        break;
+      case 'killed':
+        setTimeout(statusController.toStandbyMenu, 500);
         break;
       default:
         throw new Error(`Received invalid message type from server: ${type}`);

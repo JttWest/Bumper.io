@@ -34,15 +34,6 @@ module.exports = class Game {
     return undefined;
   }
 
-  isClientPlayerKilled() {
-    const currSnapshot = this.serverGameSnapshotQueue[0];
-
-    if (currSnapshot)
-      return currSnapshot.players.some(player => player.id === this.clientPlayerId && player.isKilled);
-
-    return true;
-  }
-
   sendControlInput(data) {
     const controlInputPayload = {
       type: 'controlInput',

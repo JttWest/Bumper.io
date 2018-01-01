@@ -149,7 +149,6 @@ const serverLoop = () => {
   debug.logGameTickRate(55);
 
   gameRooms.forEach((gameRoom) => {
-    // TODO: remove inactive players from game room
     gameRoom.tick();
 
     const gameStateSnapshotPayload = {
@@ -167,14 +166,6 @@ const serverLoop = () => {
       else if (!player.syncing)
         player.sendData(JSON.stringify(gameStateSnapshotPayload));
     });
-
-    // broadcast new game state data
-    // const gameStateSnapshotPayload = {
-    //   type: 'gameStateSnapshot',
-    //   data: gameRoom.gameState.getSnapshot()
-    // };
-
-    // gameRoom.broadcast(JSON.stringify(gameStateSnapshotPayload));
   });
 };
 
