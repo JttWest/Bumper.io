@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const helmet = require('helmet');
 const WebSocket = require('ws');
 const httpStatus = require('http-status-codes');
 const path = require('path');
@@ -23,7 +24,6 @@ router.route('/ping').get((req, res) => {
   res.status(httpStatus.OK).end();
 });
 
-// TODO: think about whether this should be kept
 router.route('/room/:roomId').get((req, res) => {
   const roomId = req.params.roomId;
   const gameRoom = gameRooms[roomId];
@@ -61,6 +61,7 @@ router.route('/join').get((req, res) => {
 });
 
 app.use(cors());
+app.use(helmet());
 app.use(express.static(path.join(__dirname, '../dist'))); // serve the game files
 app.use('/', router);
 
