@@ -8,7 +8,7 @@ const physics = require('../physics');
 module.exports = class GameState {
   constructor() {
     // this.availablePlayerIds = Array.from(Array(configs.maxPlayerLimit).keys());
-    this.players = {};
+    this.playerStates = new Map();
 
     const numZonesH = configs.mapWidth / configs.zoneWidth;
     const numZonesV = configs.mapHeight / configs.zoneHeight;
@@ -21,56 +21,53 @@ module.exports = class GameState {
   }
 
   removeFromGame(pState) {
-    delete this.players[pState.id];
-    console.log(`Player ${pState.id} killed`);
+    this.playerStates.delete(pState.id);
   }
 
   // process players movement and actions
   tick() {
-    const players = Object.values(this.players);
-
     // process tick for each player in game
-    players.forEach((player) => {
-      if (player.isKilled) {
-        this.removeFromGame(player);
+    this.playerStates.forEach((state) => {
+      if (state.isKilled) {
+        this.removeFromGame(state);
       } else {
-        const currInput = player.controlInputQueue.shift();
+        const currInput = state.controlInputQueue.shift();
 
         // uppdate current player's state with control input data
-        if (!player.overridePlayerControl)
-          player.processControlInput(currInput);
+        if (!state.overridePlayerControl)
+          state.processControlInput(currInput);
 
-        player.tick();
+        state.tick();
       }
     });
 
     // collision
-    players.forEach((player) => {
-      if (player.collision.duration > 0) {
-        player.collision.duration--;
+    this.playerStates.forEach((state) => {
+      if (state.collision.duration > 0) {
+        state.collision.duration--;
       } else {
-        player.collision.collidedWith = null;
+        state.collision.collidedWith = null;
       }
 
       // resolve any collision when player is dashing
-      if (player.actions.dash && player.status.unmaterialized === 0) {
-        players.forEach((otherPlayer) => {
+      if (state.actions.dash && state.status.unmaterialized === 0) {
+        this.playerStates.forEach((otherPlayerState) => {
           // only resolve collision when player is dashing
-          if (player.id !== otherPlayer.id && physics.checkCollision(player, otherPlayer) && otherPlayer.status.unmaterialized === 0) {
-            if (player.overridePlayerControl < configs.collisionDisplacementDuration)
-              player.overridePlayerControl = configs.collisionDisplacementDuration;
+          if (state.id !== otherPlayerState.id && physics.checkCollision(state, otherPlayerState) && otherPlayerState.status.unmaterialized === 0) {
+            if (state.overridePlayerControl < configs.collisionDisplacementDuration)
+              state.overridePlayerControl = configs.collisionDisplacementDuration;
 
-            if (otherPlayer.overridePlayerControl < configs.collisionDisplacementDuration)
-              otherPlayer.overridePlayerControl = configs.collisionDisplacementDuration;
+            if (otherPlayerState.overridePlayerControl < configs.collisionDisplacementDuration)
+              otherPlayerState.overridePlayerControl = configs.collisionDisplacementDuration;
 
             // track collision to allocate credit if there's a kill
-            player.collision.collidedWith = otherPlayer.id;
-            player.collision.duration = configs.collisionDisplacementDuration;
+            state.collision.collidedWith = otherPlayerState.id;
+            state.collision.duration = configs.collisionDisplacementDuration;
 
-            otherPlayer.collision.collidedWith = player.id;
-            otherPlayer.collision.duration = configs.collisionDisplacementDuration;
+            otherPlayerState.collision.collidedWith = state.id;
+            otherPlayerState.collision.duration = configs.collisionDisplacementDuration;
 
-            physics.resolveCollision(player, otherPlayer);
+            physics.resolveCollision(state, otherPlayerState);
           }
         });
       }
@@ -79,19 +76,21 @@ module.exports = class GameState {
     this.field.tick();
 
     // check which player should be killed
-    players.forEach((player) => {
+    this.playerStates.forEach((state) => {
       if (
-        player.position.x <= 0 || player.position.x >= configs.mapWidth || // out of bound horizontally
-        player.position.y <= 0 || player.position.y >= configs.mapHeight || // out of bound vertically
-        this.field.getZoneByCoord(player.position).isOn() // in a kill zone
+        state.position.x <= 0 || state.position.x >= configs.mapWidth || // out of bound horizontally
+        state.position.y <= 0 || state.position.y >= configs.mapHeight || // out of bound vertically
+        this.field.getZoneByCoord(state.position).isOn() // in a kill zone
       ) {
         // only kill player if materialized
-        if (player.status.unmaterialized === 0) {
+        if (state.status.unmaterialized === 0) {
           // award point to collidee player (if there is 1) before removing current player
-          if (player.collision.collidedWith !== null && this.players[player.collision.collidedWith])
-            this.players[player.collision.collidedWith].points++;
+          const attackingPlayer = this.playerStates.get(state.collision.collidedWith);
 
-          player.kill();
+          if (attackingPlayer)
+            attackingPlayer.points++;
+
+          state.kill();
         }
       }
     }, this);
@@ -111,14 +110,20 @@ module.exports = class GameState {
 
     const playerState = new PlayerState(playerId, name, initPosition);
 
-    this.players[playerId] = playerState;
+    this.playerStates.set(playerId, playerState);
 
     return playerState;
   }
 
   getSnapshot() {
+    const playerSnapshots = [];
+
+    this.playerStates.forEach((playerState) => {
+      playerSnapshots.push(playerState.getSnapshot());
+    });
+
     return {
-      players: Object.values(this.players).map(player => player.getSnapshot()),
+      players: playerSnapshots,
       field: {
         zones: this.field.zones.map(zone => ({
           coord: zone.coord,

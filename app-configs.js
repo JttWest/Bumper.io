@@ -15,7 +15,7 @@ module.exports = {
     attackCountdown: 100,
     zoneWidth: 100,
     zoneHeight: 100,
-    maxOnZones: 3,
+    maxOnZones: 5,
     zoneTransitionCountdown: 75,
     zone: {
       minOnDuration: 200,
@@ -28,7 +28,7 @@ module.exports = {
     player: {
       clientColor: 'lime',
       otherColor: '#2274A5',
-      unmaterializedTransparency: 0.5
+      unmaterializedTransparency: 0.4
     },
     zone: {
       onColor: 'rgb(0, 0, 0)',
@@ -38,7 +38,7 @@ module.exports = {
       borderSize: 1
     },
     initJoinTimeout: 3000,
-    leaderboardUpdatehInterval: 1000
+    leaderboardUpdatehInterval: 500
   },
   server: {
     passcodeExpiration: 30000, // 30 seconds
@@ -47,6 +47,7 @@ module.exports = {
       maxPlayers: 10
     },
     bot: {
+      scanningDistance: 10,
       numPerRoom: 5
     },
     inactiveTickLimit: 6000, // TODO: make timeout shorter

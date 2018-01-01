@@ -67,7 +67,7 @@ module.exports = class GameRoom {
       player.ws.close();
 
     // if player is still in game state
-    const playerState = this.gameState.players[player.id];
+    const playerState = this.gameState.playerStates.get(player.id);
     if (playerState)
       this.gameState.removeFromGame(playerState);
   }

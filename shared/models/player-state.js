@@ -88,9 +88,6 @@ module.exports = class Player {
 
   kill() {
     this.isKilled = true;
-
-    if (this.collision.collidedWith)
-      console.log(`${this.id} killed by ${this.collision.collidedWith}`);
   }
 
   getSnapshot() {

@@ -1,5 +1,5 @@
 const util = require('../../shared/util');
-const configs = require('../../app-configs').shared;
+const configs = require('../../app-configs');
 const Coord = require('../../shared/models/coord');
 
 const minBotMovementRepeat = 5;
@@ -8,8 +8,8 @@ const maxBotMovementRepeast = 50;
 const isCloseToBorder = (coord) => {
   const buffer = 30;
 
-  if (coord.x < buffer || coord.x > configs.mapWidth - buffer ||
-    coord.y < buffer || coord.y > configs.mapHeight - buffer)
+  if (coord.x < buffer || coord.x > configs.shared.mapWidth - buffer ||
+    coord.y < buffer || coord.y > configs.shared.mapHeight - buffer)
     return true;
 
   return false;
@@ -24,9 +24,9 @@ const isInDangerZone = (field, position) => {
   return !zone.isOff();
 };
 
-const isMovingIntoDangerZone = (field, currPos, direction, scanDist) => {
-  const xDisplacement = scanDist * Math.cos(direction);
-  const yDisplacement = scanDist * Math.sin(direction);
+const isMovingIntoDangerZone = (field, currPos, direction) => {
+  const xDisplacement = configs.server.bot.scanningDistance * Math.cos(direction);
+  const yDisplacement = configs.server.bot.scanningDistance * Math.sin(direction);
 
   const newPos = new Coord(currPos.x + xDisplacement, currPos.y + yDisplacement);
 
@@ -68,7 +68,7 @@ const getClosestPlayer = (player, gameState) => {
   let closestPlayer;
   let distance = Number.POSITIVE_INFINITY;
 
-  Object.values(gameState.players).forEach((p) => {
+  gameState.playerStates.forEach((p) => {
     // skip current player during check
     if (player.id === p.id)
       return;
@@ -107,8 +107,9 @@ class BotPlayer {
     this.intention = null;
   }
 
-  isKilled() {
-    return this.playerState.isKilled && !this.gameState.players[this.id];
+  readyToRejoin() {
+    // make sure the player state has been remove from game state first
+    return this.playerState.isKilled && !this.gameState.playerStates.has(this.id);
   }
 
   tick() {
@@ -124,18 +125,16 @@ class BotPlayer {
         this.movement.direction = util.randomFloatFromInterval(-Math.PI, Math.PI);
       }
 
-      const scanDist = 6;
-
       // reverse direction if moving into a danger zone
       if (isInDangerZone(this.gameState.field, this.playerState.position)) {
         // TODO: look at surronding zones and go to a none on/transition one
         this.movement.direction = this.movement.direction;
-      } else if (isMovingIntoDangerZone(this.gameState.field, this.playerState.position, this.movement.direction, scanDist)) {
+      } else if (isMovingIntoDangerZone(this.gameState.field, this.playerState.position, this.movement.direction)) {
         this.movement.direction += Math.PI;
         // redirect bot toward center when its too close to border
       } else if (isCloseToBorder(this.playerState.position)) {
         const angleToCenter = getAngleBetweenCoords(this.playerState.position,
-          { x: configs.mapWidth / 2, y: configs.mapHeight / 2 });
+          { x: configs.shared.mapWidth / 2, y: configs.shared.mapHeight / 2 });
 
         this.movement.direction = angleToCenter;
       }
@@ -164,7 +163,7 @@ module.exports = class BotManager {
 
   tick() {
     Object.values(this.bots).forEach((bot) => {
-      if (bot.isKilled()) {
+      if (bot.readyToRejoin()) {
         // rejoin game is killed
         const player = this.gameState.play(`Bot${bot.id}`, bot.id);
         this.bots[bot.id] = new BotPlayer(bot.id, player, this.gameState);
