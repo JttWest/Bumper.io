@@ -33,7 +33,7 @@ body {
 #error {
   position: fixed;
   top: 1em;
-  z-index: 999;
+  z-index: 99999;
   left: 50%;
   transform: translateX(-50%);
 }

@@ -106,14 +106,20 @@ ui.registerOnJoinButtonClick(() => {
         ui.registerOnPlayButtonClick(() => {
           const name = $('#nameInput').val();
 
-          const joinPayload = {
-            type: 'play',
-            data: {
-              name: name
-            }
-          };
+          if (!name) {
+            ui.showErrorMessage('Please enter a name.');
+          } else if (name.length > 10) {
+            ui.showErrorMessage('Name too long.');
+          } else {
+            const joinPayload = {
+              type: 'play',
+              data: {
+                name: name
+              }
+            };
 
-          ws.send(JSON.stringify(joinPayload));
+            ws.send(JSON.stringify(joinPayload));
+          }
         });
 
         statusController.toStandbyMenu();
