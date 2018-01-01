@@ -1,3 +1,6 @@
+# abort on first error
+set -e
+
 # get latest changes from repo
 git fetch --all
 git reset --hard origin/master
@@ -10,3 +13,5 @@ npm run build:prod
 
 pm2 delete all
 pm2 start server/server.js
+
+echo Successfully deployed!
