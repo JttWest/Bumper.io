@@ -76,18 +76,17 @@ const joinServer = endpoint => axios.get(endpoint)
     return passcode;
   })
   .catch((error) => {
+    let errMessage;
     if (error.response) {
       // Response code outside of 2xx
-      console.log('Error', error.response.data);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.log('Timeout', error.request);
+      errMessage = error.response.data.message;
     } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Set up failed', error.message);
+      errMessage = 'Unknown error occured';
     }
 
-    throw new Error('Failed to join game.');
+    console.log('Error joining server', error);
+
+    throw new Error(errMessage);
   });
 
 
@@ -97,24 +96,38 @@ const joinServer = endpoint => axios.get(endpoint)
 statusController.toMainMenu();
 
 ui.registerOnJoinButtonClick(() => {
-  joinServer(`${serverUrl}/join`)
-    .then(establishWS)
-    .then((ws) => {
-      // register play with the connected websocket
-      ui.registerOnPlayButtonClick(() => {
-        const name = $('#nameInput').val();
+  ui.disableAndLoadJoinButton();
 
-        const joinPayload = {
-          type: 'play',
-          data: {
-            name: name
-          }
-        };
+  setTimeout(() => {
+    joinServer(`${serverUrl}/join`)
+      .then(establishWS)
+      .then((ws) => {
+        // register play with the connected websocket
+        ui.registerOnPlayButtonClick(() => {
+          const name = $('#nameInput').val();
 
-        ws.send(JSON.stringify(joinPayload));
+          const joinPayload = {
+            type: 'play',
+            data: {
+              name: name
+            }
+          };
+
+          ws.send(JSON.stringify(joinPayload));
+        });
+
+        statusController.toStandbyMenu();
+      })
+      .catch((err) => {
+        let errMessage;
+        if (err.message)
+          errMessage = err.message;
+        else
+          errMessage = 'Unknown error.';
+
+        ui.showErrorMessage(errMessage);
+        ui.enableJoinButton();
       });
-
-      statusController.toStandbyMenu();
-    })
-    .catch(err => console.log('Error joining server', err));
+  }, 500);
 });
+

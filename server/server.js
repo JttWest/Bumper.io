@@ -57,7 +57,7 @@ router.route('/join').get((req, res) => {
     }
   }
 
-  res.status(httpStatus.BAD_REQUEST).json({ message: 'No available spot' });
+  res.status(httpStatus.BAD_REQUEST).json({ message: 'All servers are full at the moment. Please try again later.' });
 });
 
 app.use(cors());
@@ -147,7 +147,7 @@ wss.on('connection', (ws, req) => {
 const serverLoop = () => {
   setTimeout(serverLoop, configs.shared.tickInterval);
 
-  debug.logGameTickRate(55);
+  debug.logGameTickRate(configs.shared.tickInterval + 50);
 
   gameRooms.forEach((gameRoom) => {
     gameRoom.tick();

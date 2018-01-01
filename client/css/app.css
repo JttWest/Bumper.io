@@ -29,3 +29,12 @@ body {
   font-size: 4em;
   font-weight: normal;
 }
+
+#error {
+  position: fixed;
+  top: 1em;
+  z-index: 999;
+  left: 50%;
+  transform: translateX(-50%);
+}
+

@@ -23,6 +23,22 @@ const hideStandbyMenu = () => {
     .modal('hide');
 };
 
+const disableAndLoadButton = (button) => {
+  button.addClass('disabled loading');
+};
+
+const enableButton = (button) => {
+  button.removeClass('disabled loading');
+};
+
+const showErrorMessage = (message) => {
+  $('#errorMessage').text(message);
+
+  $('#error').show();
+
+  setTimeout(() => $('#error').hide(), 2000);
+};
+
 module.exports = {
   mainView,
   gameView,
@@ -30,11 +46,23 @@ module.exports = {
   showStandbyMenu,
   hideStandbyMenu,
 
+  showErrorMessage,
+
+  disableAndLoadJoinButton: () => {
+    disableAndLoadButton($('#joinButton'));
+  },
+
+  enableJoinButton: () => {
+    enableButton($('#joinButton'));
+  },
+
   registerOnJoinButtonClick: (func) => {
+    $('#joinButton').off('click');
     $('#joinButton').click(func);
   },
 
   registerOnPlayButtonClick: (func) => {
+    $('#playButton').off('click');
     $('#playButton').click(func);
   }
 };

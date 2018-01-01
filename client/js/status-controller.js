@@ -50,6 +50,7 @@ const gameLoop = () => {
 function toMainMenu() {
   currentStatus = appStatus.MAIN;
 
+  ui.enableJoinButton();
   ui.mainView();
   ui.hideStandbyMenu();
 
