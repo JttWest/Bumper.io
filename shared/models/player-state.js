@@ -86,7 +86,7 @@ module.exports = class Player {
     this.actionTick();
   }
 
-  killed() {
+  kill() {
     this.isKilled = true;
 
     if (this.collision.collidedWith)

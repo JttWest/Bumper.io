@@ -12,6 +12,15 @@ module.exports = class Game {
     this.serverGameSnapshotQueue = [];
   }
 
+  getCurrentPlayers() {
+    const currSnapshot = this.serverGameSnapshotQueue[0];
+
+    if (currSnapshot)
+      return currSnapshot.players;
+
+    return undefined;
+  }
+
   getCurrentClient() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
@@ -79,8 +88,8 @@ module.exports = class Game {
   }
 
   tick() {
-    // TODO: remove this
-    $('#leaderboardContainer').text(this.serverGameSnapshotQueue.length);
+    if (debug.isDebugMode())
+      $('#snapshotsInQueue').text(`Snapshots in Queue: ${this.serverGameSnapshotQueue.length}`);
 
     if (this.serverGameSnapshotQueue.length === 0) {
       this.requestSync();

@@ -37,7 +37,8 @@ module.exports = {
       borderColor: 'black',
       borderSize: 1
     },
-    initJoinTimeout: 3000
+    initJoinTimeout: 3000,
+    leaderboardUpdatehInterval: 1000
   },
   server: {
     passcodeExpiration: 30000, // 30 seconds

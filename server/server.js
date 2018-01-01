@@ -35,7 +35,7 @@ router.route('/room/:roomId').get((req, res) => {
     roomId: gameRoom.roomId,
     availablePlayerIds: gameRoom.availablePlayerIds,
     playerIds: Array.from(gameRoom.players.keys()),
-    inGamePlayers: Array.from(Object.values(gameRoom.gameState.players))
+    inGamePlayers: Array.from(Object.values(gameRoom.gameState.getSnapshot()))
   });
 });
 

@@ -108,7 +108,7 @@ class BotPlayer {
   }
 
   isKilled() {
-    return this.playerState.isKilled;
+    return this.playerState.isKilled && !this.gameState.players[this.id];
   }
 
   tick() {

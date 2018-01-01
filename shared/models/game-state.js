@@ -21,10 +21,6 @@ module.exports = class GameState {
   }
 
   removeFromGame(pState) {
-    // award point to collidee player (if there is 1) before removing current player
-    if (pState.collision.collidedWith && this.players[pState.collision.collidedWith])
-      this.players[pState.collision.collidedWith].points++;
-
     delete this.players[pState.id];
     console.log(`Player ${pState.id} killed`);
   }
@@ -82,15 +78,21 @@ module.exports = class GameState {
 
     this.field.tick();
 
-    // check which player are in kill zone
+    // check which player should be killed
     players.forEach((player) => {
       if (
         player.position.x <= 0 || player.position.x >= configs.mapWidth || // out of bound horizontally
         player.position.y <= 0 || player.position.y >= configs.mapHeight || // out of bound vertically
         this.field.getZoneByCoord(player.position).isOn() // in a kill zone
       ) {
-        if (player.status.unmaterialized === 0) // only kill player if materialized
-          player.isKilled = true;
+        // only kill player if materialized
+        if (player.status.unmaterialized === 0) {
+          // award point to collidee player (if there is 1) before removing current player
+          if (player.collision.collidedWith !== null && this.players[player.collision.collidedWith])
+            this.players[player.collision.collidedWith].points++;
+
+          player.kill();
+        }
       }
     }, this);
   }

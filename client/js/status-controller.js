@@ -1,12 +1,22 @@
 const appStatus = require('../../shared/enums').client.appStatus;
 const ui = require('./ui');
-const global = require('./global');
 const control = require('./control');
 const configs = require('../../app-configs');
-// const status = require('../../shared/enums').client.appStatus;
+const leaderboard = require('./dashboard/leaderboard');
 
 let game;
 let currentStatus = appStatus.MAIN;
+
+const leaderboardLoop = () => {
+  if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
+    setTimeout(leaderboardLoop, configs.client.leaderboardUpdatehInterval);
+
+    const players = game.getCurrentPlayers();
+
+    if (players)
+      leaderboard.update(players);
+  }
+};
 
 const renderLoop = () => {
   if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
@@ -65,6 +75,7 @@ function toStandbyMenu() {
   if (oldStatus === appStatus.MAIN) {
     gameLoop(); // game tick happens here
     renderLoop();
+    leaderboardLoop();
   }
 }
 
