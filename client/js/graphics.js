@@ -73,20 +73,20 @@ const drawText = (text, coord, maxWidth, setting) => {
 };
 
 const drawZoneBorders = () => {
-  // draw vertical borders
+  // draw horizontal borders
   for (let i = 1; i < configs.shared.mapHeight / configs.shared.zoneHeight; ++i) {
     const startCoord = new Coord(0, i * configs.shared.zoneHeight);
-    const endCoord = new Coord(configs.shared.mapHeight, i * configs.shared.zoneHeight);
+    const endCoord = new Coord(configs.shared.mapWidth, i * configs.shared.zoneHeight);
 
     drawLine(startCoord, endCoord,
       { strokeStyle: configs.client.zone.borderColor, lineWidth: configs.client.zone.borderSize }
     );
   }
 
-  // draw horizontal borders
+  // draw vertical borders
   for (let i = 1; i < configs.shared.mapWidth / configs.shared.zoneWidth; ++i) {
     const startCoord = new Coord(i * configs.shared.zoneWidth, 0);
-    const endCoord = new Coord(i * configs.shared.zoneWidth, configs.shared.mapWidth);
+    const endCoord = new Coord(i * configs.shared.zoneWidth, configs.shared.mapHeight);
 
     drawLine(startCoord, endCoord,
       { strokeStyle: configs.client.zoneBorderColor, lineWidth: configs.shared.zoneBorderSize }

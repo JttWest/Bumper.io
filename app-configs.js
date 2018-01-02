@@ -3,7 +3,7 @@ module.exports = {
     port: 3000,
     tickInterval: 50,
     tickBufferSize: 5,
-    mapWidth: 600,
+    mapWidth: 800,
     mapHeight: 600,
     playerRadius: 20,
     playerSpeed: 3,
