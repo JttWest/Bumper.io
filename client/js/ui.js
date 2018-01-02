@@ -48,6 +48,14 @@ module.exports = {
 
   showErrorMessage,
 
+  setCanvasSize: (width, height) => {
+    $('#canvasContainer').width(width).height(height);
+
+    $('#canvas')
+      .prop('width', width)
+      .prop('height', height);
+  },
+
   disableAndLoadJoinButton: () => {
     disableAndLoadButton($('#joinButton'));
   },

@@ -92,6 +92,8 @@ const joinServer = endpoint => axios.get(endpoint)
 
 // ---------------------------- UI ----------------------------------- //
 
+ui.setCanvasSize(configs.shared.mapWidth, configs.shared.mapHeight);
+
 // start with Main Menu
 statusController.toMainMenu();
 
