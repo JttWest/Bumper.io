@@ -38,3 +38,20 @@ body {
   transform: translateX(-50%);
 }
 
+#leaderboard {
+  position:fixed;
+  top:1em;
+  right:1em;
+  color: #858AE3;
+  font-weight: bold;
+}
+
+#mainMenu {
+  background-color: #23B5D3
+}
+
+#overview > * {
+  color: #3F4184;
+  font-weight: bold;
+}
+

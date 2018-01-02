@@ -31,9 +31,9 @@ module.exports = {
       unmaterializedTransparency: 0.4
     },
     zone: {
-      onColor: 'rgb(0, 0, 0)',
-      offColor: 'rgb(0, 125, 0)',
-      transitionColor: 'rgb(0, 70, 0)',
+      onColor: '#262620',
+      offColor: '#17AD00',
+      transitionColor: '#ADAD95',
       borderColor: 'black',
       borderSize: 1
     },
@@ -43,7 +43,7 @@ module.exports = {
   server: {
     passcodeExpiration: 30000, // 30 seconds
     gameRoom: {
-      maxRooms: 1,
+      maxRooms: 3,
       maxPlayers: 10
     },
     bot: {

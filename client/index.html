@@ -15,13 +15,35 @@
     <p id="errorMessage" class="header"></p>
   </div>
 
-  <div id="mainMenu" class="ui inverted vertical masthead center aligned segment">
+  <div id="mainMenu" class="ui vertical masthead center aligned segment">
     <div class="ui text container">
-      <h1 class="ui inverted header">
-        Game.io
-      </h1>
-      <h2>Dash out the other players.</h2>
-      <div id="joinButton" class="ui medium green button">Join a server!
+      <div id="overview" class="ui text container">
+        <h1 class="ui header">
+          Game.io
+        </h1>
+        <h2>Push out the other players.</h2>
+      </div>
+      <div id="overview" class="ui text container"></div>
+      <div class="ui blue message">
+        <div class="header">
+          Instructions:
+        </div>
+        <ul class="ui relaxed horizontal divided list">
+          <div class="item">
+            <i class="move icon"></i>
+            <div class="content">
+              MOUSE
+            </div>
+          </div>
+          <div class="item">
+            <i class="legal icon"></i>
+            <div class="content">
+              SPACE
+            </div>
+          </div>
+        </ul>
+      </div>
+      <div id="joinButton" class="ui medium blue button">Join a server!
         <i class="right arrow icon"></i>
       </div>
     </div>
@@ -42,11 +64,9 @@
       </div>
     </div>
 
-    <div id="leaderboard" style="position:fixed; top:1em; right:1em;">
-      <div class="ui right sticky">
-        <h3 class="ui header">Scoreboard</h3>
-        <div id="playerRanking" class="ui list"></div>
-      </div>
+    <div id="leaderboard">
+      <h1 class="ui">Scoreboard</h3>
+      <div id="playerRanking" class="ui divided ordered list"></div>
     </div>
 
     <div id="debug" style="position:fixed; top:1em; left:1em;">
