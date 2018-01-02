@@ -56,6 +56,14 @@ module.exports = {
     enableButton($('#joinButton'));
   },
 
+  disableAndLoadPlayButton: () => {
+    disableAndLoadButton($('#playButton'));
+  },
+
+  enablePlayButton: () => {
+    enableButton($('#playButton'));
+  },
+
   registerOnJoinButtonClick: (func) => {
     $('#joinButton').off('click');
     $('#joinButton').click(func);

@@ -111,6 +111,8 @@ ui.registerOnJoinButtonClick(() => {
           } else if (name.length > 10) {
             ui.showErrorMessage('Name too long.');
           } else {
+            ui.disableAndLoadPlayButton();
+
             const joinPayload = {
               type: 'play',
               data: {

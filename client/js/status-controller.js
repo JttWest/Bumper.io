@@ -68,8 +68,8 @@ function toStandbyMenu() {
 
   currentStatus = appStatus.STANDBY;
 
+  ui.enablePlayButton();
   ui.gameView();
-
   ui.showStandbyMenu();
 
   // start loops if coming from MAIN

@@ -9,7 +9,6 @@ const update = (players) => {
 
       return 0;
     })
-    //.map(player => `<li class="item">${player.name}: ${player.points}</li>`);
     .map(player => `<div class="item">
                       <div class="right floated content">
                         <span>${player.points}</span>
