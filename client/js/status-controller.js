@@ -34,7 +34,10 @@ const controlLoop = () => {
 
     if (clientPlayer) {
       const controlInput = control.getUserInputData(clientPlayer.position);
-      game.sendControlInput(controlInput);
+
+      // dont brother sending snapshot if no movement since its throw away at server
+      if (controlInput.movement !== null)
+        game.sendControlInput(controlInput);
     }
   }
 };

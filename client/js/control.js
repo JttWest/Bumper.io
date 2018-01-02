@@ -24,6 +24,10 @@ const getMovementData = (clientPlayerPosition) => {
   const deltaX = mouseX - clientPlayerPosition.x;
   const deltaY = mouseY - clientPlayerPosition.y;
 
+  // if distance is small
+  if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10)
+    return null;
+
   return Math.atan2(deltaY, deltaX);
 };
 
