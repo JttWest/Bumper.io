@@ -1,7 +1,3 @@
-const configs = require('../../app-configs');
-const global = require('./global');
-const appStatus = require('../../shared/enums').client.appStatus;
-
 const keyRegister = {};
 
 // list of available input keys

@@ -1,7 +1,4 @@
-import { setTimeout } from 'timers';
-
 require('../css/app.css');
-// require('./ui/leaderboard');
 
 const configs = require('../../app-configs');
 const control = require('./control');
@@ -92,9 +89,7 @@ const joinServer = endpoint => axios.get(endpoint)
 
 // ---------------------------- UI ----------------------------------- //
 
-$(document).ready(() => {
-  ui.setCanvasSize(configs.shared.mapWidth, configs.shared.mapHeight);
-});
+ui.setCanvasSize(configs.shared.mapWidth, configs.shared.mapHeight);
 
 // start with Main Menu
 statusController.toMainMenu();
