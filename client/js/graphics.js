@@ -167,8 +167,6 @@ const drawPlayerName = (player) => {
 };
 
 const render = (clientPlayerId, gameSnapshot) => {
-  // const gameSnapshot = global.get('gameState');
-
   if (gameSnapshot) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

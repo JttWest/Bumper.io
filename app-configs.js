@@ -48,7 +48,7 @@ module.exports = {
     },
     bot: {
       scanningDistance: 10,
-      numPerRoom: 5
+      numPerRoom: 8
     },
     inactiveTickLimit: 6000, // TODO: make timeout shorter
     debug: {
