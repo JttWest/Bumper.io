@@ -45,6 +45,7 @@ joinAck
   type: 'joinAck',
   data: {
     id: NUMBER
+    sessionData
   }
 }
 
@@ -62,6 +63,17 @@ syncAck
 killed
 {
   type: 'killed'
+}
+
+sessionData
+{
+  type: 'sessionData',
+  data: {
+    id: NUMBER,
+    sessionData: {
+      name: STRING
+    }
+  }
 }
 
 gameStateSnapshot

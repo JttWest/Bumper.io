@@ -3,6 +3,7 @@ const ui = require('./ui');
 const control = require('./control');
 const configs = require('../../app-configs');
 const leaderboard = require('./dashboard/leaderboard');
+const util = require('../../shared/util');
 
 let game;
 let currentStatus = appStatus.MAIN;
@@ -13,8 +14,17 @@ const leaderboardLoop = () => {
 
     const players = game.getCurrentPlayers();
 
-    if (players)
-      leaderboard.update(players);
+    if (players !== null) {
+      const leaderboardData = players.map((player) => {
+        if (util.isBot(player)) {
+          return { name: `Bot${player.id}`, points: player.points };
+        }
+
+        return { name: game.sessionData[player.id].name, points: player.points };
+      });
+
+      leaderboard.update(leaderboardData);
+    }
   }
 };
 

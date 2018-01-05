@@ -11,5 +11,7 @@ module.exports = {
 
   radianToDegree: radian => radian * (180 / Math.PI),
 
-  degreeToRadian: degree => degree * (Math.PI / 180)
+  degreeToRadian: degree => degree * (Math.PI / 180),
+
+  isBot: playerState => playerState.id < 0
 };

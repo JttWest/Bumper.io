@@ -10,6 +10,8 @@ module.exports = class Game {
     this.syncing = true;
 
     this.serverGameSnapshotQueue = [];
+
+    this.sessionData = null;
   }
 
   getCurrentPlayers() {
@@ -18,7 +20,7 @@ module.exports = class Game {
     if (currSnapshot)
       return currSnapshot.players;
 
-    return undefined;
+    return null;
   }
 
   getCurrentClient() {
@@ -31,7 +33,7 @@ module.exports = class Game {
       return clientPlayer;
     }
 
-    return undefined;
+    return null;
   }
 
   sendControlInput(data) {
@@ -71,11 +73,19 @@ module.exports = class Game {
     return this.serverGameSnapshotQueue[0];
   }
 
+  setSessionData(sessionData) {
+    this.sessionData = sessionData;
+  }
+
+  updateSessionData(id, data) {
+    this.sessionData[id] = data;
+  }
+
   render() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
     if (currSnapshot)
-      graphics.render(this.clientPlayerId, this.serverGameSnapshotQueue[0]);
+      graphics.render(this.clientPlayerId, this.serverGameSnapshotQueue[0], this.sessionData);
   }
 
   tick() {

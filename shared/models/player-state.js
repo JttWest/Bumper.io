@@ -93,7 +93,7 @@ module.exports = class Player {
   getSnapshot() {
     return {
       id: this.id,
-      name: this.name,
+      // name: this.name,
       position: this.position,
       points: this.points,
       isKilled: this.isKilled,

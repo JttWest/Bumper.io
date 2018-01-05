@@ -1,6 +1,7 @@
 const configs = require('../../app-configs');
 const Coord = require('../../shared/models/coord');
 const zoneStatus = require('../../shared/enums').shared.zoneStatus;
+const util = require('../../shared/util');
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -165,7 +166,7 @@ const drawPlayer = (player, color) => {
   );
 };
 
-const drawPlayerName = (player) => {
+const drawPlayerName = (playerState, name) => {
   const maxWidth = 1000; // TODO: figure out max width of name
   const setting = {
     font: 'bold 15px Impact',
@@ -173,13 +174,13 @@ const drawPlayerName = (player) => {
     textAlign: 'center',
   };
 
-  drawText(player.name,
-    new Coord(player.position.x, player.position.y + 35),
+  drawText(name,
+    new Coord(playerState.position.x, playerState.position.y + 35),
     maxWidth,
     setting);
 };
 
-const render = (clientPlayerId, gameSnapshot) => {
+const render = (clientPlayerId, gameSnapshot, sessionData) => {
   if (gameSnapshot) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -203,9 +204,13 @@ const render = (clientPlayerId, gameSnapshot) => {
       drawPlayer(clientPlayer, configs.client.player.clientColor);
 
     // draw names seperately to prevent players from blocking eachother's name
-    // gameSnapshot.players.forEach((player) => {
-    //   drawPlayerName(player);
-    // });
+    gameSnapshot.players.forEach((playerState) => {
+      if (util.isBot(playerState)) {
+        drawPlayerName(playerState, `Bot${playerState.id}`);
+      } else {
+        drawPlayerName(playerState, sessionData[playerState.id].name);
+      }
+    });
   }
 };
 

@@ -100,14 +100,34 @@ wss.on('connection', (ws, req) => {
 
             passcodeManager.delete(passcode); // prevent the code from being use again
 
-            player.sendData(JSON.stringify({ type: 'joinAck', data: { id: player.id } }));
+            player.sendData(JSON.stringify({
+              type: 'joinAck',
+              data: {
+                id: player.id,
+                sessionData: gameRooms[player.roomId].getSessionData()
+              }
+            }));
           }
           break;
         }
         // puts the player into the game and start playing
         case 'play': {
           const { name } = data;
+
           player.playerState = gameRooms[player.roomId].gameState.play(name, player.id);
+
+          const newPlayerSessionData = {
+            type: 'sessionData',
+            data: {
+              id: player.id,
+              sessionData: {
+                name: name
+              }
+            }
+          };
+
+          // broadcast new player's session data
+          gameRooms[player.roomId].broadcast(JSON.stringify(newPlayerSessionData));
 
           player.sendData(JSON.stringify({ type: 'playAck' }));
           break;

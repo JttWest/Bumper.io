@@ -36,6 +36,22 @@ module.exports = class GameRoom {
     return this.availablePlayerIds.length > 0;
   }
 
+  // TODO: move this to gameState and include bot's data
+  // (will be to broadcast bot join data)
+  getSessionData() {
+    const sessionData = {};
+    this.players.forEach((player) => {
+      // only if player is in game
+      if (player.playerState) {
+        sessionData[player.id] = {
+          name: player.playerState.name
+        };
+      }
+    });
+
+    return sessionData;
+  }
+
   getSyncSnapshots() {
     return this.gameStateSnapshotQueue;
   }

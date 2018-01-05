@@ -1,5 +1,9 @@
-const update = (players) => {
-  const scoreboardElements = players
+/**
+ * @param {*} leaderboardData an array of name and point pairs
+ */
+
+const update = (leaderboardData) => {
+  const scoreboardElements = leaderboardData
     .sort((p1, p2) => {
       // order the players in reverse (most points is first)
       if (p1.points > p2.points)
@@ -9,12 +13,12 @@ const update = (players) => {
 
       return 0;
     })
-    .map(player => `<div class="item">
+    .map(playerData => `<div class="item">
                       <div class="right floated content">
-                        <span>${player.points}</span>
+                        <span>${playerData.points}</span>
                       </div>
                       <div class="content">
-                        ${player.name}
+                        ${playerData.name}
                       </div>
                     </div>`);
 

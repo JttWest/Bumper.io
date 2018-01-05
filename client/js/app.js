@@ -45,7 +45,10 @@ const establishWS = passcode => new Promise((resolve, reject) => {
     switch (type) {
       case 'joinAck':
         clientPlayerId = data.id;
+
         game = new Game(ws, clientPlayerId);
+        game.setSessionData(data.sessionData);
+
         statusController.setGame(game);
 
         resolve(ws);
@@ -63,6 +66,9 @@ const establishWS = passcode => new Promise((resolve, reject) => {
       //   break;
       case 'killed':
         setTimeout(statusController.toStandbyMenu, 500);
+        break;
+      case 'sessionData':
+        game.updateSessionData(data.id, data.sessionData);
         break;
       default:
         throw new Error(`Received invalid message type from server: ${type}`);
