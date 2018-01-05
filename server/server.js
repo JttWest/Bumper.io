@@ -9,6 +9,7 @@ const GameRoom = require('./models/game-room');
 const uuidv4 = require('uuid/v4');
 const cors = require('cors');
 const debug = require('../shared/debug');
+const codec = require('../shared/codec');
 
 const PORT = process.env.PORT || configs.shared.port;
 
@@ -152,10 +153,12 @@ const serverLoop = () => {
   gameRooms.forEach((gameRoom) => {
     gameRoom.tick();
 
-    const gameStateSnapshotPayload = {
-      type: 'gameStateSnapshot',
-      data: gameRoom.gameState.getSnapshot()
-    };
+    // const gameStateSnapshotPayload = {
+    //   type: 'gameStateSnapshot',
+    //   data: gameRoom.gameState.getSnapshot()
+    // };
+
+    const gameStateSnapshotPayload = codec.gameStateSnapshot.encode(gameRoom.gameState.getSnapshot());
 
     gameRoom.players.forEach((player) => {
       player.numInactiveTicks++;
@@ -165,7 +168,7 @@ const serverLoop = () => {
         gameRoom.removePlayer(player);
       // broadcast new game state data (if they are not currently syncing)
       else if (!player.syncing)
-        player.sendData(JSON.stringify(gameStateSnapshotPayload));
+        player.sendData(gameStateSnapshotPayload);
     });
   });
 };

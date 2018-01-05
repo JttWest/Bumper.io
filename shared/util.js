@@ -7,5 +7,9 @@ module.exports = {
 
   randBool: () => Math.random() >= 0.5,
 
-  isNegativeNumber: number => number < 0
+  isNegativeNumber: number => number < 0,
+
+  radianToDegree: radian => radian * (180 / Math.PI),
+
+  degreeToRadian: degree => degree * (Math.PI / 180)
 };

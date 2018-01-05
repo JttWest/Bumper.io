@@ -24,7 +24,7 @@ const getMovementData = (clientPlayerPosition) => {
   // if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10)
   //   return null;
 
-  return Math.atan2(deltaY, deltaX);
+  return Math.atan2(deltaY, deltaX); // returns value between PI and -PI radians
 };
 
 const getActionData = () => {

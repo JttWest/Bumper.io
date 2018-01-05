@@ -94,7 +94,17 @@ const drawZoneBorders = () => {
   }
 };
 
-const drawZone = (zone, width, height) => {
+/* TODO: Reconsider whether these zone heplers should be here */
+const numZonesH = configs.shared.mapWidth / configs.shared.zoneWidth;
+
+const getZoneCoordByIndex = (index) => {
+  const rowIndex = Math.floor(index / numZonesH);
+  const colIndex = index % numZonesH;
+
+  return new Coord(colIndex * configs.shared.zoneWidth, rowIndex * configs.shared.zoneHeight);
+};
+
+const drawZone = (zone, index) => {
   let zoneColor;
 
   switch (zone.status) {
@@ -111,7 +121,10 @@ const drawZone = (zone, width, height) => {
       throw new Error(`Invalid zone status: ${zone.status}`);
   }
 
-  drawRectangle(zone.coord, width, height, { fillStyle: zoneColor });
+  drawRectangle(getZoneCoordByIndex(index),
+    configs.shared.zoneWidth,
+    configs.shared.zoneHeight,
+    { fillStyle: zoneColor });
 };
 
 
@@ -170,23 +183,29 @@ const render = (clientPlayerId, gameSnapshot) => {
   if (gameSnapshot) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    gameSnapshot.field.zones.forEach((zone) => {
-      drawZone(zone, configs.shared.zoneWidth, configs.shared.zoneHeight);
+    gameSnapshot.field.zones.forEach((zone, index) => {
+      drawZone(zone, index);
     });
 
     drawZoneBorders();
 
+    let clientPlayer;
+
     gameSnapshot.players.forEach((player) => {
       if (player.id === clientPlayerId)
-        drawPlayer(player, configs.client.player.clientColor);
+        clientPlayer = player;
       else
         drawPlayer(player, configs.client.player.otherColor);
     });
 
+    // draw client player last so it will appear on top of other players
+    if (clientPlayer)
+      drawPlayer(clientPlayer, configs.client.player.clientColor);
+
     // draw names seperately to prevent players from blocking eachother's name
-    gameSnapshot.players.forEach((player) => {
-      drawPlayerName(player);
-    });
+    // gameSnapshot.players.forEach((player) => {
+    //   drawPlayerName(player);
+    // });
   }
 };
 

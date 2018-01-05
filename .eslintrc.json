@@ -24,6 +24,7 @@
     "no-param-reassign": ["error", { "props": false }],
     "object-shorthand":"off",
     "no-prototype-builtins":"off",
-    "no-use-before-define": ["error", { "functions": false }]
+    "no-use-before-define": ["error", { "functions": false }],
+    "no-bitwise":"warn"
   }
 }

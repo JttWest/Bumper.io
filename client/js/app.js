@@ -7,6 +7,7 @@ const axios = require('axios');
 const statusController = require('./status-controller');
 const ui = require('./ui');
 const Game = require('./game');
+const codec = require('../../shared/codec');
 
 const canvas = document.getElementById('canvas');
 control.trackKeysInput(canvas);
@@ -19,6 +20,8 @@ const wsUrl = `ws://${host}:${configs.shared.port}`;
 
 const establishWS = passcode => new Promise((resolve, reject) => {
   const ws = new WebSocket(wsUrl);
+  ws.binaryType = 'arraybuffer';
+
   let clientPlayerId;
   let game;
 
@@ -30,6 +33,13 @@ const establishWS = passcode => new Promise((resolve, reject) => {
   };
 
   ws.onmessage = (evt) => {
+    // only gameStateSnapshot is in binary format ATM
+    if (evt.data instanceof ArrayBuffer) {
+      debug.logGameStatePacketReceiveRate(200);
+      game.insertGameStateSnapshot(codec.gameStateSnapshot.decode(evt.data));
+      return;
+    }
+
     const { type, data } = JSON.parse(evt.data);
 
     switch (type) {
@@ -47,10 +57,10 @@ const establishWS = passcode => new Promise((resolve, reject) => {
       case 'playAck':
         statusController.toPlaying();
         break;
-      case 'gameStateSnapshot':
-        debug.logGameStatePacketReceiveRate(200);
-        game.insertGameStateSnapshot(data);
-        break;
+      // case 'gameStateSnapshot':
+      //   debug.logGameStatePacketReceiveRate(200);
+      //   game.insertGameStateSnapshot(data);
+      //   break;
       case 'killed':
         setTimeout(statusController.toStandbyMenu, 500);
         break;
