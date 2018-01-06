@@ -110,6 +110,10 @@ ui.setCanvasSize(configs.shared.mapWidth, configs.shared.mapHeight);
 // start with Main Menu
 statusController.toMainMenu();
 
+ui.registerOnMainMenuButtonClick(() => {
+  statusController.toMainMenu();
+});
+
 ui.registerOnJoinButtonClick(() => {
   ui.disableAndLoadJoinButton();
 

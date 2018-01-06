@@ -67,6 +67,10 @@ function toMainMenu() {
   ui.mainView();
   ui.hideStandbyMenu();
 
+  if (game) {
+    game.ws.close();
+  }
+
   game = null;
 }
 

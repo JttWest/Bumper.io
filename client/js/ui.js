@@ -80,5 +80,10 @@ module.exports = {
   registerOnPlayButtonClick: (func) => {
     $('#playButton').off('click');
     $('#playButton').click(func);
+  },
+
+  registerOnMainMenuButtonClick: (func) => {
+    $('#mainMenuButton').off('click');
+    $('#mainMenuButton').click(func);
   }
 };
