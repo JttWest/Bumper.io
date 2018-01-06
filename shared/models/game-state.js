@@ -26,12 +26,13 @@ module.exports = class GameState {
 
   // process players movement and actions
   tick() {
-    const killedPlayerIds = [];
+    // {id, points}
+    const killedPlayerData = [];
 
     // process tick for each player in game
     this.playerStates.forEach((state) => {
       if (state.isKilled) {
-        killedPlayerIds.push(state.id);
+        killedPlayerData.push({ id: state.id, points: state.points });
         this.removeFromGame(state);
       } else {
         const currInput = state.controlInputQueue.shift();
@@ -98,7 +99,7 @@ module.exports = class GameState {
       }
     }, this);
 
-    return killedPlayerIds; // for notifying dead players
+    return killedPlayerData; // for notifying dead players
   }
 
   play(name, id) {

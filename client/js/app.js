@@ -65,7 +65,7 @@ const establishWS = passcode => new Promise((resolve, reject) => {
       //   game.insertGameStateSnapshot(data);
       //   break;
       case 'killed':
-        setTimeout(statusController.toStandbyMenu, 500);
+        setTimeout(statusController.toStandbyMenu, 500, data.points);
         break;
       case 'sessionData':
         game.updateSessionData(data.id, data.sessionData);

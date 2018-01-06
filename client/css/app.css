@@ -62,3 +62,7 @@ body {
   text-shadow: 0 0 0.2em #EEB868, 0 0 0.2em #EEB868, 0 0 0.2em #EEB868;
 }
 
+#scoreContainer span {
+  color: #151515
+}
+

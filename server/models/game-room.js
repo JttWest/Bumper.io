@@ -19,8 +19,6 @@ class Player {
   }
 }
 
-const killedPayload = JSON.stringify({ type: 'killed' });
-
 module.exports = class GameRoom {
   constructor(roomId) {
     this.availablePlayerIds = Array.from(Array(configs.server.gameRoom.maxPlayers).keys());
@@ -71,12 +69,20 @@ module.exports = class GameRoom {
 
   tick() {
     this.BotManager.tick();
-    const killedPlayerIds = this.gameState.tick();
+    const killedPlayerData = this.gameState.tick();
 
-    killedPlayerIds.forEach((id) => {
+    killedPlayerData.forEach((data) => {
+      const { id, points } = data;
       // there could be ids for bots in this array, which aren't part of gameroom players
       if (this.players.has(id))
-        this.players.get(id).sendData(killedPayload);
+        this.players.get(id).sendData(JSON.stringify(
+          {
+            type: 'killed',
+            data: {
+              points: points
+            }
+          }
+        ));
     });
 
     this.gameStateSnapshotQueue.shift();

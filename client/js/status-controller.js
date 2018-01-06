@@ -70,7 +70,7 @@ function toMainMenu() {
   game = null;
 }
 
-function toStandbyMenu() {
+function toStandbyMenu(points = null) {
   const oldStatus = currentStatus;
 
   if (oldStatus !== appStatus.MAIN && oldStatus !== appStatus.PLAYING)
@@ -78,6 +78,13 @@ function toStandbyMenu() {
 
   if (!game)
     throw new Error('No Game initialized in Status Controller');
+
+  if (points !== null) {
+    $('#score').text(points);
+    $('#scoreContainer').show();
+  } else {
+    $('#scoreContainer').hide();
+  }
 
   currentStatus = appStatus.STANDBY;
 
