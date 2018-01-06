@@ -53,13 +53,11 @@ body {
   background-color: #23B5D3
 }
 
-#overview > * {
+#title {
   color: #3F4184;
   font-weight: bold;
-}
-
-#title {
-  text-shadow: 0 0 0.2em #EEB868, 0 0 0.2em #EEB868, 0 0 0.2em #EEB868;
+  font-style: italic;
+  text-shadow: 0 0 0.2em rgb(241, 72, 30), 0 0 0.2em rgb(241, 72, 30), 0 0 0.2em rgb(241, 72, 30);
 }
 
 #scoreContainer span {
