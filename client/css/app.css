@@ -54,10 +54,15 @@ body {
 }
 
 #title {
-  color: #3F4184;
+  color: #AC3931;
   font-weight: bold;
+  text-shadow: 0 0 0.2em #EEB868, 0 0 0.2em #EEB868, 0 0 0.2em #EEB868;
+}
+
+#supTitle {
   font-style: italic;
-  text-shadow: 0 0 0.2em rgb(241, 72, 30), 0 0 0.2em rgb(241, 72, 30), 0 0 0.2em rgb(241, 72, 30);
+  text-shadow: 0 0 0;
+  font-weight: normal;
 }
 
 #scoreContainer span {
