@@ -50,7 +50,7 @@ body {
 }
 
 #mainMenu {
-  background-color: #23B5D3
+  background: radial-gradient(#E0F0FE, #44E5E7, #4CB4D1, #3F88C5);
 }
 
 #title {
