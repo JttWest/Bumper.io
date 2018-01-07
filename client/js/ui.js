@@ -1,6 +1,8 @@
 const mainView = () => {
   $('#mainMenu').show();
   $('#gameView').hide();
+
+  setTimeout(() => $('#title').transition('jiggle'), 1000);
 };
 
 const gameView = () => {
