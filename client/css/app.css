@@ -54,6 +54,7 @@ body {
 }
 
 #title {
+  font-family: helvetica;
   color:#F11A45;
   font-weight: bold;
   text-shadow: 0 0 0.2em #F2DC5D, 0 0 0.2em #F2DC5D, 0 0 0.2em #F2DC5D;

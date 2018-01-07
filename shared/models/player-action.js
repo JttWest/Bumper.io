@@ -10,7 +10,7 @@ class PlayerAction extends MultiTickEvent {
 
 class DashAction extends PlayerAction {
   constructor() {
-    super('dash', 0, 10, 20);
+    super('dash', 0, 10, 30);
   }
 
   executeEvent(player) {

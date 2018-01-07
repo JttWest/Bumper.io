@@ -169,7 +169,7 @@ const drawPlayer = (player, color) => {
 const drawPlayerName = (playerState, name) => {
   const maxWidth = 1000; // TODO: figure out max width of name
   const setting = {
-    font: 'bold 15px Impact',
+    font: 'bold 15px "Courier New"',
     fillStyle: 'white',
     textAlign: 'center',
   };
