@@ -47,31 +47,25 @@ module.exports = class GameState {
 
     // collision
     this.playerStates.forEach((state) => {
-      if (state.collision.duration > 0) {
-        state.collision.duration--;
-      } else {
-        state.collision.collidedWith = null;
-      }
-
-      // resolve any collision when player is dashing
-      if (state.actions.dash && state.status.unmaterialized === 0) {
+      // resolve any collision when player is hitting and materialized
+      if (state.status.hitting > 0 && state.status.unmaterialized === 0) {
         this.playerStates.forEach((otherPlayerState) => {
           // only resolve collision when player is dashing
           if (state.id !== otherPlayerState.id && physics.checkCollision(state, otherPlayerState) && otherPlayerState.status.unmaterialized === 0) {
-            if (state.overridePlayerControl < configs.collisionDisplacementDuration)
-              state.overridePlayerControl = configs.collisionDisplacementDuration;
+            // if other player is also hitting
+            if (otherPlayerState.status.hitting > 0) {
+              state.disableControl(configs.collisionDisplacementDuration);
+              state.trackCollision(otherPlayerState.id);
+            } else {
+              state.disableControl(Math.floor(configs.collisionDisplacementDuration / 2));
+            }
 
-            if (otherPlayerState.overridePlayerControl < configs.collisionDisplacementDuration)
-              otherPlayerState.overridePlayerControl = configs.collisionDisplacementDuration;
+            otherPlayerState.disableControl(configs.collisionDisplacementDuration);
+            otherPlayerState.trackCollision(state.id);
 
-            // track collision to allocate credit if there's a kill
-            state.collision.collidedWith = otherPlayerState.id;
-            state.collision.duration = configs.collisionDisplacementDuration;
+            state.status.hitting = 0; // only allow 1 hit per dash
 
-            otherPlayerState.collision.collidedWith = state.id;
-            otherPlayerState.collision.duration = configs.collisionDisplacementDuration;
-
-            physics.resolveCollision(state, otherPlayerState);
+            physics.resolveCollisionVelocity(state, otherPlayerState);
           }
         });
       }

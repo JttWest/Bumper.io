@@ -27,7 +27,7 @@ function rotate(velocity, angle) {
 * @returns Collision | { direction: Number, speed : Number }
 */
 
-const resolveCollision = (player1, player2) => {
+const resolveCollisionVelocity = (player1, player2) => {
   const xVelocityDiff = player1.velocity.x - player2.velocity.x;
   const yVelocityDiff = player1.velocity.y - player2.velocity.y;
 
@@ -77,6 +77,6 @@ const checkCollision = (p1, p2) => {
 };
 
 module.exports = {
-  resolveCollision,
+  resolveCollisionVelocity,
   checkCollision
 };

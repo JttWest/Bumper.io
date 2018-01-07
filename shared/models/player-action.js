@@ -19,6 +19,8 @@ class DashAction extends PlayerAction {
 
     super.executeEvent();
     player.overridePlayerControl = this.duration;
+    player.status.hitting = this.duration;
+
     player.speed = configs.shared.playerDashSpeed;
 
     const angle = Math.atan2(player.velocity.y, player.velocity.x);

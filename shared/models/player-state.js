@@ -20,7 +20,8 @@ module.exports = class Player {
     };
     this.points = 0;
     this.status = {
-      unmaterialized: configs.player.startUnmaterializedDuration
+      unmaterialized: configs.player.startUnmaterializedDuration,
+      hitting: 0
     };
   }
 
@@ -55,9 +56,23 @@ module.exports = class Player {
     }
   }
 
+  disableControl(duration) {
+    if (this.overridePlayerControl < duration) {
+      this.overridePlayerControl = duration;
+    }
+  }
+
   statusTick() {
     if (this.status.unmaterialized > 0)
       this.status.unmaterialized--;
+
+    if (this.status.hitting > 0)
+      this.status.hitting--;
+  }
+
+  trackCollision(hitBy) {
+    this.collision.collidedWith = hitBy;
+    this.collision.duration = configs.collisionDisplacementDuration;
   }
 
   movementTick() {
@@ -80,6 +95,12 @@ module.exports = class Player {
   tick() {
     if (this.overridePlayerControl)
       this.overridePlayerControl--;
+
+    if (this.collision.duration > 0) {
+      this.collision.duration--;
+    } else {
+      this.collision.collidedWith = null; // important since 0 could be a ID
+    }
 
     this.statusTick();
     this.movementTick();
