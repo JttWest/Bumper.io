@@ -6,7 +6,7 @@ const leaderboard = require('./dashboard/leaderboard');
 const util = require('../../shared/util');
 
 let game;
-let currentStatus = appStatus.MAIN;
+let currentStatus = null;
 
 const leaderboardLoop = () => {
   if (currentStatus === appStatus.STANDBY || currentStatus === appStatus.PLAYING) {
@@ -61,6 +61,9 @@ const gameLoop = () => {
 };
 
 function toMainMenu() {
+  if (currentStatus === appStatus.MAIN)
+    return;
+
   currentStatus = appStatus.MAIN;
 
   ui.enableJoinButton();
