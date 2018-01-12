@@ -70,3 +70,9 @@ body {
   color: #151515
 }
 
+#credits {
+  position: fixed;
+  bottom: 5px;
+  width: 100%;
+}
+
