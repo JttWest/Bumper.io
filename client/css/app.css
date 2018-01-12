@@ -4,6 +4,18 @@ body {
   overflow: hidden; /* disable scrolling */
 }
 
+/* TODO: fix this */
+.center-viewport {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+
 #canvas {
   border: solid 1px black;
   position: relative;
@@ -11,19 +23,25 @@ body {
 }
 
 #canvasContainer {
-  display: block;
-  margin: 0 auto;
+  /* display: block;
+  margin: auto; */
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
+/* TODO: rename */
 .masthead {
-  /* text-align: center; */
-  min-height: 700px;
-  padding: '1em 0em';
+  height: 100vh;
+  width: 100vw;
 }
 
 .masthead h1.ui.header {
-  margin-top: 3em;
-  margin-bottom: 0em;
+  /* margin-top: 3em;
+  margin-bottom: 0em; */
   font-size: 4em;
   font-weight: normal;
 }
