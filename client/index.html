@@ -15,36 +15,40 @@
     <p id="errorMessage" class="header"></p>
   </div>
 
-  <div id="mainMenu" class="ui vertical masthead center aligned segment">
-    <div class="ui text container center-viewport">
+  <div id="mainMenu" class="full-viewport ui vertical center aligned segment">
+    <div class="center-viewport">
       <div class="ui text container">
+
         <h1 id="title" class="ui header">
           Bumper
           <sup id="supTitle">io</sup>
         </h1>
-      </div>
-      <div class="ui blue message">
-        <div class="header">
-          Push out the other players
+
+        <div class="ui blue message">
+          <div class="header">
+            Push out the other players
+          </div>
+          <div class="ui divider"></div>
+          <ul class="ui relaxed horizontal divided list">
+            <div class="item">
+              <i class="teal large move icon"></i>
+              <div class="header content">
+                MOUSE
+              </div>
+            </div>
+            <div class="item">
+              <i class="teal large lightning icon"></i>
+              <div class="header content">
+                SPACE
+              </div>
+            </div>
+          </ul>
         </div>
-        <div class="ui divider"></div>
-        <ul class="ui relaxed horizontal divided list">
-          <div class="item">
-            <i class="teal large move icon"></i>
-            <div class="header content">
-              MOUSE
-            </div>
-          </div>
-          <div class="item">
-            <i class="teal large lightning icon"></i>
-            <div class="header content">
-              SPACE
-            </div>
-          </div>
-        </ul>
-      </div>
-      <div id="joinButton" class="ui large blue button">Join a server!
-        <i class="right arrow icon"></i>
+
+        <div id="joinButton" class="ui large blue button">Join a server!
+          <i class="right arrow icon"></i>
+        </div>
+
       </div>
     </div>
 
@@ -52,7 +56,7 @@
   </div>
 
   <div id="gameView" class="ui">
-    <div id="canvasContainer" class="ui">
+    <div id="canvasContainer" class="center-viewport">
       <canvas id="canvas" tabindex='1'></canvas>
     </div>
 
