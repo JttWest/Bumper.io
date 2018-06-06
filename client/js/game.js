@@ -80,6 +80,9 @@ module.exports = class Game {
 
     // TODO: get new position based on input data
     let oldPosition = this.clientPrediction.position;
+    
+    if (!oldPosition)
+      return;
 
     const newPosition = computeNewPosition(oldPosition, data.movement, configs.shared.playerSpeed);
     this.clientPrediction.position = newPosition;
