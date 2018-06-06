@@ -40,7 +40,7 @@ const controlLoop = () => {
   if (currentStatus === appStatus.PLAYING) {
     setTimeout(controlLoop, configs.shared.tickInterval);
 
-    const clientPlayer = game.getCurrentClient();
+    const clientPlayer = game.getCurrentClientSnapshot();
 
     if (clientPlayer) {
       const controlInput = control.getUserInputData(clientPlayer.position);

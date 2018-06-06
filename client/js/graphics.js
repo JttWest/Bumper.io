@@ -180,7 +180,7 @@ const drawPlayerName = (playerState, name) => {
     setting);
 };
 
-const render = (clientPlayerId, gameSnapshot, sessionData) => {
+const render = (clientPlayerId, clientPlayerSnapshot, gameSnapshot, sessionData) => {
   if (gameSnapshot) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -190,27 +190,25 @@ const render = (clientPlayerId, gameSnapshot, sessionData) => {
 
     drawZoneBorders();
 
-    let clientPlayer;
-
     gameSnapshot.players.forEach((player) => {
-      if (player.id === clientPlayerId)
-        clientPlayer = player;
-      else
+      if (player.id !== clientPlayerId)
         drawPlayer(player, configs.client.player.otherColor);
     });
-
-    // draw client player last so it will appear on top of other players
-    if (clientPlayer)
-      drawPlayer(clientPlayer, configs.client.player.clientColor);
 
     // draw names seperately to prevent players from blocking eachother's name
     gameSnapshot.players.forEach((playerState) => {
       if (util.isBot(playerState)) {
         drawPlayerName(playerState, `Bot${playerState.id}`);
-      } else {
+      } else if (playerState.id !== clientPlayerId) {
         drawPlayerName(playerState, sessionData[playerState.id].name);
       }
     });
+
+    // draw client player last so it will appear on top of other players
+    if (clientPlayerSnapshot) {
+      drawPlayer(clientPlayerSnapshot, configs.client.player.clientColor);
+      drawPlayerName(clientPlayerSnapshot, sessionData[clientPlayerId].name);
+    }
   }
 };
 

@@ -23,6 +23,7 @@ module.exports = class Player {
       unmaterialized: configs.player.startUnmaterializedDuration,
       hitting: 0
     };
+    this.noInput = true; // true if tick process without client input
   }
 
   move(dx, dy) {
@@ -40,8 +41,12 @@ module.exports = class Player {
     if (!controlInput) {
       this.velocity.x = 0;
       this.velocity.y = 0;
+
+      this.noInput = true;
       return;
     }
+
+    this.noInput = false;
 
     const angle = controlInput.movement;
 
@@ -118,7 +123,8 @@ module.exports = class Player {
       position: this.position,
       points: this.points,
       isKilled: this.isKilled,
-      status: this.status
+      status: this.status,
+      noInput: this.noInput
     };
   }
 };

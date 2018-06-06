@@ -1,17 +1,51 @@
 const graphics = require('./graphics');
 const debug = require('../../shared/debug');
 const configs = require('../../app-configs');
+const Coord = require('../../shared/models/coord');
+
+const validatePrediction = (serverSnapshot, predictionSnapshot) => {
+  if (Math.round(serverSnapshot.position.x) === Math.round(predictionSnapshot.position.x) &&
+    Math.round(serverSnapshot.position.y) === Math.round(predictionSnapshot.position.y))
+    return true;
+
+  return false;
+};
+
+const getLatestClientSnapshot = (clientPlayerId, snapshotQueue) => {
+  if (snapshotQueue.length === 0)
+    return null;
+
+  const latestGameSnapshot = snapshotQueue[snapshotQueue.length - 1];
+
+  const clientPlayer = latestGameSnapshot.players
+    .find(player => player.id === clientPlayerId);
+
+  return clientPlayer;
+};
+
+const computeNewPosition = (oldPosition, angle, speed) => {
+  const dx = speed * Math.cos(angle);
+  const dy = speed * Math.sin(angle);
+
+  return new Coord(oldPosition.x + dx, oldPosition.y + dy);
+};
 
 module.exports = class Game {
   // create on join
   constructor(ws, clientPlayerId) {
     this.ws = ws;
     this.clientPlayerId = clientPlayerId;
+    this.clientPrediction = { position: null };
+
     this.syncing = true;
+
+    // names of players in game
+    this.sessionData = null;
 
     this.serverGameSnapshotQueue = [];
 
-    this.sessionData = null;
+    // client side prediction
+    this.predictionSnapshotQueue = [];
   }
 
   getCurrentPlayers() {
@@ -23,7 +57,7 @@ module.exports = class Game {
     return null;
   }
 
-  getCurrentClient() {
+  getCurrentClientSnapshot() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
     if (currSnapshot) {
@@ -43,6 +77,17 @@ module.exports = class Game {
     };
 
     this.ws.send(JSON.stringify(controlInputPayload));
+
+    // TODO: get new position based on input data
+    let oldPosition = this.clientPrediction.position;
+
+    const newPosition = computeNewPosition(oldPosition, data.movement, configs.shared.playerSpeed);
+    this.clientPrediction.position = newPosition;
+
+    // TODO: fix status and others fields
+    const predictionSnapshot = { position: newPosition, status: {} };
+
+    this.predictionSnapshotQueue.push(predictionSnapshot);
   }
 
   insertGameStateSnapshot(snapshot) {
@@ -53,6 +98,21 @@ module.exports = class Game {
       }
 
       this.serverGameSnapshotQueue.push(snapshot);
+
+      // confirm client's prediction
+      const clientPlayerSnapshot = snapshot.players.find(player => player.id === this.clientPlayerId);
+
+      // only try to validate prediction if client input was processed
+      if (clientPlayerSnapshot && !clientPlayerSnapshot.noInput) {
+        // get oldest unvalidated prediction snapshot
+        const predictionSnapshot = this.predictionSnapshotQueue.shift();
+
+        // prediction doesn't match server
+        if (predictionSnapshot && !validatePrediction(clientPlayerSnapshot, predictionSnapshot)) {
+          console.log('wrong prediction');
+          this.predictionSnapshotQueue = [];
+        }
+      }
     }
   }
 
@@ -84,13 +144,20 @@ module.exports = class Game {
   render() {
     const currSnapshot = this.serverGameSnapshotQueue[0];
 
-    if (currSnapshot)
-      graphics.render(this.clientPlayerId, this.serverGameSnapshotQueue[0], this.sessionData);
+    if (currSnapshot) {
+      const clientPlayerSnapshot = this.predictionSnapshotQueue.length > 0 ?
+        this.predictionSnapshotQueue[0] :
+        this.getCurrentClientSnapshot();
+
+      graphics.render(this.clientPlayerId, clientPlayerSnapshot, currSnapshot, this.sessionData);
+    }
   }
 
   tick() {
-    if (debug.isDebugMode())
-      $('#snapshotsInQueue').text(`Snapshots in Queue: ${this.serverGameSnapshotQueue.length}`);
+    if (debug.isDebugMode()) {
+      $('#snapshotsInQueue').text(`Snapshots in GameState Queue: ${this.serverGameSnapshotQueue.length}`);
+      $('#predictionsInQueue').text(`Snapshots in Prediction Queue: ${this.predictionSnapshotQueue.length}`);
+    }
 
     if (this.serverGameSnapshotQueue.length === 0) {
       this.requestSync();
@@ -102,37 +169,3 @@ module.exports = class Game {
     }
   }
 };
-
-/*
-const serverGameSnapshotQueue = [];
-
-// always render serverGameState to player (except current client player's position)
-
-// render current client's positino based on clientGameState
-
-// everything in here must be confirm by server
-const clientInputQueue = [];
-
-// on play
-clientInputQueue.push(...Array(4).fill(null));
-
-// server packet (snapshots)
-// snapshot should be enough to recontruct the state
-// gameState + the player's input at the gameState (could be null -> NO_INPUT)
-
-const confirmInput = () => {
-
-}
-
-const getCurrentSnapshot
-
-const tick = () => {
-  // confirm player input
-
-
-  // serverGameState.tick() -> render rest of gameState from here
-
-  // clientGameState.tick() -> render current player from here
-
-}
-*/

@@ -32,8 +32,8 @@ type       numPlayers
 
 PLAYER
 Int8Array  Float32Array  Float32Array   Uint16Array   Uint8Array
-X          X             X              X             ------xx
-id         x-coord       y-coord        points        isKilled, unMaterialized
+X          X             X              X             x-----xx
+id         x-coord       y-coord        points        npInput, ... isKilled, unMaterialized
 
 ZONE
 Uint8Array
@@ -83,6 +83,7 @@ const gameStateSnapshot = {
       let statusFlags = 0;
       if (playerState.isKilled) statusFlags |= 0b1;
       if (playerState.status.unmaterialized) statusFlags |= 0b10;
+      if (playerState.noInput) statusFlags |= 0b10000000;
 
       dataview2.setUint8(11 + i * playerSize, statusFlags);
     }
@@ -128,8 +129,9 @@ const gameStateSnapshot = {
 
       const flags = dataview2.getUint8(11 + i * playerSize);
 
-      const isKilled = (flags & 0b1) === 0b1;
-      const unmaterialized = (flags & 0b10) === 0b10;
+      const isKilled = (flags & 0b1) !== 0;
+      const unmaterialized = (flags & 0b10) !== 0;
+      const noInput = (flags & 0b10000000) !== 0;
 
       snapshot.players.push({
         id,
@@ -138,7 +140,8 @@ const gameStateSnapshot = {
         isKilled,
         status: {
           unmaterialized
-        }
+        },
+        noInput
       });
     }
 
